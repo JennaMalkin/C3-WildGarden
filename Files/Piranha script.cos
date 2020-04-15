@@ -1,0 +1,485 @@
+*GB Template
+*# Pray-File "GB_Piranha.agent"
+*# DS-Name "Piranha"
+*# Depend jaws.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Piranha raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 20
+*# GB_Category = 5
+*# Agent Author = "Creature Labs"
+
+new: simp 2 16 3 "jaws" 53 0 1000
+attr 195
+mvsf game "ch_x" game "ch_y"
+
+elas 50
+accg 0
+aero 0
+loop
+	setv ov10 rand -1 1
+untl ov10 ne 0
+perm 60
+
+tick rand 8 15
+setv ov02 100
+
+setv ov61 50
+
+
+scrp 2 16 3 9
+
+	doif rtyp room targ ne 8 and rtyp room targ ne 9
+		addv ov99 1
+		accg 4
+		aero 10
+		setv vely 3
+
+		wait 10
+		doif rtyp room targ ne 8 and rtyp room targ ne 9
+			sndc "fish"
+			anim [48 49 50 51 255]
+			accg 4
+			aero 10
+			loop
+				wait 1
+			untl fall eq 0
+
+			velo rand -5 5 rand -10 -5
+			doif ov99 ge 20
+				stpc
+				anim []
+				wait 30
+				kill ownr
+			endi
+			stop
+		endi
+	else
+		setv ov99 0
+		accg 0
+		aero 0
+	endi
+
+
+	doif rand 0 19 eq 0
+		doif carr eq null
+			inst
+			setv va20 0
+
+			esee 2 16 3
+				addv va20 1
+			next
+
+			esee 2 18 22
+				addv va20 1
+			next
+			doif va20 le 7
+				setv va00 posl
+				setv va01 post
+				new: simp 2 18 22 "jaws" 4 53 10
+				attr 192
+				elas 0
+				fric 100
+				pose 3
+				doif tmvt va00 va01 ne 1
+					kill targ
+					stop
+				endi
+				mvto va00 va01
+				tick 600
+			endi
+			slow
+			targ ownr
+		endi
+	endi
+
+
+	doif obst 0 lt 40 and ov10 lt 0
+		negv ov10
+	endi
+	doif obst 1 lt 40 and ov10 gt 0
+		negv ov10
+	endi
+
+	doif ov10 lt 0
+		base 0
+		setv velx rand -3 -2
+		anim [0 1 2 3 4 5 6 7 255]
+	else
+
+		setv velx rand 2 3
+		anim [8 9 10 11 12 13 14 15 255]
+	endi
+
+
+	setv vely rand -1 1
+
+
+	subv ov02 1
+	doif ov02 le 0
+		velo 0 0
+		anim [48 49 50 51 52]
+		over
+		inst
+		doif room targ <> -1
+			altr room targ 4 0.1
+			altr room targ 3 0.1
+		endi
+		kill ownr
+	endi
+
+	doif carr eq null
+		doif ov02 lt 100 or rand 0 5 eq 0
+			inst
+			etch 4 0 0
+				doif carr ne null
+					stop
+				endi
+				setv va01 attr
+				andv va01 829
+				attr va01
+				stpt
+				tick 0
+				velo 0 0
+
+				seta va99 targ
+				gsub feed
+			next
+
+			etch 2 13 0
+				doif carr ne null
+					stop
+				endi
+				doif spcs ne 5
+					setv va01 attr
+					andv va01 829
+					attr va01
+					stpt
+					tick 0
+					velo 0 0
+
+					seta va99 targ
+					gsub feed
+				endi
+			next
+
+			etch 2 14 0
+				doif carr ne null
+					stop
+				endi
+				setv va01 attr
+				andv va01 829
+				attr va01
+				stpt
+				tick 0
+				velo 0 0
+
+				seta va99 targ
+				gsub feed
+			next
+
+			etch 2 15 0
+				doif carr ne null
+					stop
+				endi
+				doif spcs ne 8
+					setv va01 attr
+					andv va01 829
+					attr va01
+					stpt
+					tick 0
+					velo 0 0
+
+					seta va99 targ
+					gsub feed
+				endi
+			next
+
+			etch 2 16 0
+				doif carr ne null
+					stop
+				endi
+				doif spcs ne 3
+					setv va01 attr
+					andv va01 829
+					attr va01
+					stpt
+					tick 0
+					velo 0 0
+
+					seta va99 targ
+					gsub feed
+				endi
+			next
+
+			subr feed
+				setv va00 posx
+				mesg wrt+ ownr 1000 va00 va99 rand 1 5
+				stop
+			retn
+
+		endi
+	endi
+endm
+
+
+scrp 2 16 3 1000
+
+	inst
+
+
+
+	setv va00 _p1_
+	subv va00 130
+
+	doif gmap posx posy eq 3
+
+		setv va79 2135
+	else
+		setv va79 post
+		subv va79 50
+	endi
+
+	new: simp 1 1 24 "pirbubbs" 21 0 8000
+
+	mvto va00 va79
+	mesg wrt+ targ 0 _p2_ 0 0
+
+	targ ownr
+	setv va00 posx
+	setv va01 posy
+	addv va01 10
+	rnge 500
+
+	esee 2 16 3
+		mesg wrt+ targ 1001 va00 va01 0
+
+	next
+
+	mesg wrt+ ownr 1001 posx posy 0
+endm
+
+
+scrp 2 16 3 1001
+
+	doif ov99 eq 0
+		setv va99 50
+		setv va00 _p1_
+		setv va01 _p2_
+
+		addv ov02 50
+		loop
+
+			doif posx gt va00 and ov10 gt 0
+				negv ov10
+				setv velx rand -12 -8
+
+				anim [32 33 34 35 36 37 38 39 255]
+			elif posx gt va00 and ov10 lt 0
+				setv velx rand -12 -8
+
+				anim [32 33 34 35 36 37 38 39 255]
+			elif posx lt va00 and ov10 lt 0
+				negv ov10
+				setv velx rand 8 12
+
+				anim [40 41 42 43 44 45 46 47 255]
+			elif posx lt va00 and ov10 gt 0
+				setv velx rand 8 12
+
+				anim [40 41 42 43 44 45 46 47 255]
+			endi
+
+
+			doif posy gt va01
+				setv vely -1
+			elif posy lt va01
+				setv vely 1
+			endi
+
+			subv va99 1
+		untl va99 le 0
+
+		setv ov99 20
+
+
+	endi
+	unlk
+endm
+
+
+scrp 1 1 24 1
+	sndl "pir2"
+	inst
+	esee 4 1 0
+		chem 117 0.5
+	next
+	slow
+	targ ownr
+
+	anim [0 0 1 1 2 2 3 3 4 4 5 5]
+	over
+	anim [6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 255]
+	setv va00 posx
+	setv va01 posy
+
+	wait 50
+	inst
+
+	setv va80 2
+	targ _p1_
+	doif targ ne null
+		doif fmly eq 4
+
+			setv va80 10
+		elif gnus eq 15 or gnus eq 16
+			setv va80 5
+		endi
+	endi
+	reps va80
+		new: simp 2 10 30 "bone" 12 0 100
+		attr 199
+		elas 20
+		accg 1
+		doif tmvt va00 va01 eq 1
+			mvto va00 va01
+			setv velx rand -7 7
+			setv vely rand -10 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 255]
+			tick 10
+		else
+			kill targ
+		endi
+	repe
+	targ ownr
+
+	targ _p1_
+	doif targ ne null
+		doif fmly eq 4
+			dead
+
+
+			lock
+			slow
+			wait 1
+			inst
+		endi
+
+		doif targ ne null
+			kill targ
+		endi
+	endi
+	slow
+
+	targ ownr
+	wait 50
+	anim [5 4 3 2 1 0]
+	fade
+	over
+	snde "burp"
+	kill ownr
+endm
+
+
+scrp 2 10 30 6
+	doif wall eq down
+		pose rand 0 2
+	endi
+	tick rand 300 600
+endm
+
+scrp 2 10 30 9
+	doif ov00 eq 1
+		doif room targ <> -1 and carr = null
+			altr room targ 3 0.01
+			altr room targ 4 0.1
+			kill ownr
+		endi
+	endi
+
+	doif ov00 eq 0
+		doif fall eq 0
+			setv ov00 1
+			tick rand 300 600
+			pose rand 0 2
+		endi
+	endi
+endm
+
+
+scrp 2 18 22 9
+	doif pose gt 0
+		setv va00 pose
+		subv va00 1
+		pose va00
+	else
+		setv va00 posl
+		setv va01 post
+		subv va01 20
+		subv va00 16
+
+		inst
+		new: simp 2 16 3 "jaws" 53 0 1000
+		attr 195
+		elas 50
+		accg 0
+		setv ov10 rand 0 1
+		doif ov10 eq 0
+			setv ov10 -1
+		endi
+		perm 60
+		setv va99 0
+		setv va98 0
+		loop
+			doif tmvt va00 va01 ne 1
+				addv va00 1
+				addv va99 1
+			else
+				setv va99 32
+				setv va98 1
+			endi
+		untl va99 ge 32
+
+		doif va98 eq 0
+			kill targ
+		else
+
+			tick rand 8 15
+			setv ov02 100
+
+			setv ov61 50
+			mvto va00 va01
+		endi
+		kill ownr
+	endi
+endm
+
+scrp 2 16 3 4
+	setv ov99 1
+endm
+
+scrp 2 16 3 5
+	setv ov99 0
+endm
+
+
+
+rscr
+enum 2 16 3
+	kill targ
+next
+enum 1 1 24
+	kill targ
+next
+enum 2 18 22
+	kill targ
+next
+scrx 1 1 24 1
+scrx 2 16 3 9
+scrx 2 16 3 6
+enum 2 10 30
+	kill targ
+next
+*scrx 2 10 30 6

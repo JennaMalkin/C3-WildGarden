@@ -1,0 +1,61 @@
+*GB Template
+*# Pray-File "GB_Purbana.agent"
+*# DS-Name "Purbana"
+*# Depend palmplant.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Purbana raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 21
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+
+new: simp 2 4 4 "palmplant" 15 0 140
+attr 192
+
+bhvr 1
+elas 0
+tick rand 200 1000
+
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 0
+
+scrp 2 4 4 1
+	targ from
+	stim writ from 62 1
+endm
+
+scrp 2 4 4 9
+	doif ov00 eq 0
+		doif pose lt 14
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			addv ov99 1
+		endi
+		doif ov99 eq 50
+			setv ov00 1
+		endi
+	endi
+	doif ov00 eq 1
+		doif pose gt 0
+			setv va00 pose
+			subv va00 1
+			pose va00
+		else
+			setv ov99 0
+			setv ov00 0
+		endi
+	endi
+endm
+
+
+
+rscr
+enum 2 4 4
+	kill targ
+next
+scrx 2 4 4 9

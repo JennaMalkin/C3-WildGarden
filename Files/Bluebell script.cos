@@ -1,0 +1,60 @@
+*GB Template
+*# Pray-File "GB_bluebell.agent"
+*# DS-Name "Bluebell"
+*# Depend bluebell.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Bluebell raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 29
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+setv va00 rand 0 2
+mulv va00 11
+new: simp 2 4 6 "bluebell" 11 va00 200
+attr 192
+
+bhvr 1
+elas 0
+tick rand 20 100
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 0
+
+scrp 2 4 6 1
+	targ from
+	stim writ from 62 1
+endm
+
+scrp 2 4 6 9
+	doif ov00 eq 0
+		doif pose lt 10
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			addv ov99 1
+		endi
+		doif ov99 ge 100
+			setv ov00 1
+		endi
+	endi
+	doif ov00 eq 1
+		doif pose gt 0
+			setv va00 pose
+			subv va00 1
+			pose va00
+		else
+			setv ov99 0
+			setv ov00 0
+		endi
+	endi
+endm
+
+
+rscr
+enum 2 4 6
+	kill targ
+next
+scrx 2 4 6 9

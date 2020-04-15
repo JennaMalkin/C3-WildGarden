@@ -1,0 +1,749 @@
+*GB Template
+*# Pray-File "GB_Goshhawk.agent"
+*# DS-Name "Gosh-hawk"
+*# Depend hawk.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Gosh-hawk conversion. After injection, place nest in an appropriate place"
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 13
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 17 4 "hawk" 3 132 200
+attr 3
+pose 2
+tint 255 128 128 128 128
+mvsf game "ch_x" game "ch_y"
+seta va99 targ
+
+
+scrp 2 16 1 9
+*	doif rtyp room targ eq 8 or rtyp room targ eq 9
+*		inst
+*		setv va10 posx
+*		setv va11 posy
+*		mvto 1152 341
+*		new: simp 1 1 43 "teleport" 9 11 5001
+*		setv va12 wdth
+*		setv va13 hght
+*		divv va12 2
+*		divv va13 2
+*		negv va12
+*		negv va13
+*		addv va12 va10
+*		addv va13 va11
+*		subv va13 35
+*		addv va12 10
+*		mvto va12 va13
+*		snde "tele"
+*		anim [0 1 2 3 4 5 6 5 4 3 2 1 0]
+*		over
+*		kill targ
+*		slow
+*	endi
+
+	targ ownr
+
+	doif carr eq null
+		doif rand 0 10 eq 0
+
+			setv va00 0
+			rtar 1 1 11
+			doif targ ne null
+				setv va00 ov00
+			endi
+			targ ownr
+			doif va00 eq 0
+
+				setv va02 216
+			else
+				setv va02 218
+			endi
+			inst
+			setv va00 posx
+			setv va01 posy
+			addv va01 10
+
+			new: simp 2 10 6 "graz" 2 va02 1999
+			attr 192
+			aero 5
+			accg 5
+			elas 0
+
+			doif tmvt va00 va01 eq 1
+				mvto va00 va01
+			else
+				mvsf va00 va01
+			endi
+
+			slow
+			targ ownr
+		endi
+	endi
+
+
+	doif ov00 eq 0
+		subv ov70 1
+		doif ov70 le 0
+
+			setv ov10 1
+			setv ov00 1
+			setv ov70 rand 50 100
+			accg 2
+		else
+
+			subv ov71 1
+			doif ov71 le 0
+				setv va00 rand 0 3
+				doif va00 eq 3
+
+					doif ov10 lt 0
+						base ov38
+					else
+						base ov39
+					endi
+					anim [0 1 2 3 4 5 6 7]
+					over
+					addv ov71 40
+				else
+					doif va00 eq 2
+
+						negv ov10
+						addv ov71 10
+					else
+						doif va00 eq 1
+
+							reps 3
+								mvby 0 -3
+							repe
+							reps 3
+								mvby 0 3
+							repe
+							addv ov71 10
+						endi
+					endi
+				endi
+				doif ov10 lt 0
+					base ov30
+				else
+					base ov31
+				endi
+				pose 0
+
+			endi
+		endi
+	endi
+
+
+	doif ov00 eq 1
+		doif carr eq null
+			plne 8200
+		endi
+		setv va00 attr
+		orrv va00 128
+		attr va00
+		subv ov70 1
+		doif ov70 le 0
+			setv ov00 3
+		endi
+
+		gsub levl
+		gsub fly_
+
+		rnge 1000
+		setv va00 0
+		inst
+		esee 2 15 2
+			addv va00 1
+		next
+		slow
+
+		doif va00 ge 7
+			rnge 400
+			setv va01 0
+			inst
+			esee 2 15 2
+				seta va00 targ
+				setv va01 1
+			next
+			slow
+			doif va01 eq 1
+
+				seta ov18 va00
+				accg 1
+				targ ov18
+				doif targ eq null
+					setv ov00 1
+					stop
+				endi
+				setv va00 relx ownr targ
+				targ ownr
+				doif va00 gt 0
+					setv ov10 1
+				elif va00 lt 0
+					setv ov10 -1
+				endi
+				doif ov10 lt 0
+					base ov34
+				else
+					base ov35
+				endi
+				pose 0
+
+				absv va00
+				doif va00 lt 100
+					setv va01 7
+				elif va00 lt 200
+					setv va01 9
+				else
+					setv va01 11
+				endi
+				mulv va01 ov10
+				setv velx va01
+				setv vely 30
+
+
+				setv ov00 2
+			endi
+		endi
+	endi
+
+
+	doif ov00 eq 2
+		doif touc ov18 ownr gt 0
+
+			sndc "hawk"
+			doif ov10 lt 0
+				base ov38
+			else
+				base ov39
+			endi
+			anim [0 1 2 3 4 5 6 7 255]
+			setv vely -30
+			mesg writ ov18 4
+			setv ov72 1
+			setv ov00 3
+			accg 2
+		else
+
+			doif obst down le 10
+				doif ov10 lt 0
+					base ov40
+				else
+					base ov41
+				endi
+				pose 0
+				setv va00 ov10
+				mulv va00 20
+				setv velx va00
+				inst
+				setv va01 posl
+				setv va02 posy
+				subv va02 10
+				setv va09 0
+				reps 6
+					new: simp 1 1 21 "hawk" 8 124 8000
+					mvto va01 va02
+					mesg wrt+ targ 0 0 0 va09
+					addv va01 va00
+					addv va09 2
+				repe
+				targ ownr
+				setv ov00 4
+				setv ov71 rand 4 10
+				accg 2
+				stop
+			endi
+		endi
+
+	endi
+
+
+
+
+	doif ov00 eq 3
+		gsub home
+	endi
+
+
+	doif ov00 eq 4
+		doif ov71 gt 0
+			doif obst down le 5
+				doif ov10 lt 0
+					base ov32
+				else
+					base ov33
+				endi
+				anim [0 1 2 3 4 5 6 7]
+
+				setv vely -10
+				setv va00 ov10
+				mulv va00 10
+				setv velx va00
+			endi
+			setv va00 rand 0 2
+			doif va00 eq 0
+				negv ov10
+			endi
+			subv ov71 1
+		else
+			doif ov10 lt 0
+				base ov36
+			else
+				base ov37
+			endi
+			anim [4 5 6 7 0 1 2 3 4]
+
+			setv ov00 3
+			setv vely -30
+		endi
+	endi
+
+
+	doif ov00 eq 5
+		plne 190
+		accg 0.1
+		setv velx 0
+		setv vely -3
+
+		loop
+			setv va90 0
+			setv va91 0
+			targ ov17
+			setv va00 posx
+			setv va01 posx
+			subv va00 5
+			addv va01 5
+			setv va02 posy
+			setv va03 posy
+			addv va03 10
+			subv va02 20
+
+			targ ownr
+
+			doif posy gt va03
+				setv va21 -2
+			else
+				doif posy lt va02
+					setv va21 0
+				else
+					setv va21 0
+					setv va91 1
+				endi
+			endi
+			doif posx gt va01
+				setv va20 -1
+			else
+				doif posx lt va00
+					setv va20 1
+				else
+					setv va20 0
+					setv va90 1
+				endi
+			endi
+
+			doif va20 lt 0
+				setv ov10 -1
+			elif va20 gt 0
+				setv ov10 1
+			endi
+
+			doif ov10 lt 0
+				base ov38
+			else
+				base ov39
+			endi
+
+			setv velx va20
+			setv vely va21
+		untl va90 eq 1 and va91 eq 1
+
+		setv ov00 0
+		accg 0
+		attr 71
+		setv velx 0
+		setv vely 0
+		setv ov70 rand 1200 2400
+
+
+
+		doif touc targ ov18 gt 0
+
+			setv ov72 0
+			kill ov18
+			seta ov18 null
+			wait 10
+			setv va00 posx
+			setv va01 post
+			reps 5
+				new: simp 2 10 30 "bone" 12 0 100
+				attr 199
+				elas 20
+				accg 1
+				mvto va00 va01
+				setv velx rand -7 7
+				setv vely rand -10 0
+				anim [0 1 2 3 4 5 6 7 8 9 10 11 255]
+				tick 10
+			repe
+		endi
+
+
+	endi
+
+
+
+
+	doif ov00 eq 6
+
+
+
+		doif ov71 gt 0
+			doif obst down le 5
+				doif ov10 lt 0
+					base ov32
+				else
+					base ov33
+				endi
+				anim [0 1 2 3 4 5 6 7]
+
+				setv vely -10
+				setv va00 ov10
+				mulv va00 10
+				setv velx va00
+			endi
+			setv va00 rand 0 5
+			doif va00 eq 0
+				negv ov10
+			endi
+			subv ov71 1
+
+			doif obst 0 le 200 and ov10 lt 0
+				negv ov10
+			elif obst 1 le 200 and ov10 gt 0
+				negv ov10
+			endi
+
+
+		else
+			doif ov10 lt 0
+				base ov36
+			else
+				base ov37
+			endi
+			anim [4 5 6 7 0 1 2 3 4]
+
+			setv ov00 ov73
+			setv vely -20
+		endi
+	endi
+
+
+
+	subr home
+		targ ov17
+		setv va00 posl
+		setv va01 posr
+		subv va00 20
+		addv va01 20
+		setv va02 post
+		targ ownr
+
+		setv ov90 va02
+		setv ov91 va00
+		setv ov92 va01
+		setv va03 va02
+		subv va03 200
+		setv va98 0
+		setv va99 0
+		doif posy gt va02
+			setv ov11 -1
+			setv va98 1
+		endi
+		doif posy lt va03
+			setv ov11 1
+			setv va99 1
+		endi
+
+		doif va98 eq 0 and va99 eq 0
+			setv ov11 0
+		endi
+		gsub trap
+
+		gsub fly_
+
+		doif touc ownr ov17 gt 0
+			targ ov17
+			setv va10 posb
+			targ ownr
+			doif posb lt va10
+
+				setv ov00 5
+				doif ov10 lt 0
+					base ov38
+				else
+					base ov39
+				endi
+				anim [0 1 2 3 4 5 6 7 255]
+
+			endi
+		endi
+	retn
+
+
+	subr fly_
+
+		snde "flap"
+		doif obst 0 lt 100
+			negv ov10
+		else
+			doif obst 1 lt 100
+				negv ov10
+			endi
+		endi
+
+		doif ov72 eq 0
+			doif ov10 lt 0
+				setv va00 -15
+				base ov36
+			else
+				setv va00 15
+				base ov37
+			endi
+			anim [4 5 6 7 0 1 2 3 4]
+		else
+			doif ov10 lt 0
+				setv va00 -15
+				base ov38
+			else
+				setv va00 15
+				base ov39
+			endi
+			anim [4 5 6 7 0 1 2 3 4]
+		endi
+
+		setv velx va00
+		setv va01 -13
+		setv va02 ov11
+		mulv va02 6
+		addv va01 va02
+		setv vely va01
+	retn
+
+	subr levl
+
+		doif obst 3 lt 450
+
+			setv ov11 -1
+		else
+			doif obst 3 gt 500
+				setv ov11 1
+
+			endi
+		endi
+		doif obst 2 lt 150 and ov11 lt 0
+
+			negv ov11
+		endi
+		gsub trap
+	retn
+
+	subr die_
+
+		accg 7
+		doif ov10 lt 0
+			base 0
+			pose 18
+			setv velx -20
+			setv va02 54
+		else
+			base 0
+			pose 19
+			setv velx 20
+			setv va02 58
+		endi
+		loop
+			wait 1
+		untl obst 3 le 1
+		inst
+		setv va00 posl
+		setv va01 post
+		new: simp 2 10 17 "hawk" 4 va02 6001
+		attr 192
+
+		mvto va00 va01
+
+		tick 100
+		kill ownr
+	retn
+
+
+
+	subr trap
+		doif obst 2 le 150 and obst 3 le 100
+			setv ov73 ov00
+			setv ov00 6
+			setv ov71 rand 4 8
+			doif ov10 lt 0
+				base ov32
+			else
+				base ov33
+			endi
+			pose 0
+			stop
+		endi
+	retn
+
+
+
+
+
+endm
+
+
+
+scrp 2 10 17 9
+	doif pose lt 3
+		setv va00 pose
+		addv va00 1
+		pose va00
+	else
+		kill ownr
+	endi
+endm
+
+*This is an additional nest script to lock it in place after it's place is chosen.
+scrp 2 17 4 5
+	setv va00 228
+	tint va00 128 128 128 128
+	reps 10
+		doif movs = 0
+			wait 10
+			subv va00 10
+			tint va00 128 128 128 128
+		else
+			tint 255 128 128 128 128
+			stop
+		endi
+	repe
+	inst
+	doif movs ne 0
+		stop
+	endi
+	tint 128 128 128 128 128
+	attr 0
+	sndc "beam"
+**Create the hawk
+	seta va99 targ
+	setv va00 posl
+	setv va01 post
+	subv va01 20
+	new: simp 2 16 1 "hawk" 62 62 190
+	attr 71
+	elas 20
+	accg 1
+	aero 5
+	doif tmvt va00 va01 eq 1
+		mvto va00 va01
+	else
+		mvsf va00 va01
+	endi
+	setv ov00 0
+	seta ov17 va99
+	seta ov18 null
+	tick 5
+
+	setv ov61 80
+
+	setv ov10 rand 0 1
+	doif ov10 eq 0
+		setv ov10 -1
+	endi
+
+	pupt -1 50 80
+
+	puhl -1 70 105
+
+
+
+	setv ov30 0
+
+	setv ov31 1
+
+	setv ov32 2
+
+	setv ov33 10
+
+	setv ov34 18
+
+	setv ov35 19
+
+	setv ov36 20
+
+	setv ov37 28
+
+	setv ov38 36
+
+	setv ov39 44
+
+	setv ov40 52
+
+	setv ov41 53
+
+	setv ov42 54
+
+	setv ov43 58
+	pose rand 0 1
+	addv va00 20
+	setv ov70 rand 1200 2400
+
+endm
+
+
+scrp 1 1 21 1
+	lock
+	anim [0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7]
+	over
+	kill targ
+endm
+
+scrp 2 16 1 5
+	setv ov10 1
+	setv ov00 1
+	setv ov70 rand 50 100
+	accg 2
+	tick 5
+endm
+
+scrp 2 16 1 4
+	anim []
+	tick 0
+	base ov39
+	anim [0 1 2 3 4 5 6 7 255]
+endm
+
+
+
+
+
+
+
+rscr
+enum 2 16 1
+	kill targ
+next
+enum 2 17 4
+	kill targ
+next
+enum 2 10 17
+	kill targ
+next
+enum 1 1 21
+	kill targ
+next
+scrx 2 16 1 9
+scrx 2 16 1 4
+scrx 2 16 1 5
+scrx 2 16 1 104

@@ -1,0 +1,1194 @@
+*GB Template
+*# Pray-File "GB_Butterfly.agent"
+*# DS-Name "Butterfly (C3)"
+*# Depend gb_c3_conv.c16 caterpillar.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Butterfly raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 2
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 13 2 "caterpillar" 131 0 800
+accg 3
+perm 99
+elas 5
+fric 80
+tick 8
+attr 195
+
+bhvr 16
+
+
+setv ov30 12
+
+setv ov31 20
+
+setv ov32 28
+
+setv ov33 36
+
+setv ov34 44
+
+setv ov35 52
+
+setv ov36 48
+
+
+addv ov30 ov36
+addv ov31 ov36
+addv ov32 ov36
+addv ov33 ov36
+addv ov34 ov36
+addv ov35 ov36
+
+
+
+setv ov37 108
+setv ov38 123
+setv ov39 128
+
+setv ov00 6
+setv ov70 0
+setv ov01 5990
+seta ov16 null
+setv ov11 -1
+setv ov61 50
+setv ov72 200
+setv ov73 250
+setv ov74 350
+setv ov02 600
+setv va66 rand 0 1
+doif va66 eq 0
+	anim [122]
+	setv ov10 1
+else
+	anim [127]
+	setv ov10 -1
+endi
+setv va50 rand 1500 2000
+setv va51 rand 700 700
+mvsf game "ch_x" game "ch_y"
+setv vely 0
+
+
+scrp 2 13 1 9
+	addv ov01 1
+	subv ov02 1
+
+	doif carr = null
+		doif rtyp room ownr = 8 or rtyp room ownr = 9
+			subv ov02 100
+		endi
+	endi
+
+	doif obst 0 lt 30
+		setv ov10 1
+		setv ov11 -1
+	endi
+	doif obst 1 lt 30
+		setv ov10 -1
+		setv ov11 -1
+	endi
+
+	doif obst 2 lt 30
+		setv ov11 0
+	endi
+	doif obst 3 lt 30
+		setv ov11 -1
+	endi
+	doif carr = null
+		doif rtyp room ownr = 8
+			subv ov02 50
+			setv ov11 -1
+			setv vely rand -14 -16
+		endi
+	endi
+
+	doif ov01 gt 6000 or ov02 <= 0
+		setv ov00 99
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+	doif ov02 lt ov72
+		setv ov00 1
+	endi
+	doif ov00 eq 1
+		gsub gfod
+	endi
+
+	doif ov00 eq 10
+		gsub goup
+	endi
+
+	doif ov02 gt ov73
+		doif ov70 eq 0
+			doif sean eq 1
+				setv ov00 2
+			endi
+		endi
+	endi
+	doif ov00 eq 2
+
+		gsub flok
+	endi
+	doif ov00 eq 3
+		gsub disp
+	endi
+	doif ov00 eq 4
+		doif ov70 eq 1
+			gsub layg
+		endi
+	endi
+
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+	stop
+
+	subr die_
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		subv va50 16
+		subv va51 16
+		new: simp 2 10 11 "caterpillar" 4 8 2000
+		accg 3
+		fric 100
+		elas 0
+		aero 10
+		perm 99
+		tick 4
+		attr 195
+		setv ov01 0
+		setv ov61 10
+		pose 0
+		setv ov10 va52
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+	retn
+
+	subr gfod
+
+		setv va47 2
+		setv va48 7
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+		doif targ <> null
+			targ ownr
+			gsub hunt
+			doif touc ov16 ownr <> 0
+
+				mesg writ ov16 303
+				addv ov02 ov73
+				doif ov02 gt ov74
+					setv ov00 0
+				endi
+			endi
+		else
+			targ ownr
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		doif ov16 <> null
+			stop
+		endi
+	retn
+
+	subr flok
+		setv va47 2
+		setv va48 13
+		setv va49 1
+		inst
+		rtar va47 va48 va49
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+		else
+			targ ownr
+			setv va50 posx
+			setv va51 posy
+		endi
+		targ ownr
+		doif posx lt va50
+			setv ov10 1
+		endi
+		doif posx gt va50
+			setv ov10 -1
+		endi
+		doif posy gt va51
+			setv ov11 -1
+		endi
+
+		etch va47 va48 va49
+			addv va60 1
+			seta va61 targ
+			setv va50 posx
+			setv va51 posy
+		next
+		doif va60 gt 0
+			targ ownr
+			doif posx lt va50
+				setv ov10 -1
+			endi
+			doif posx gt va50
+				setv ov10 1
+			endi
+			doif posy lt va51
+				setv ov11 -1
+			endi
+			setv ov70 1
+		endi
+		doif ov70 eq 1
+			setv ov00 3
+		endi
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr disp
+		setv ov00 4
+		seta ov16 null
+	retn
+
+	subr layg
+		inst
+		setv va47 2
+		setv va48 6
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		doif ov16 = null
+
+			gsub roam
+		endi
+		targ ov16
+		doif targ <> null
+			targ ownr
+			gsub hunt
+			doif touc ov16 ownr <> 0
+				inst
+				setv va50 posl
+				setv va51 post
+				rnge 600
+				esee 2 18 2
+					addv va66 1
+				next
+				doif va66 <= 2
+					new: simp 2 18 2 "caterpillar" 1 130 2000
+					accg 3
+					elas 1
+					fric 100
+					perm 50
+
+
+					bhvr 0
+					tick 4
+					attr 195
+					subv va50 10
+					subv va51 10
+					setv ov61 20
+					doif tmvt va50 va51 <> 1
+						mvsf va50 va51
+
+
+
+
+					else
+						mvto va50 va51
+						setv vely 0
+					endi
+				endi
+				targ ownr
+				slow
+				setv ov70 2
+				setv ov00 0
+
+			endi
+		else
+			slow
+			targ ownr
+			setv ov00 0
+		endi
+		slow
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr roam
+		setv va66 rand 0 30
+
+		doif va66 eq 0
+			mulv ov10 -1
+		endi
+		doif va66 eq 1
+
+			mulv ov11 -1
+		endi
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr goup
+		setv va66 rand 0 20
+		doif va66 eq 0
+			mulv ov10 -1
+		endi
+		setv ov11 -1
+		doif obst down > 300
+			setv ov00 2
+		endi
+		gsub vect
+		gsub anim
+		gsub move
+
+		stop
+	retn
+
+	subr vect
+		setv va10 rand 1 6
+		setv va11 rand 1 6
+	retn
+
+	subr anim
+		doif ov10 lt 0
+			base 0
+			anim [0 1 2 3 255]
+		endi
+
+		doif ov10 gt 0
+			base 4
+			anim [0 1 2 3 255]
+		endi
+	retn
+
+	subr move
+		mulv va10 ov10
+		mulv va11 ov11
+		velo va10 va11
+
+	retn
+
+	subr find
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va50 relx ownr targ
+				setv va51 rely ownr targ
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		targ va58
+		doif targ <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+	retn
+	subr hunt
+		inst
+		doif ov16 <> null
+			targ ov16
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 0
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			setv ov00 0
+			stop
+		endi
+	retn
+
+endm
+
+scrp 2 18 2 9
+
+	addv ov01 1
+	doif ov01 gt rand 80 300
+		setv va50 posl
+		setv va51 post
+		subv va50 25
+		subv va51 25
+		doif totl 2 13 2 lt 8
+			setv va66 5
+		else
+			setv va66 2
+		endi
+		inst
+		reps va66
+			setv va66 0
+			rnge 600
+			esee 2 13 2
+				addv va66 1
+			next
+			doif va66 <= 4
+
+				new: simp 2 13 2 "caterpillar" 131 0 800
+				accg 3
+				perm 99
+				tick 8
+				attr 195
+
+				bhvr 16
+
+
+				setv ov30 12
+
+				setv ov31 20
+
+				setv ov32 28
+
+				setv ov33 36
+
+				setv ov34 44
+
+				setv ov35 52
+
+				setv ov36 48
+
+
+				addv ov30 ov36
+				addv ov31 ov36
+				addv ov32 ov36
+				addv ov33 ov36
+				addv ov34 ov36
+				addv ov35 ov36
+
+				setv ov37 108
+				setv ov38 123
+				setv ov39 128
+
+				setv ov00 0
+				setv ov01 500
+				seta ov16 null
+				setv ov10 1
+				setv ov11 0
+				setv ov61 40
+				setv ov72 400
+				setv ov73 250
+				setv ov74 350
+				setv ov02 600
+				doif tmvt va50 va51 <> 1
+					mvsf va50 va51
+
+
+
+
+
+
+				else
+					mvto va50 va51
+					pose ov30
+				endi
+			endi
+		repe
+		targ ownr
+		kill targ
+	endi
+
+endm
+
+scrp 2 13 2 9
+
+	fric 80
+
+	addv ov01 1
+	doif carr = null
+		doif rtyp room ownr = 8 or rtyp room ownr = 9
+			subv ov02 100
+		endi
+	endi
+
+
+	doif ov00 ne 6
+		subv ov02 1
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+
+	doif obst 3 gt 4
+		elas 5
+	else
+		elas 80
+	endi
+
+	doif ov00 eq 0
+		gsub gplt
+	endi
+	doif ov00 eq 1
+
+		gsub cplt
+		gsub goup
+	endi
+	doif ov00 eq 2
+		gsub eat_
+	endi
+	doif ov00 eq 3
+		gsub cplt
+		gsub redy
+	endi
+	doif ov00 eq 4
+		gsub cplt
+		gsub morf
+	endi
+	doif ov00 eq 5
+		setv ov00 6
+	endi
+
+	doif ov00 = 7
+		gsub sele
+	endi
+
+
+	doif ov00 eq 6
+
+		doif ov01 gt 500
+			doif totl 2 13 1 < 25
+
+				gsub bfly
+			endi
+		endi
+
+	endi
+
+	stop
+
+	subr die_
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		subv va50 16
+		subv va51 16
+		new: simp 2 10 12 "caterpillar" 14 96 2000
+		accg 3
+		aero 10
+		perm 50
+		fric 100
+		elas 0
+		tick 200
+		attr 195
+		setv ov01 0
+		setv ov61 10
+		doif ov10 le 0
+			pose 0
+		else
+			pose 7
+		endi
+		setv ov10 va52
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+
+	retn
+	subr gplt
+		setv ov11 0
+		setv va47 2
+		setv va48 4
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+		doif targ <> null
+
+
+			targ ownr
+
+			gsub hunt
+			doif touc ov16 ownr <> 0
+				setv ov00 1
+			endi
+		else
+			targ ownr
+			gsub roam
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr goup
+		inst
+		doif ov16 <> null
+			targ ov16
+			setv va90 post
+			setv va91 posb
+			setv va92 plne
+			addv va92 1
+			setv va93 posx
+			targ ownr
+			plne va92
+		endi
+		slow
+		setv va92 va91
+		subv va92 va90
+		doif va92 > 25
+			addv va90 20
+		endi
+		accg 0
+		doif posx < va93
+			velo 1 -1
+		elif posx > va93
+			velo -1 -1
+		else
+			velo 0 -1
+		endi
+
+		setv ov11 -1
+		doif post < va90
+			setv ov00 2
+		endi
+		gsub vect
+		gsub anim
+		velo 0 0
+		stop
+	retn
+
+	subr eat_
+		setv va47 2
+		setv va48 4
+
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+		doif targ <> null
+			targ ownr
+			addv ov02 ov73
+
+			doif ov02 gt ov72
+				setv ov00 3
+			endi
+			stop
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 7
+			accg 3
+		endi
+
+	retn
+
+	subr sele
+		setv ov11 0
+		targ ov16
+		doif targ = null
+			rtar 2 4 0
+			seta va50 targ
+			targ ownr
+			seta ov16 va50
+		endi
+		targ ownr
+		doif ov16 = null
+			rtar 2 4 0
+			seta va50 targ
+			targ ownr
+			seta ov16 va50
+		endi
+
+		targ ov16
+		doif targ <> null
+			targ ownr
+			gsub hunt
+			doif touc ov16 ownr <> 0
+				setv ov00 1
+			endi
+		else
+			targ ownr
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr redy
+		inst
+		doif ov16 <> null
+			targ ov16
+			setv va90 posy
+			setv va91 posb
+			setv va93 posx
+			targ ownr
+		endi
+		slow
+		doif posb > va91
+
+			doif posx < va93
+				velo 1 1
+			elif posx > va93
+				velo -1 1
+			else
+				velo 0 1
+			endi
+
+		else
+
+			setv ov00 4
+		endi
+		setv ov11 1
+		doif posy > va90
+			setv ov00 4
+		endi
+		gsub vect
+		gsub anim
+		velo 0 0
+		stop
+
+	retn
+
+	subr morf
+		doif ov10 <= 0
+			base ov37
+			anim [0 1 2 3 4]
+			over
+		endi
+		doif ov10 > 0
+			base ov38
+			anim [0 1 2 3 4]
+			over
+		endi
+		accg 3
+		setv ov00 6
+		stop
+	retn
+
+	subr cplt
+		setv va90 0
+		etch 2 4 0
+			addv va90 1
+		next
+		etch 2 5 0
+			addv va90 1
+		next
+		doif va90 lt 1
+			mesg wrt+ ownr 257 0 0 0
+		endi
+
+	retn
+
+	subr bfly
+		setv va50 posl
+		setv va51 post
+		subv va50 25
+		subv va51 48
+		inst
+		rnge 600
+		esee 2 13 1
+			addv va66 1
+		next
+		doif va66 <= 2
+
+			new: simp 2 13 1 "caterpillar" 11 0 2500
+
+			tick 15
+			attr 195
+			elas 20
+			aero 10
+			perm 49
+
+			bhvr 16
+			setv ov00 10
+			setv ov70 0
+			setv ov01 500
+			seta ov16 null
+			setv ov10 1
+			setv ov11 -1
+			setv ov61 40
+			setv ov72 200
+			setv ov73 250
+			setv ov74 350
+			setv ov02 600
+			inst
+			doif tmvt va50 va51 <> 1
+				mvsf va50 va51
+
+
+
+			else
+				mvto va50 va51
+			endi
+			slow
+		endi
+		targ ownr
+		kill targ
+		slow
+	retn
+
+	subr roam
+		setv va66 rand 0 10
+
+
+		setv ov75 1
+		doif va66 lt 5
+
+			mulv ov10 -1
+		endi
+		doif va66 gt 5
+
+			setv ov11 0
+		endi
+
+		gsub vect
+		gsub anim
+		gsub move
+
+		stop
+	retn
+
+	subr vect
+		setv va10 rand 4 8
+		setv va11 rand 10 12
+	retn
+
+	subr anim
+		doif ov10 lt 0
+			doif ov11 eq 0
+				base ov30
+				anim [6 7 0 1 2 3 4 5]
+			endi
+			doif ov11 eq -1
+				base ov32
+				anim [6 7 0 1 2 3 4 5]
+			endi
+			doif ov11 eq 1
+				base ov35
+				anim [6 7 0 1 2 3 4 5]
+			endi
+
+
+		endi
+
+		doif ov10 gt 0
+			doif ov11 eq 0
+				base ov31
+				anim [6 7 0 1 2 3 4 5]
+			endi
+			doif ov11 eq -1
+				base ov33
+				anim [6 7 0 1 2 3 4 5]
+			endi
+			doif ov11 eq 1
+				base ov34
+				anim [6 7 0 1 2 3 4 5]
+			endi
+
+		endi
+	retn
+
+	subr move
+
+		mulv va10 ov10
+		mulv va11 ov11
+
+		subv va11 2
+		setv vely va11
+		setv velx va10
+
+	retn
+
+	subr find
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			setv va50 relx ownr targ
+			setv va51 rely ownr targ
+			doif va50 lt 0
+				negv va50
+			endi
+			doif va51 lt 0
+				negv va51
+			endi
+			setv va52 va50
+			mulv va52 va52
+			setv va53 va51
+			mulv va53 va53
+			setv va54 va52
+			addv va54 va53
+			doif va54 lt va99
+				seta va58 targ
+				setv va99 va54
+			endi
+		next
+		slow
+		targ va58
+		doif targ <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+	retn
+	subr hunt
+		inst
+		doif ov16 <> null
+			targ ov16
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+
+		else
+			setv ov00 0
+			stop
+		endi
+	retn
+
+endm
+
+scrp 2 13 2 257
+	accg 3
+	setv vely 0
+	doif ov00 eq 6
+
+		base 0
+		doif ov10 lt 0
+			pose 24
+		endi
+		doif ov10 gt 0
+			pose 33
+		endi
+	endi
+
+	doif ov00 ne 6
+		base 0
+		anim []
+		doif ov10 lt 0
+			pose 110
+		endi
+		doif ov10 gt 0
+			pose 115
+		endi
+		setv ov00 7
+	endi
+
+endm
+
+scrp 2 13 2 4
+	setv ov77 1
+	tick 0
+	accg 6
+	aero 0
+endm
+
+
+scrp 2 13 2 6
+	doif ov00 eq 6
+		base 0
+		doif ov10 lt 0
+			pose 128
+		endi
+		doif ov10 gt 0
+			pose 129
+		endi
+	endi
+endm
+
+scrp 2 13 2 5
+	accg 3
+	doif ov77 = 1
+		setv ov77 0
+		tick 8
+		stop
+	endi
+
+	doif ov00 eq 6
+		base 0
+		doif ov10 lt 0
+			pose 24
+		endi
+		doif ov10 gt 0
+			pose 33
+		endi
+	endi
+
+	doif ov00 ne 6
+		base 0
+		anim []
+		doif ov10 lt 0
+			pose 122
+		endi
+		doif ov10 gt 0
+			pose 127
+		endi
+		setv ov00 7
+	endi
+endm
+
+scrp 2 10 11 9
+	addv ov01 1
+	doif ov01 > 50
+		doif carr = null
+			doif ov10 <= 0
+				anim [0 1 2 3]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.1
+					altr room targ 4 0.1
+				endi
+				over
+			endi
+			doif ov10 > 0
+				anim [0 1 2 3]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.1
+					altr room targ 4 0.1
+				endi
+				over
+			endi
+			kill ownr
+		endi
+	endi
+endm
+
+scrp 2 10 12 9
+	doif carr = null
+		kill ownr
+		doif room targ <> -1 and carr = null
+			altr room targ 3 0.1
+			altr room targ 4 0.1
+		endi
+	endi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+endm
+
+scrp 2 13 1 12
+	stim writ from 80 1
+	kill ownr
+
+endm
+
+scrp 2 13 2 12
+	stim writ from 80 1
+	kill ownr
+
+endm
+
+rscr
+enum 2 13 1
+	kill targ
+next
+scrx 2 13 1 9
+
+enum 2 10 11
+	kill targ
+next
+scrx 2 10 11 9
+
+enum 2 10 12
+	kill targ
+next
+scrx 2 10 12 9
+
+enum 2 18 2
+	kill targ
+next
+scrx 2 18 2 9
+
+enum 2 13 2
+	kill targ
+next
+scrx 2 13 2 9
+scrx 2 13 2 6
+scrx 2 13 2 257
+
+endm

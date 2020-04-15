@@ -1,0 +1,1182 @@
+*GB Template
+*# Pray-File "GB_Angelfish.agent"
+*# DS-Name "Angelfish"
+*# Depend angel.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Angelfish raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 2
+*# GB_Category = 5
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 14 "angel" 153 0 4100
+attr 199
+BHVR 48
+clac -1
+elas 20
+aero 1
+accg 0
+perm 100
+mvsf game "ch_x" game "ch_y"
+emit 6 .15
+
+setv ov01 0
+
+setv ov02 550
+setv ov05 0
+seta ov16 null
+
+setv va51 rand 1 4
+doif va51 = 1
+	setv ov75 13
+	setv ov71 8
+	setv ov76 1
+elif va51 = 2
+	setv ov75 3
+	setv ov71 6
+	setv ov76 2
+elif va51 = 3
+	setv ov75 3
+	setv ov71 7
+	setv ov76 3
+elif va51 = 4
+	setv ov75 3
+	setv ov71 8
+	setv ov76 4
+endi
+
+setv ov30 0
+setv ov31 10
+setv ov32 20
+setv ov33 30
+setv ov34 41
+
+setv ov61 50
+setv ov73 1
+
+
+setv ov74 0
+setv va50 rand 0 1
+doif va50 = 0
+	setv ov10 -1
+	pose 0
+elif va50 = 1
+	setv ov10 1
+	pose 30
+endi
+velo 0 0
+tick 2
+
+
+scrp 2 18 14 12
+
+	stim writ from 80 1
+	kill ownr
+endm
+
+scrp 2 18 14 9
+
+	gsub room
+
+	doif ov66 = 66
+		gsub htch
+	endi
+
+
+
+	doif ov80 = 0
+		gsub drft
+	elif ov80 = 1
+		gsub htch
+	endi
+
+
+	doif ov99 = 5
+		gsub deth
+	endi
+
+
+	subr drft
+		setv va70 rand 0 10
+		doif va70 = 1
+			setv ov11 -1
+		elif va70 = 2
+			setv ov11 1
+		elif va70 = 3
+			setv ov10 -1
+		elif va70 = 4
+			setv ov10 1
+		endi
+		gsub obst
+		gsub anim
+		gsub move
+	retn
+
+
+
+	subr obst
+		doif obst 0 < 50
+			setv ov10 1
+		endi
+		doif obst 1 < 50
+			setv ov10 -1
+		endi
+		doif obst 2 < 50
+			setv ov11 1
+		endi
+		doif obst 3 < 20
+			accg 5
+			setv ov80 1
+		endi
+	retn
+
+
+	subr anim
+		setv va44 rand 1 3
+		doif va44 = 1
+			anim [0 1 2 3 255]
+		elif va44 = 2
+			anim [2 1 0 3 255]
+		elif va44 = 3
+			anim [1 3 0 2 255]
+		endi
+	retn
+	subr move
+		velo ov10 ov11
+	retn
+
+
+	subr room
+		doif rtyp room ownr <> 9
+			elas 50
+			loop
+				addv ov86 1
+				doif ov86 >= 0 and ov86 <= 6
+					addv ov87 .03
+				elif ov86 > 6 and ov86 < 100
+					addv ov87 .08
+				endi
+				accg ov87
+			untl rtyp room ownr = 9 or ov86 >= 100
+			doif ov86 >= 100
+				gsub deth
+			endi
+		endi
+		doif rtyp room ownr = 9
+			elas 0
+			setv ov86 0
+			setv ov87 1
+		endi
+		accg ov87
+	retn
+
+
+
+	subr deth
+		inst
+		doif carr = null
+
+			targ ownr
+			kill targ
+		elif carr <> null
+			setv ov99 5
+		endi
+		slow
+	retn
+
+
+
+	subr htch
+		doif ov67 = 0
+			setv va90 0
+			doif ov60 = 0
+				setv ov60 rand 15000 20000
+			endi
+			wait ov60
+			loop
+				addv va90 1
+				velo rand -3 3 rand -1 -5
+				gsub anim
+				wait 10
+			untl va90 = 25
+			setv ov67 9
+		endi
+		doif carr = null
+			setv va90 posl
+			setv va91 post
+			inst
+			new: simp 2 15 14 "angel" 153 0 4100
+			attr 199
+			BHVR 48
+			clac -1
+			elas 20
+			aero 1
+			accg 0
+			perm 100
+			doif tmvt va90 va91 = 1
+				mvto va90 va91
+			else
+				mvsf va90 va91
+			endi
+			emit 6 .15
+
+			setv ov01 0
+
+			setv ov02 550
+			setv ov05 0
+			seta ov16 null
+
+
+
+
+
+			setv va51 rand 1 4
+			doif va51 = 1
+				setv ov75 13
+				setv ov71 8
+				setv ov76 1
+			elif va51 = 2
+				setv ov75 3
+				setv ov71 6
+				setv ov76 2
+			elif va51 = 3
+				setv ov75 3
+				setv ov71 7
+				setv ov76 3
+			elif va51 = 4
+				setv ov75 3
+				setv ov71 8
+				setv ov76 4
+			endi
+
+
+			setv ov30 0
+			setv ov31 10
+			setv ov32 20
+			setv ov33 30
+			setv ov34 41
+
+			setv ov61 50
+			setv ov73 1
+
+
+			setv ov74 0
+			setv va50 rand 0 1
+			doif va50 = 0
+				setv ov10 -1
+				pose 0
+			elif va50 = 1
+				setv ov10 1
+				pose 30
+			endi
+			velo 0 0
+			tick 2
+			slow
+			kill ownr
+		else
+			setv ov66 66
+		endi
+	retn
+endm
+
+scrp 2 15 14 9
+
+
+
+	gsub room
+
+
+	doif ov99 = 5
+		gsub deth
+	endi
+
+
+
+	doif ov01 >= 1500
+		gsub deth
+	endi
+
+
+
+	addv ov01 2
+
+
+
+	subv ov02 3
+
+
+
+	doif ov70 = 1
+		gsub eggs
+		setv ov70 0
+		gsub deth
+	endi
+
+
+
+	doif ov02 < 2500
+		gsub eat_
+
+
+	endi
+
+
+
+	doif ov05 = 2 and ov72 = 0
+		addv ov74 1
+		doif ov74 >= 100
+			gsub mate
+		endi
+	endi
+
+
+
+	inst
+	doif ov73 = 1 and ov01 >= 200 and ov01 <= 400 and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40 and rtyp room ownr = 9
+
+		setv ov05 1
+		setv ov73 2
+		setv ov30 51
+		setv ov31 61
+		setv ov32 71
+		setv ov33 81
+		setv ov34 92
+		doif ov10 < 0
+			gsub lstn
+			gsub ftsw
+			gsub rstr
+			setv ov10 1
+		elif ov10 > 0
+			gsub rstn
+			gsub lstr
+			setv ov10 -1
+		endi
+		gsub swim
+
+	elif ov73 = 2 and ov01 >= 401 and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40 and rtyp room ownr = 9
+		setv ov05 2
+		setv ov73 3
+		setv ov30 102
+		setv ov31 112
+		setv ov32 122
+		setv ov33 132
+		setv ov34 143
+		doif ov10 < 0
+			gsub lstn
+			gsub ftsw
+			gsub rstr
+			setv ov10 1
+		elif ov10 > 0
+			gsub rstn
+			gsub lstr
+			setv ov10 -1
+		endi
+		gsub swim
+	endi
+	slow
+
+
+	doif ov02 >= 500 and ov02 <= 1499
+
+
+		doif ov92 = 0
+			gsub inim
+			gsub obst
+			gsub swim
+			gsub move
+			setv ov92 1
+		elif ov92 = 1
+			gsub flok
+			gsub obst
+			gsub swim
+			gsub move
+		endi
+
+	elif ov02 >= 1500
+		setv va44 rand 1 10
+		doif va44 = 5
+			doif ov10 = 1
+				gsub rstn
+			elif ov10 = -1
+				gsub lstn
+			endi
+
+			setv va44 0
+			setv va45 rand 1 4
+			loop
+				addv va44 1
+				gsub ftsw
+			untl va44 = va45
+			doif ov10 = 1
+				gsub rstr
+			elif ov10 = -1
+				gsub lstr
+			endi
+			gsub obst
+			gsub swim
+			gsub move
+		elif va44 <> 5
+			gsub flok
+			gsub obst
+			gsub swim
+			gsub move
+		endi
+	elif ov02 < 500 and ov02 > 0
+
+
+		gsub hunt
+		gsub obst
+		gsub swim
+		gsub move
+		gsub eat_
+
+	elif ov02 <= 0
+
+
+		gsub deth
+	endi
+
+
+	subr deth
+		doif carr = null
+			setv va00 posl
+			setv va01 post
+			doif rtyp room ownr = 9
+				setv va60 0
+				setv va70 208
+			elif rtyp room ownr <> 9
+				setv va60 1
+				setv va70 209
+			endi
+
+
+
+			doif ov05 = 0
+				doif ov10 < 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 18 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 1
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+					slow
+				elif ov10 > 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 21 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 10
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+					slow
+				endi
+
+			elif ov05 = 1
+				doif ov10 < 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 12 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 10
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+					slow
+				elif ov10 > 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 15 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 10
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+
+					slow
+				endi
+
+			elif ov05 = 2
+				doif ov10 < 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 6 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 10
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+
+					slow
+				elif ov10 > 0
+					inst
+					new: simp 2 10 40 "dead_fish" 3 9 1000
+					attr va70
+					perm 99
+					accg va60
+					elas 15
+					aero 10
+					fric 100
+					seta va16 targ
+					doif tmvt va00 va01 = 1
+						mvto va00 va01
+						setv ov77 5
+						tick 10
+						kill ownr
+					else
+						targ va16
+						kill targ
+						kill ownr
+					endi
+
+					slow
+				endi
+			endi
+		elif carr <> null and carr = pntr
+			setv ov99 5
+		elif carr <> null and carr <> pntr
+			targ ownr
+			kill targ
+		endi
+	retn
+
+
+	subr room
+		doif rtyp room ownr <> 9
+			loop
+				addv ov86 1
+				doif ov86 >= 0 and ov86 <= 6
+					addv ov87 .03
+				elif ov86 > 6 and ov86 < 100
+					addv ov87 .08
+				endi
+				accg ov87
+			untl rtyp room ownr = 9 or ov86 >= 100
+			doif ov86 >= 100
+				gsub deth
+			endi
+		endi
+		doif rtyp room ownr = 9
+			setv ov86 0
+			setv ov87 0
+		endi
+		accg ov87
+	retn
+
+
+	subr obst
+		doif obst rght < 45 and ov10 <> -1
+			velo 0 0
+			setv ov10 -1
+			gsub rstn
+			gsub lstr
+			setv ov12 rand -4 -1
+		elif obst left < 45 and ov10 <> 1
+			velo 0 0
+			setv ov10 1
+			gsub lstn
+			gsub rstr
+			setv ov12 rand 1 4
+		endi
+		doif obst _up_ < 45 and ov11 <> 1
+			velo 0 0
+			setv ov11 1
+			setv ov13 rand 1 2
+		elif obst down < 45 and ov11 <> -1
+			velo 0 0
+			setv ov11 -1
+			setv ov13 rand -2 -1
+		endi
+	retn
+
+
+	subr mate
+		rnge 50
+		inst
+		esee 2 15 14
+			doif targ <> null
+				doif ov05 = 2
+					setv ov70 1
+					setv va70 1
+				endi
+			endi
+		next
+		slow
+		doif va70 = 1
+			setv ov70 1
+		endi
+	retn
+
+	subr eggs
+
+		setv va34 0
+		rnge 500
+		esee 2 15 14
+			addv va34 1
+		next
+
+		rnge 500
+		esee 2 18 14
+			addv va34 1
+		next
+		doif va34 < 14
+			setv ov08 rand 1 3
+		elif va34 > 16
+			kill ownr
+			stop
+		else
+			setv ov08 0
+		endi
+
+		doif ov08 <> 0
+			setv va80 posl
+			setv va81 post
+			reps ov08
+				new: simp 2 18 14 "angel" 4 153 4000
+				attr 199
+				BHVR 48
+				clac -1
+				elas 50
+				accg 1
+				aero 7
+				perm 75
+				fric 99
+				setv ov61 30
+				seta va16 targ
+				doif tmvt va80 va81 = 1
+					mvto va80 va81
+					emit 6 .15
+					tick 10
+				else
+					targ va16
+					kill targ
+				endi
+
+			repe
+			targ ownr
+			setv ov70 0
+			gsub deth
+		endi
+	retn
+
+
+	subr inim
+		doif ov10 = 1
+			setv ov12 rand 1 2
+			setv ov13 2
+			doif ov13 = 1
+				setv ov13 -1
+			elif ov13 = 2
+				setv ov13 1
+			endi
+		elif ov10 = -1
+			setv ov12 rand -2 -1
+			setv ov13 rand 1 2
+			setv va13 rand 1 2
+			doif va13 = 1
+				negv ov13
+			endi
+		endi
+	retn
+
+	subr hunt
+		setv va60 0
+		loop
+			addv va60 1
+			setv va50 0
+			setv va51 0
+			setv va52 0
+			setv va53 0
+
+			inst
+			rnge 500
+			esee 2 ov75 ov71
+				setv va53 0
+				doif targ <> null
+					setv va53 1
+					setv va50 relx ownr targ
+					addv va51 va50
+					setv va50 0
+					setv va50 rely ownr targ
+					addv va52 va50
+					setv va50 0
+				endi
+			next
+			slow
+			doif va53 = 0
+
+				setv va76 ov76
+				loop
+					setv va00 rand 1 4
+					setv va51 rand 1 4
+					doif va51 = 1
+						setv ov75 13
+						setv ov71 8
+						setv ov76 1
+					elif va51 = 2
+						setv ov75 3
+						setv ov71 6
+						setv ov76 2
+					elif va51 = 3
+						setv ov75 3
+						setv ov71 7
+						setv ov76 3
+					elif va51 = 4
+						setv ov75 3
+						setv ov71 8
+						setv ov76 4
+					endi
+				untl ov76 <> va76
+			endi
+		untl va53 = 1 or va60 = 7
+		doif va53 = 1
+			sets va00 "Prey has been targetted, it's classifier is: 2 "
+			adds va00 vtos ov75
+			adds va00 " "
+			adds va00 vtos ov71
+
+			divv va51 va53
+			divv va52 va53
+			doif va51 < 0 and ov10 = -1
+				setv ov12 rand -2 -1
+			elif va51 < 0 and ov10 = 1
+				velo 0 0
+				gsub rstn
+				gsub lstr
+				setv ov10 -1
+				setv ov12 rand -2 -1
+			elif va51 > 0 and ov10 = -1
+				velo 0 0
+				gsub lstn
+				gsub rstr
+				setv ov10 1
+				setv ov12 rand 1 2
+			elif va51 > 0 and ov10 = 1
+				setv ov12 rand 1 2
+			endi
+			doif va52 < 0
+				setv ov13 rand -2 -1
+			elif va52 > 0
+				setv ov13 rand 1 2
+			endi
+		else
+
+			gsub rndm
+		endi
+	retn
+
+
+	subr eat_
+		setv va44 0
+		setv va55 0
+		rnge 50
+		inst
+		esee 2 ov75 ov71
+			doif targ <> null
+				addv va44 1
+				doif va44 >= 1
+					setv va55 1
+					kill targ
+				endi
+			endi
+		next
+		slow
+		doif va55 = 1
+			addv ov02 5000
+			doif ov76 = 1
+
+			elif ov76 = 2
+
+			elif ov76 = 3
+
+			elif ov76 = 4
+
+			else
+				sets va00 "What was eaten was undescribable!"
+			endi
+		endi
+	retn
+
+
+
+	subr flok
+		setv va50 0
+		setv va51 0
+		setv va52 0
+		setv va53 1
+		rnge 200
+		inst
+		esee 2 15 14
+			doif targ <> null
+				addv va53 1
+				setv va50 relx ownr targ
+				addv va51 va50
+				setv va50 0
+				setv va50 rely ownr targ
+				addv va52 va50
+				setv va50 0
+			endi
+		next
+		slow
+		doif va53 > 1
+			divv va51 va53
+			divv va52 va53
+			doif va51 < 0 and ov10 = -1
+				setv ov12 rand -2 -1
+			elif va51 < 0 and ov10 = 1
+				gsub rstn
+				gsub lstr
+				setv ov10 -1
+				setv ov12 rand -2 -1
+			elif va51 > 0 and ov10 = -1
+				gsub lstn
+				gsub rstr
+				setv ov10 1
+				setv ov12 rand 1 2
+			elif va51 > 0 and ov10 = 1
+				setv ov12 rand 1 2
+			endi
+			doif va52 < 0
+				setv ov13 rand -2 -1
+			elif va52 > 0
+				setv ov13 rand 1 2
+			endi
+		else
+			gsub rndm
+		endi
+	retn
+
+
+	subr move
+		velo ov12 ov13
+	retn
+
+
+	subr rndm
+		setv va64 rand 1 10
+		doif va64 = 6 and ov10 = 1
+			velo 0 0
+			setv ov10 -1
+			gsub rstn
+			gsub lstr
+			setv ov12 rand -2 -1
+		elif va64 = 6 and ov10 = -1
+			velo 0 0
+			setv ov10 1
+			gsub lstn
+			gsub rstr
+			setv ov12 rand 1 2
+		endi
+		setv va64 rand 1 10
+		doif va64 = 7 and ov11 = 1
+			setv ov13 rand -1 0
+			setv ov11 -1
+		elif va64 = 7 and ov11 = -1
+			setv ov13 rand 0 1
+			setv ov11 1
+		endi
+	retn
+
+
+	subr lstn
+		base ov32
+		anim [0 1 2 3 4 5 6 7 8 9 10]
+		over
+	retn
+
+
+	subr rstr
+		base ov33
+		anim [0 1 2 3 4 5 6 7 8 9 10]
+		over
+	retn
+
+
+	subr lstr
+		base ov32
+		anim [10 9 8 7 6 5 4 3 2 1 0]
+		over
+	retn
+
+
+	subr rstn
+		base ov33
+		anim [10 9 8 7 6 5 4 3 2 1 0]
+		over
+	retn
+
+
+	subr ftsw
+		velo 0 0
+		velo -1 1
+		velo 1 -1
+		velo 0 -1
+		velo 0 1
+		velo 1 0
+		velo -1 0
+		velo 0 0
+		base ov34
+		anim [0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9]
+	retn
+
+
+	subr swim
+		doif ov10 = 1
+			base ov31
+			anim [0 1 2 3 4 5 6 7 8 9 255]
+		elif ov10 = -1
+			base ov30
+			anim [0 1 2 3 4 5 6 7 8 9 255]
+		endi
+
+	retn
+endm
+
+
+scrp 2 10 40 9
+	doif ov77 = 5
+		wait 100
+		pose 1
+		wait 100
+		pose 2
+		wait 100
+		kill ownr
+	elif ov77 = 8
+		wait 100
+		pose 1
+		wait 100
+		pose 2
+		wait 100
+		pose 3
+		wait 100
+		kill ownr
+	endi
+endm
+
+scrp 2 15 14 12
+	stim writ from 80 1
+	targ ownr
+	setv va00 posl
+	setv va01 post
+	doif rtyp room ownr = 9
+		setv va60 0
+		setv va70 208
+	elif rtyp room ownr <> 9
+		setv va60 1
+		setv va70 209
+	endi
+
+
+	doif ov05 = 0
+		doif ov10 < 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 48 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+			slow
+		elif ov10 > 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 52 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+			slow
+		endi
+
+	elif ov05 = 1
+		doif ov10 < 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 40 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+			slow
+		elif ov10 > 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 44 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+			slow
+		endi
+
+	elif ov05 = 2
+		doif ov10 < 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 32 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+			slow
+		elif ov10 > 0
+			inst
+			new: simp 2 10 40 "dead_fish" 4 36 1000
+			attr va70
+			perm 99
+			accg va60
+			elas 15
+			aero 10
+			fric 100
+			seta va16 targ
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+				setv ov77 8
+				tick 10
+				kill ownr
+			else
+				targ va16
+				kill targ
+				kill ownr
+			endi
+
+			slow
+		endi
+	endi
+
+endm
+
+rscr
+enum 2 18 14
+	kill targ
+next
+enum 2 15 14
+	kill targ
+next
+enum 2 10 40
+	kill targ
+next
+scrx 2 10 40 9
+scrx 2 15 14 12
+scrx 2 15 14 9
+scrx 2 18 14 9
+endm

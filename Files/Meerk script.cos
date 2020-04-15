@@ -1,0 +1,337 @@
+*GB Template
+*# Pray-File "GB_Meerk.agent"
+*# DS-Name "Meerk"
+*# Depend meerk.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Meerk raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 18
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 23 "meerk" 145 0 2500
+attr 194
+elas 0
+fric 10
+accg 2
+
+setv ov10 rand 0 1
+doif ov10 eq 0
+	setv ov10 -1
+endi
+
+mvsf game "ch_x" game "ch_y"
+tick 8
+
+setv ov02 rand 100 500
+
+
+
+
+
+
+
+
+
+scrp 2 15 23 9
+	tick 8
+	doif carr ne null
+		stop
+	endi
+	doif fall ne 0
+		stop
+	endi
+
+	subv ov02 1
+
+
+	doif ov00 eq 9
+		tick 600
+		gsub dead
+		stop
+	endi
+
+
+	doif ov02 le 0 and ov90 eq 0
+		setv velx 0
+		anim []
+		doif ov10 lt 0
+			base 70
+			anim [0 1 2 3 4 5 6 7 8]
+		else
+			base 82
+			anim [0 1 2 3 4 5 6 7 8]
+		endi
+		over
+
+		setv ov00 9
+		tick 600
+		stop
+	endi
+
+
+
+
+
+
+
+	doif ov00 eq 0
+
+
+		doif ov02 le 200
+			inst
+			setv va00 0
+			etch 2 13 9
+				setv va00 1
+				seta va99 targ
+			next
+			doif va00 eq 1
+				targ va99
+				doif targ ne null
+					tick 0
+					velo 0 0
+				endi
+				targ ownr
+				gsub eat_
+				inst
+				doif va99 ne null
+					kill va99
+				endi
+				slow
+				addv ov02 50
+				gsub rise
+			endi
+		endi
+		slow
+
+
+		setv va00 rand 0 5
+		doif va00 eq 0
+			doif carr eq null
+				gsub dig_
+			else
+				gsub sit_
+			endi
+		elif va00 eq 1
+			gsub sit_
+		elif va00 eq 2
+			negv ov10
+		elif va00 eq 3
+			gsub run_
+		elif va00 eq 4
+			reps 3
+				gsub push
+			repe
+		else
+			gsub walk
+		endi
+	endi
+
+
+
+
+
+	doif ov00 eq 5
+		targ ov17
+		doif targ eq null
+			kill ownr
+		endi
+		setv va00 posl
+		setv va01 post
+		targ ownr
+		mvto va00 va01
+		velo 0 -10
+		plne 2000
+		attr 194
+		setv ov00 0
+		doif ov10 lt 0
+			anim [58 59 60 61 62 63]
+		else
+			anim [64 65 66 67 68 69]
+		endi
+		over
+		doif ov17 ne null
+			kill ov17
+		endi
+		gsub run_
+	endi
+
+
+
+
+
+
+
+	subr walk
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 255]
+			setv velx -5
+		else
+			anim [11 12 13 14 15 16 17 18 19 20 21 255]
+			setv velx 5
+		endi
+	retn
+
+	subr run_
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [22 23 24 25 26 27 28 29 30 31 32 33 255]
+			setv velx -9
+		else
+			anim [34 35 36 37 38 39 40 41 42 43 44 45 255]
+			setv velx 9
+		endi
+	retn
+
+	subr sit_
+		doif fall eq 1
+			stop
+		endi
+		setv velx 0
+		doif ov10 lt 0
+			anim [46 47 48 49 50 51]
+		else
+			anim [52 53 54 55 56 57]
+		endi
+		over
+	retn
+
+	subr stnd
+		doif fall eq 1
+			stop
+		endi
+		setv velx 0
+		doif ov10 lt 0
+			anim [58 59 60 61 62 63]
+		else
+			anim [64 65 66 67 68 69]
+		endi
+		over
+	retn
+
+	subr dead
+		doif fall eq 1
+			stop
+		endi
+		doif room targ ne -1
+			altr room targ 4 0.4
+			altr room targ 3 0.2
+		endi
+		doif pose lt 11
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			kill ownr
+		endi
+	retn
+
+	subr eat_
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [94 95 96 97]
+			over
+			anim [98 99 100 101 255]
+		else
+			anim [102 103 104 105]
+			over
+			anim [106 107 108 109 255]
+		endi
+	retn
+
+	subr rise
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [110 111]
+		else
+			anim [112 113]
+		endi
+		over
+	retn
+
+	subr dig_
+		doif fall eq 1
+			stop
+		endi
+		plne 10
+		doif ov10 lt 0
+			anim [114 115 116 117 118 119 120 121 122 123 124 125 126 127 128]
+			setv va00 128
+		else
+			anim [129 130 131 132 133 134 135 136 137 138 139 140 141 142 143]
+			setv va00 143
+		endi
+		over
+
+		inst
+		setv va01 posl
+		setv va02 post
+		new: simp 1 1 8 "meerk" 1 va00 11
+		seta va99 targ
+		mvto va01 va02
+		targ ownr
+		seta ov17 va99
+		setv ov00 5
+		attr 0
+		pose 144
+		mvto 0 0
+		tick rand 100 300
+		stop
+	retn
+
+	subr push
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [94 95 96 97 110 111 255]
+		else
+			anim [102 103 104 105 112 113 255]
+		endi
+	retn
+
+
+
+	subr b_up
+		doif fall eq 1
+			stop
+		endi
+		plne 10
+		doif ov10 lt 0
+			anim [128 127 126 125 124 123 122 121 120 119 118 117 116 115 114]
+		else
+			anim [143 142 141 140 139 138 137 136 135 134 133 132 131 130 129]
+		endi
+		over
+	retn
+
+endm
+
+
+
+
+
+
+
+
+
+rscr
+enum 2 15 23
+	kill targ
+next
+enum 1 1 8
+	kill targ
+next
+
+scrx 2 15 23 9

@@ -1,0 +1,329 @@
+*GB Template
+*# Pray-File "GB_Mossiefly.agent"
+*# DS-Name "Mossie Fly"
+*# Depend mossie.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Mossie Fly/Mosquito raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 19
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 14 4 "mossie" 24 0 300
+attr 66
+
+bhvr 49
+tick 5
+
+setv ov61 40
+
+mvsf game "ch_x" game "ch_y"
+setv ov10 rand 0 1
+doif ov10 eq 0
+	setv ov10 -1
+endi
+setv ov11 rand 0 1
+doif ov11 eq 0
+	setv ov11 -1
+endi
+
+
+
+scrp 2 14 4 9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	addv ov01 1
+
+	doif rtyp room targ eq 8 or rtyp room targ eq 9
+		setv vely -5
+		stop
+	endi
+
+	setv va00 0
+	setv va01 0
+
+
+	doif prop room targ 5 gt 0.2
+		setv vely -10
+		stop
+	endi
+
+
+	doif ov01 ge 100
+		doif totl 2 14 4 lt 20
+			rnge 1000
+			setv va99 0
+			esee 2 14 4
+				addv va99 1
+			next
+
+			doif va99 le 3
+				setv va98 totl 2 18 20
+
+				doif va98 lt 3
+
+					inst
+					setv va90 posl
+					setv va91 post
+					new: simp 2 18 20 "blnk" 1 0 0
+					doif tmvt va90 va91 <> 1
+						kill targ
+						stop
+					endi
+					attr 16
+					tick 3600
+					mvto va90 va91
+				endi
+			endi
+		endi
+	endi
+	targ ownr
+
+
+
+
+
+	doif ov00 eq 0
+
+		setv ov14 5
+		setv ov15 5
+
+		subv ov90 1
+
+		gsub wall
+
+		doif ov90 le 0
+
+			doif va00 ne 1
+				doif rand 0 2 eq 0
+
+					negv ov10
+				endi
+				addv ov90 rand 1 3
+			endi
+
+			doif va01 ne 1
+
+
+				negv ov11
+
+				addv ov90 rand 2 5
+			endi
+		endi
+
+		gsub velo
+		gsub anim
+
+
+		doif ov91 le 0
+			gsub hunt
+
+		else
+			subv ov91 1
+		endi
+
+	endi
+
+
+	doif ov00 eq 1
+		gsub hunt
+		doif posx lt ov70 and ov10 lt 0
+			setv ov10 1
+		endi
+		doif posx gt ov70 and ov10 gt 0
+			setv ov10 -1
+		endi
+		doif posy lt ov71 and ov11 lt 0
+			setv ov11 1
+		endi
+		doif posy gt ov71 and ov11 gt 0
+			setv ov11 -1
+		endi
+		setv ov14 4
+		setv ov15 4
+
+		gsub velo
+		gsub wall
+		gsub anim
+	endi
+
+
+
+
+
+
+
+	subr hunt
+		rnge 200
+		setv va99 0
+		esee 2 1 1
+			setv va99 1
+			setv va00 posx
+			setv va01 posy
+			targ ownr
+			setv ov00 1
+			setv ov70 va00
+			setv ov71 va01
+		next
+		doif va99 eq 0
+			setv ov00 0
+		endi
+	retn
+
+
+
+	subr velo
+		doif ov10 lt 0
+
+			negv ov14
+			doif ov12 gt ov14
+				subv ov12 2
+			endi
+			negv ov14
+		else
+
+			doif ov12 lt ov14
+				addv ov12 2
+			endi
+		endi
+
+		doif ov11 lt 0
+
+			negv ov15
+			doif ov13 gt ov15
+				subv ov13 2
+			endi
+			negv ov15
+		else
+
+			doif ov13 lt ov15
+				addv ov13 2
+			endi
+		endi
+
+		setv velx ov12
+		setv vely ov13
+	retn
+
+
+	subr wall
+
+		doif obst 0 lt 100 and ov10 lt 0
+			negv ov10
+			setv va00 1
+		endi
+
+		doif obst 1 lt 100 and ov10 gt 0
+			negv ov10
+			setv va00 1
+		endi
+
+		doif obst 2 lt 50 and ov11 lt 0
+			negv ov11
+			setv va01 1
+		endi
+
+		doif obst 3 lt 100 and ov11 gt 0
+			negv ov11
+			setv va01 1
+		endi
+	retn
+
+
+	subr anim
+
+		doif ov12 gt 0
+			anim [2 3 255]
+		elif ov12 lt 0
+			anim [8 9 255]
+		endi
+	retn
+
+endm
+
+scrp 2 14 4 1
+	setv vely -20
+	targ from
+	doif fmly eq 4
+		stim writ targ 88 1
+	endi
+endm
+
+scrp 2 14 4 4
+	targ from
+	doif fmly eq 4
+		stim writ targ 88 1
+	endi
+	mesg writ targ 5
+endm
+
+scrp 2 14 4 12
+	targ from
+	doif fmly eq 4
+		stim writ targ 88 1
+	endi
+	kill ownr
+endm
+
+
+scrp 2 18 20 9
+	inst
+	setv va00 posl
+	setv va01 post
+	rnge 700
+	setv va66 0
+	esee 2 14 5
+		addv va66 1
+	next
+	doif va66 < 20
+
+		new: simp 2 14 4 "mossie" 24 0 300
+		attr 66
+		doif tmvt va00 va01 <> 1
+			kill targ
+			stop
+		endi
+
+		bhvr 49
+		tick 5
+
+		setv ov61 40
+
+		mvto va00 va01
+		setv ov10 rand 0 1
+		doif ov10 eq 0
+			setv ov10 -1
+		endi
+		setv ov11 rand 0 1
+		doif ov11 eq 0
+			setv ov11 -1
+		endi
+	endi
+endm
+
+
+rscr
+enum 2 14 4
+	kill targ
+next
+scrx 2 14 4 9
+scrx 2 14 4 1
+scrx 2 14 4 4
+scrx 2 14 4 12

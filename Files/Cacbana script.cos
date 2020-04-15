@@ -1,0 +1,640 @@
+
+*GB Template
+*# Pray-File "GB_Cacbana.agent"
+*# DS-Name "Cacbana"
+*# Depend cacbana.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Cacbana raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 4
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+new: simp 2 3 9 "cacbana" 12 0 50
+attr 195
+bhvr 16
+
+elas 40
+fric 50
+aero 5
+accg 1
+rnge 500
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 rand -5 -20
+setv ov81 1
+tick 15
+setv ov81 rand 8 15
+
+
+
+
+
+
+
+
+
+
+scrp 2 3 9 12
+	lock
+	stim writ from 77 3
+	wait 1
+	kill ownr
+endm
+
+
+scrp 2 3 9 6
+	doif ov00 eq 0
+		doif wall ne _up_
+			addv ov80 1
+			doif ov80 > ov81
+				doif prop room targ 2 ge 0.1
+					setv va00 0
+					inst
+					esee 2 5 2
+						addv va00 1
+					next
+					slow
+					doif va00 < 5
+						gsub grow
+					else
+						gsub dorm
+					endi
+				else
+					gsub dorm
+				endi
+			else
+				pose 0
+				velo rand -20 20 rand -10 -20
+				anim [0 1 2 3 4 5 6 7 255]
+			endi
+		endi
+	endi
+	doif ov00 eq 1
+		pose 0
+	endi
+
+
+	subr grow
+		inst
+		pose 0
+		setv va50 posl
+		setv va51 post
+		subv va51 50
+		subv va50 30
+		new: simp 2 5 2 "cacbana" 46 12 rand 500 1500
+		perm 80
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+			velo rand -20 20 rand -10 -20
+			anim [0 1 2 3 4 5 6 7 255]
+			stop
+		endi
+		mvto va50 va51
+		attr 192
+		elas 0
+		fric 100
+		pose 0
+		tick 100
+
+		setv ov66 100
+
+		seta ov16 null
+		seta ov17 null
+
+		setv ov55 0.01
+
+		setv ov56 0.01
+
+		setv ov57 0.5
+		kill ownr
+	retn
+
+	subr dorm
+		setv ov82 rand 10 100
+		tick 200
+		setv ov00 1
+	retn
+endm
+
+
+scrp 2 3 9 9
+
+	doif ov00 eq 0
+		doif ov80 lt ov81
+			doif fall eq 0 and carr eq null
+				pose 0
+				setv ov00 1
+				stop
+			endi
+		endi
+	endi
+
+	doif ov00 eq 1
+
+		subv ov82 1
+
+		doif ov82 le 0
+			altr room targ 3 0.5
+			altr room targ 4 0.5
+			kill ownr
+		endi
+
+		doif prop room targ 2 ge 0.1
+
+			setv va00 0
+			inst
+			esee 2 5 2
+				addv va00 1
+			next
+			targ ownr
+			slow
+
+			doif va00 < 5
+				gsub grow
+			endi
+		endi
+
+		pose 0
+		velo rand -20 20 rand -10 -20
+		anim [0 1 2 3 4 5 6 7 255]
+
+	endi
+
+	subr grow
+		setv va50 posl
+		setv va51 post
+		subv va51 50
+		subv va50 30
+		new: simp 2 5 2 "cacbana" 46 12 rand 500 1500
+		perm 80
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+			velo rand -20 20 rand -10 -20
+			anim [0 1 2 3 4 5 6 7 255]
+			stop
+		endi
+		mvto va50 va51
+		attr 192
+		elas 0
+		fric 100
+		pose 0
+		tick 100
+
+		setv ov66 100
+
+		seta ov16 null
+		seta ov17 null
+
+		setv ov55 0.01
+
+		setv ov56 0.01
+
+		setv ov57 0.5
+
+		kill ownr
+	retn
+endm
+
+
+
+scrp 2 5 2 9
+
+
+
+
+
+
+
+
+
+
+
+	setv ov30 4
+
+	setv ov31 23
+
+	setv ov32 16
+
+	setv ov33 11
+
+	setv ov34 10
+
+
+
+
+
+
+	setv ov70 0.2
+
+
+
+
+	subv ov55 0.005
+	doif ov55 le 0
+		setv ov00 9
+	endi
+
+
+	gsub uptk
+
+
+	doif ov00 eq 9
+		setv va00 0
+		setv va01 0
+		doif ov16 ne null
+
+			mesg writ ov16 301
+			setv va00 1
+		endi
+
+		doif ov17 ne null
+			mesg writ ov17 301
+			setv va01 1
+		endi
+
+		doif va00 eq 0 and va01 eq 0
+			setv ov69 0
+			setv va99 ov32
+			setv va98 ov33
+			setv va97 ov34
+
+			doif ov64 eq 1
+				addv va99 ov31
+				addv va98 ov31
+				addv va97 ov31
+			endi
+			doif pose le va99 and pose ge va98
+				gsub rmve
+				setv ov00 9
+			else
+				doif pose lt va97
+					setv va00 pose
+					addv va00 1
+					pose va00
+				else
+					inst
+					doif room targ ne -1 and carr eq null
+						altr room targ 3 0.05
+						altr room targ 4 0.1
+						kill ownr
+					endi
+					slow
+				endi
+			endi
+		endi
+		stop
+	endi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	doif ov00 eq 0
+		setv va00 pose
+
+		setv va01 ov30
+		doif ov64 eq 1
+			addv va01 ov31
+		endi
+
+		doif va00 lt va01
+
+			doif prop room targ 4 ge ov70
+				setv va34 ov70
+				negv va34
+				altr room targ 4 va34
+				setv va00 pose
+				addv va00 1
+				pose va00
+			endi
+		else
+			setv ov00 1
+		endi
+	endi
+
+
+	doif ov00 eq 1
+		subv ov66 1
+
+		doif prop room targ 1 le 0.4
+
+			setv va00 ov33
+			doif ov64 eq 1
+				addv va00 ov31
+			endi
+			pose va00
+			setv ov00 2
+
+			doif ov69 eq 1
+				gsub flwr
+				targ ov16
+				doif targ ne null
+					mvto va00 va01
+				endi
+				targ mv17
+				doif targ ne null
+					mvto va10 va01
+				endi
+			endi
+		endi
+	endi
+	targ ownr
+
+	doif ov00 eq 2
+		subv ov66 1
+
+		setv va00 ov32
+		doif ov64 eq 1
+			addv va00 ov31
+		endi
+		inst
+		doif pose lt va00
+			setv va00 pose
+			addv va00 1
+			pose va00
+		endi
+		doif prop room targ 1 gt 0.4
+			setv ov00 3
+		endi
+
+		doif ov69 eq 1
+			gsub flwr
+			targ ov16
+			doif targ ne null
+				mvto va00 va01
+			endi
+			targ mv17
+			doif targ ne null
+				mvto va10 va01
+			endi
+		endi
+		slow
+	endi
+	targ ownr
+
+	doif ov00 eq 3
+		subv ov66 1
+
+
+		gsub rmve
+
+	endi
+
+	targ ownr
+
+	doif ov66 le 0 and ov69 eq 0
+
+
+
+
+
+		doif prop room targ 3 ge 0.3
+			inst
+			setv ov69 1
+			seta va95 targ
+
+			gsub flwr
+
+			setv va03 plne
+			addv va03 1
+			setv va99 rand 0 1
+			mulv va99 9
+			addv va99 58
+			new: simp 2 7 3 "cacbana" 9 va99 va03
+			mvto va00 va01
+			seta va90 targ
+			seta ov16 va95
+			tick 600
+
+			new: simp 2 7 3 "cacbana" 9 va99 va03
+			mvto va10 va01
+			seta va91 targ
+			seta ov16 va95
+			tick 600
+
+			targ ownr
+			seta ov16 va90
+			seta ov17 va91
+		endi
+
+
+	endi
+
+
+
+	subr flwr
+		targ ownr
+
+		setv va00 posl
+		setv va01 post
+		setv va10 posl
+
+		setv va02 pose
+		doif ov64 eq 1
+			addv va02 ov31
+		endi
+		doif pose eq ov30
+			addv va00 22
+			addv va01 4
+			addv va10 44
+		else
+
+			setv va99 ov33
+			doif pose eq va99
+				addv va00 18
+				subv va01 1
+				addv va10 53
+			else
+				addv va99 1
+
+				doif pose eq va99
+					addv va00 6
+					addv va01 2
+					addv va10 61
+				else
+					addv va99 1
+
+					doif pose eq va99
+						subv va00 2
+						addv va01 8
+						addv va10 67
+					else
+						addv va99 1
+
+						doif pose eq va99
+							subv va00 5
+							addv va01 20
+							addv va10 69
+						else
+							addv va99 1
+
+							doif pose eq va99
+								subv va00 3
+								addv va01 25
+								addv va10 73
+							else
+								addv va99 1
+
+								doif pose eq va99
+									subv va00 6
+									addv va01 39
+									addv va10 73
+								endi
+							endi
+						endi
+					endi
+				endi
+			endi
+		endi
+	retn
+
+
+	subr rmve
+
+		setv va00 ov33
+		doif ov64 eq 1
+			addv va00 ov31
+		endi
+		doif pose ge va00
+			setv va00 pose
+			subv va00 1
+			pose va00
+		else
+			setv va00 ov30
+			doif ov64 eq 1
+				addv va00 ov31
+			endi
+			pose va00
+			setv ov00 1
+		endi
+
+
+		doif ov69 eq 1
+			gsub flwr
+			targ ov16
+			doif targ ne null
+				mvto va00 va01
+			endi
+			targ mv17
+			doif targ ne null
+				mvto va10 va01
+			endi
+		endi
+	retn
+
+
+
+	subr uptk
+		setv va00 prop room targ 4
+		doif va00 ge ov56 and ov55 lt ov57
+			addv ov55 ov56
+			setv va01 ov56
+			negv va01
+			altr room targ 4 va01
+		endi
+
+	retn
+
+endm
+
+
+
+scrp 2 7 3 9
+	doif pose lt 4
+		setv va00 pose
+		addv va00 1
+		pose va00
+	endi
+
+	doif ov70 eq 1
+		doif pose lt 8
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			setv va00 posl
+			setv va01 post
+
+			new: simp 2 3 9 "cacbana" 12 0 50
+			attr 199
+			elas 40
+			fric 50
+			aero 5
+			accg 1
+			rnge 500
+			doif tmvt va00 va01 eq 1
+				mvto va00 va01
+			else
+				mvsf va00 va01
+			endi
+			velo rand -10 10 rand -5 -20
+			setv ov81 rand 8 15
+			targ ownr
+
+			targ ov16
+			doif targ ne null
+				doif ov16 eq ownr
+					seta ov16 null
+				elif ov17 eq ownr
+					seta ov17 null
+				endi
+				doif ov16 eq null and ov17 eq null
+					setv ov80 0
+					setv ov69 0
+					setv ov66 100
+				endi
+			endi
+			kill ownr
+		endi
+	endi
+endm
+
+scrp 2 7 3 303
+	setv ov70 1
+endm
+
+scrp 2 7 3 301
+	targ ov16
+	doif ov16 eq ownr
+		seta ov16 null
+		kill ownr
+	elif ov17 eq ownr
+		seta ov17 null
+		kill ownr
+	endi
+endm
+
+
+
+rscr
+enum 2 5 2
+	kill targ
+next
+scrx 2 5 2 9
+enum 2 7 3
+	kill targ
+next
+enum 2 3 9
+	kill targ
+next

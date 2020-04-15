@@ -1,0 +1,1230 @@
+*GB Template
+*# Pray-File "GB_Bramboo.agents"
+*# DS-Name "Bramboo"
+*# Depend blank.c16 bramboo.c16
+
+
+*# desc = "DS Bramboo raw, buggy, unsupported conversion."
+*# Agent Animation File = "bramboo.c16"
+*# Agent Animation Gallery = "bramboo"
+*# Agent Sprite First Image = 18
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+*Injection
+*Initial variables, just in case:
+* Bramboo Localsphere is the RNGE (Range) used for checking
+* the local Bramboo population in the Environment Check script. 
+setv game "Bramboo_LocalSphere" 350
+* Bramboo MaxPop Local is the intended maximum amount of Bramboo that can 
+* grow together in a local area.
+setv game "Bramboo_MaxPop_Local" 8
+* Bramboo Genetic RotnSwap decides whether the Rotation and Swap genetic variables
+* are used or not.
+* Set it to 1 to use Rotation and Swap. If it is off (0) the genetic variables will still mutate, just they won't be expressed.
+setv game "Bramboo_Genetic_RotnSwap" 0
+
+*Now to inject like. One berry. o_O
+*set some random variables
+
+** GENETIC VARIABLES
+** ov40 = GENETIC Cane Height
+setv va40 rand 6 8
+** ov41 = GENETIC Petal Red
+setv va41 rand 170 255
+** ov42 = GENETIC Petal Green
+setv va42 rand 170 255
+** ov43 = GENETIC Petal Blue
+setv va43 rand 170 255
+** ov44 = GENETIC Petal Rotation
+setv va44 rand 0 255
+** ov45 = GENETIC Petal Swap
+setv va45 rand 0 255
+** ov46 = GENETIC Fruit Red
+setv va46 rand 70 255
+** ov47 = GENETIC Fruit Green
+setv va47 rand 70 255
+** ov48 = GENETIC Fruit Blue
+setv va48 rand 70 255
+** ov49 = GENETIC Fruit Rotation
+setv va49 rand 0 255
+** ov50 = GENETIC Fruit Swap 
+setv va50 rand 0 255
+
+** Create a fruit agent
+inst
+new: simp 2 8 8 "bramboo" 10 97 300
+seta ov16 null
+attr 195
+setv va83 rand 1.0 3.5
+accg va83
+elas 50
+fric 100
+aero 1
+setv va00 rand 1 2
+doif va00 = 1
+	setv va00 rand -3 -2
+else
+	setv va00 rand 2 3
+endi
+velo va00 0
+pose 4
+tick 1
+
+** Store the genetic colourings
+setv ov41 va41
+setv ov42 va42
+setv ov43 va43
+setv ov44 va44
+setv ov45 va45
+setv ov46 va46
+setv ov47 va47
+setv ov48 va48
+setv ov49 va49
+setv ov50 va50
+** Store the genetical height of the Bramboo cane
+setv ov40 va40
+** Tint the Fruit
+doif game "Bramboo_Genetic_RotnSwap" = 1
+	tint va46 va47 va48 va49 va50
+else
+	tint va46 va47 va48 128 128
+endi
+*pick the base?
+*make it smellll
+emit 6 .5
+mvsf game "ch_x" game "ch_y"
+mesg wrt+ targ 1000 1 0 0
+
+
+
+*100% Copy/Pasted scripts, just in case they're missing somehow..
+** Bramboo Cane Timer
+scrp 2 4 13 9
+** Age Stuff
+** age once
+	addv ov01 1
+	doif ov05 < 9
+		gsub growth
+	endi
+*** Able to flower?
+	doif ov05 = 10
+		gsub flowers_and_fruit
+	endi
+** Time to wither?
+	doif ov05 = 11
+		setv va00 totl 2 4 13
+		doif va00 > 1
+			gsub witherdown
+		else
+			inst
+			lock
+** Bramboo Pod Position
+			setv va00 950
+** Genetic Stuff from last remaining Bramboo
+			setv va40 ov40
+			setv va41 ov41
+			setv va42 ov42
+			setv va43 ov43
+			setv va44 ov44
+			setv va45 ov45
+			setv va46 ov46
+			setv va47 ov47
+			setv va48 ov48
+			setv va49 ov49
+			setv va50 ov50
+			setv va00 950
+			setv va04 9605
+			setv va03 0
+			reps 4
+				addv va03 1
+				inst
+** Initial Bramboo
+				new: comp 2 4 13 "bramboo" 0 0 0
+				attr 192
+				accg 0
+				perm 0
+				aero 0
+				fric 0
+				elas 0
+** Genetic Mutations
+** =================
+**
+** It felt cool to use the genetics of the last remaining Bramboo
+** to influence the new ones that will appear out of the Bramboo Pod.
+** So simple two parent genetic averaging.. 
+**
+** OV08 determines how many sections the plant aims to make, it becomes OV40 (Genetic Height) but is dynamic..
+** if the Bramboo simply can't grow as big as Genetic Height may want it to, then OV08 is adjusted accordingly.
+**
+** For the purpose of the new Bramboo cane shoots, I'm lowering the resultant genetic height by using rand 15 20 and averaging it with
+** the last remaining Bramboo's genetic height.
+				setv ov08 rand 15 20
+				addv ov08 va40
+				divv ov08 2
+
+** PETAL Red
+				setv ov41 rand 190 255
+				addv ov41 va41
+				divv ov41 2
+** PETAL Green
+				setv ov42 rand 190 255
+				addv ov42 va42
+				divv ov42 2
+** PETAL Blue
+				setv ov43 rand 190 255
+				addv ov43 va43
+				divv ov43 2
+** PETAL Rotation
+				setv ov44 rand 0 255
+				addv ov44 va44
+				divv ov44 2
+** PETAL Swap
+				setv ov45 rand 0 255
+				addv ov45 va45
+				divv ov45 2
+** FRUIT Red
+				setv ov46 rand 190 255
+				addv ov46 va46
+				divv ov46 2
+
+** FRUIT Green
+				setv ov47 rand 190 255
+				addv ov47 va47
+				divv ov47 2
+** FRUIT Blue
+				setv ov48 rand 190 255
+				addv ov48 va48
+				divv ov48 2
+** FRUIT Rotation
+				setv ov49 rand 0 255
+				addv ov49 va49
+				divv ov49 2
+** FRUIT Swap
+				setv ov50 rand 0 255
+				addv ov50 va50
+				divv ov50 2
+** Initial flag
+				setv name "initial" 1
+** ov40 itself is Genetic Height, this can be from 1 through to 40! Imagine such towering Bramboo canes as that!
+				setv ov40 ov08
+** name "sections" counts how many sections have been made
+				setv name "sections" 0
+** ov70 stores the Y co-ordinate for new sections
+** Position Adjustments
+				setv va01 va00
+				setv va02 va04
+				doif va03 = 1
+					addv va02 7
+				elif va03 = 2
+					subv va01 15
+					subv va02 8
+				elif va03 = 3
+					subv va01 10
+				elif va03 = 4
+					subv va02 10
+				endi
+				mvto va01 va02
+				addv va00 70
+				setv ov90 1
+				tick 50
+			repe
+			targ ownr
+			gsub witherdown
+		endi
+	endi
+** Make another section? or make a crown?
+	doif ov08 > 1 and ov05 = 9
+** The Bramboo may contain the genetics to grow tall.. 
+** ..but if there's no space for such tall bramboo canes, then it needs to rethink it's growth strategy!
+		gsub sectioncheck
+	elif ov08 = 1 and ov05 = 9
+		gsub coronation
+	endi
+	subr witherdown
+		setv va00 name "sections"
+		sets va01 vtos va00
+		adds va01 " sections"
+*		dbg: outs va01
+** Repeal crown
+		part va00
+		frat 1
+		anim [5 6 7 8]
+		over
+		pat: kill va00
+		subv va00 1
+
+** Give nearby creatures a fright!
+		inst
+		setv va70 25
+		mulv va70 name "sections"
+		divv va70 1000.00
+		rnge 350
+		esee 4 0 0
+			doif targ <> null
+				driv 10 va70
+			endi
+		next
+		slow
+** Repeal all sections
+		loop
+			setv va99 rand 1 3
+			doif va99 = 1
+				snde "bco1"
+			elif va99 = 2
+				snde "bco2"
+			elif va99 = 3
+				snde "bco3"
+			endi
+			inst
+** Sectiontype 1 or 2?
+			sets va88 "sectiontype"
+			adds va88 vtos va00
+			setv va50 name va88
+			doif va50 = 1
+* 1, use second trunk set.
+				part va00
+				frat 1
+				anim [35 36 37 38 39 40 41 42]
+				over
+			elif va50 = 2
+* 2, use first trunk set (like base section)
+				part va00
+				frat 1
+				anim [18 19 20 21 22 23 24 25]
+				over
+			endi
+			pat: kill va00
+			subv va00 1
+			addv va99 1
+		untl va00 = 0 or va99 > name "sections"
+** Wither trunk!
+		part 0
+		frat 1
+		anim [18 19 20 21 22 23 24 25]
+		over
+* die!!
+		kill ownr
+	retn
+	subr flowers_and_fruit
+** Do I need to flower? Or is it just I need to do something with the flowers I've got?
+** ov72 = 0 when you need to flower
+		doif ov72 = 0
+** Store the number of sections
+			setv va01 name "sections"
+			addv va01 1
+** va00 is the "how many times have I looped" counter
+			setv va00 1
+** va02 is the starting part number
+			setv va02 60
+			setv va03 45
+			setv va04 0
+			setv name "flowers" 0
+			loop
+				doif va00 <> 1
+** Random X position
+					setv va05 rand -4 17
+					subv va03 35
+** Which flower to use? 3 to choose from.
+					setv va04 rand 1 4
+					doif va04 = 1
+						setv va04 53
+					elif va04 = 2
+						setv va04 64
+					elif va04 = 3
+						setv va04 75
+					elif va04 = 4
+						setv va04 86
+					endi
+** Temporarily store the part base, adding the number of flowers already formed, then bump up the flower count
+					setv va06 va02
+					addv va06 name "flowers"
+					addv name "flowers" 1
+** Create the flower bud
+					pat: dull va06 "bramboo" va04 va05 va03 1
+** save the relative X and Y positions to name variables in the Bramboo cane
+** Relative X Pos for Flower
+					sets va30 "flowerX"
+					adds va30 vtos name "flowers"
+					setv name va30 va05
+** Relative Y Pos for Flower
+					sets va30 "flowerY"
+					adds va30 vtos name "flowers"
+					setv name va30 va03
+** Which flower was used?
+					sets va30 "flower"
+					adds va30 vtos name "flowers"
+					setv name va30 va04
+** Tint that flower
+					part va06
+					doif game "Bramboo_Genetic_RotnSwap" = 1
+						tint ov41 ov42 ov43 ov44 ov45
+					else
+						tint ov41 ov42 ov43 128 128
+					endi
+				else
+					subv va03 35
+				endi
+				addv va00 1
+			untl va00 = va01
+			setv ov72 1
+		elif ov72 = 1
+			setv va00 name "flowers"
+			setv va01 0
+			setv va02 60
+** Open or close
+			loop
+				setv va44 va02
+				addv va44 va01
+				part va44
+				setv va99 pose
+				doif pose <> -1
+** Make it open up
+					part va44
+					frat rand 20 40
+					anim [0 1 2 3 4 5 6 7 8 9 10]
+				endi
+				addv va01 1
+			untl va01 = va00
+			wait 100
+** Fruiting
+** Find the amount of fruit
+			setv va00 name "flowers"
+			addv va00 1
+			setv va01 1
+** Prepare va30 and va31 to help identify the X and Y pos of the fruit
+			sets va30 "flowerX"
+			sets va31 "flowerY"
+** Store the owner agent (the bramboo) into va04 to later save into the fruit
+			seta va04 ownr
+** Part count
+			setv va28 60
+			loop
+				targ ownr
+** Rel X
+				sets va60 va30
+				adds va60 vtos va01
+				setv va90 name va60
+** Rel Y
+				sets va61 va31
+				adds va61 vtos va01
+				setv va91 name va61
+** Which flower was used?
+** I need to know, so I know which fruit to use
+** Check the sprite file, there are four different fruit
+				sets va70 "flower"
+				adds va70 vtos va01
+				setv va98 name va70
+				doif va98 = 53
+					setv va99 0
+				elif va98 = 64
+					setv va99 5
+				elif va98 = 75
+					setv va99 10
+				elif va98 = 86
+					setv va99 15
+				endi
+**+-------+
+**| Fruit |
+**+-------+
+** Store the genetic colourings for Petals and Fruit
+				setv va41 ov41
+				setv va42 ov42
+				setv va43 ov43
+				setv va44 ov44
+				setv va45 ov45
+				setv va46 ov46
+				setv va47 ov47
+				setv va48 ov48
+				setv va49 ov49
+				setv va50 ov50
+** Store the genetical height
+				setv va40 ov40
+* initial flag
+				setv va23 name "initial"
+				doif va23 = 1
+					setv va23 2
+				elif va23 = 0
+					setv va23 306
+				endi
+** Create a fruit agent
+				inst
+				new: simp 2 8 8 "bramboo" 10 97 va23
+				seta ov16 null
+				perm 50
+				attr 35
+				bhvr 48
+				frel va04
+** Store the genetic colourings
+				setv ov41 va41
+				setv ov42 va42
+				setv ov43 va43
+				setv ov44 va44
+				setv ov45 va45
+				setv ov46 va46
+				setv ov47 va47
+				setv ov48 va48
+				setv ov49 va49
+				setv ov50 va50
+** Store the genetical height of the parent Bramboo cane
+				setv ov40 va40
+** Tint the Fruit
+				doif game "Bramboo_Genetic_RotnSwap" = 1
+					tint va46 va47 va48 va49 va50
+				else
+					tint va46 va47 va48 128 128
+				endi
+** Use the first fruit pose as the base
+				base va99
+** Fly to on top of the flower.
+				flto va90 va91
+** Store the Bramboo
+				seta ov16 ownr
+*				dbg: asrt type ov16 <> 0
+** Store original flower
+				setv va29 va00
+** Minus since it was added to in a loop
+				subv va29 1
+** Addition of base flower 60
+				setv ov17 va28
+** Save the coords to memory, for creating the petals later
+				setv ov30 posx
+				setv ov31 posy
+** Give it a random Rot time (not genetic... yet!)
+				setv name "TimeToRot" rand 10 30
+** Make it emit the smell of protein
+				emit 6 .5
+** Start the fruit ripening
+				frat 50
+				anim [0 1 2 3 4]
+** tick
+				tick 500
+** Add up the loop stuff
+				addv va03 1
+				addv va01 1
+** increment part count
+				addv va28 1
+
+			untl va01 = va00
+			targ ownr
+** Set ov72 to show that fruiting has occured.
+			setv ov72 2
+		elif ov72 = 2
+** Fruit have grown and are ready to be plucked, after a certain time if they aren't plucked the
+** bramboo will make them all just pop off
+** We do that by simply calling the pickup script for the fruit
+			doif ov01 > 350
+				inst
+				enum 2 8 8
+					doif targ <> null
+						doif ov16 = ownr and ov00 <> 1
+							mesg wrt+ targ 1000 2 0 0
+						endi
+					endi
+				next
+				targ ownr
+** Bramboo can now wither down to nothing. Watch it repeal those sections baby!
+				setv ov05 11
+			endi
+		endi
+	retn
+	subr sectioncheck
+** Can we actually make another section? 
+** Or is the ceiling too low?
+** Firstly get the current highest point
+		setv va70 ov70
+		addv va70 post
+** va50 will record how many times the loop has looped
+		setv va50 0
+** va60 will be set depending on how much available space there is... 
+** this enables us to work out what kind the new part will be... crown or trunk!
+		setv va60 0
+** POSL, POSX, POSR
+		setv va30 posl
+		setv va31 posx
+		setv va32 posr
+		loop
+			subv va70 2
+			setv va00 grap va30 va70
+			setv va01 grap va31 va70
+			setv va02 grap va32 va70
+			doif va00 <> -1 and va01 <> -1 and va02 <> -1
+* There is room for another section.
+				addv va60 1
+			else
+				setv va51 99
+			endi
+			addv va50 1
+		untl va50 = 35 or va51 = 99
+** Now if va60 < 30 we can only make a crown.
+** And if va60 >= 30 we can make a new section.
+		doif va60 < 30
+			setv ov08 1
+			stop
+		elif va60 >= 30
+			gsub sectionmaker
+		else
+*			dbg: outs "arrrgh!"
+*			dbg: outv va60
+		endi
+	retn
+	subr sectionmaker
+** Makes a new section
+** Add it to the score.
+		addv name "sections" 1
+** Subtract it from the intended section total
+		subv ov08 1
+** adjust Y co-ordinate
+		subv ov70 35
+		setv va70 ov70
+** actually create it
+		pat: dull name "sections" "bramboo" 1 0 va70 0
+		part name "sections"
+		frat rand 70 120
+		anim [0 1 2 3 4 5 6 7 8]
+		over
+*		setv va00 name "sections"
+*		modv va00 2
+		setv va00 rand 1 2
+** Even or Odd Section?
+		sets va88 "sectiontype"
+		adds va88 vtos name "sections"
+		setv name va88 va00
+		doif va00 = 1
+* odd, use second trunk set.
+			part name "sections"
+			frat rand 70 120
+			anim [26 27 28 29 30 31 32 33 34]
+			over
+		elif va00 = 2
+* even, use first trunk set (like base section)
+			part name "sections"
+			frat rand 70 120
+			anim [9 10 11 12 13 14 15 16 17]
+			over
+		endi
+	retn
+** if the Bramboo has grown, crown it
+	subr coronation
+** Crowns the Bramboo pole and gives it completeness
+		subv ov70 24
+		setv va70 ov70
+** Add it to the score.
+		addv name "sections" 1
+** make the crown
+		pat: dull name "sections" "bramboo" 44 2 va70 0
+		part name "sections"
+		frat rand 10 20
+		anim [0 1 2 3 4]
+		over
+** Life stage to Mature (can now flower)
+		setv ov05 10
+	retn
+	subr growth
+** change life stage based on age and current life stage
+		doif ov99 = 1
+			setv ov01 rand 50 219
+			setv ov99 0
+		endi
+		doif ov01 >= 4 and ov05 = -1
+			setv ov05 0
+		elif ov01 > 5 and ov05 = 0
+			setv ov05 1
+		elif ov01 > 30 and ov05 = 1
+			setv ov05 2
+		elif ov01 > 55 and ov05 = 2
+			setv ov05 3
+		elif ov01 > 70 and ov05 = 3
+			setv ov05 4
+		elif ov01 > 95 and ov05 = 4
+			setv ov05 5
+		elif ov01 > 120 and ov05 = 5
+			setv ov05 6
+		elif ov01 > 185 and ov05 = 6
+			setv ov05 7
+		elif ov01 > 220 and ov05 = 7
+			setv ov05 8
+		endi
+
+		doif ov05 > 0 and ov05 < 8
+* pose it
+			pose ov05
+		elif ov05 = 8
+* pose it
+			pose ov05
+			frat rand 30 40
+			anim [9 10 11 12 13 14 15 16 17]
+			over
+			setv ov05 9
+		elif ov05 = 0
+			base 1
+			pose 0
+		endi
+	retn
+endm
+
+
+** Bramboo Pickup
+scrp 2 8 8 4
+	inst
+	plne 306
+	mesg wrt+ ownr 1000 1 0 0
+endm
+
+** Bramboo Windfall / Pickup
+scrp 2 8 8 1000
+	plne 306
+	doif _p1_ = 2
+** Put gravity on, remove floating
+** make sure you can move to where you are
+		setv va50 posl
+		setv va51 post
+		doif tmvt va50 va51 = 0
+			mvsf va50 va51
+		endi
+** if so, do it
+		attr 195
+		setv va83 rand 1.0 3.5
+		accg va83
+		elas 50
+		fric 100
+		aero 1
+		setv va00 rand 1 2
+		doif va00 = 1
+			setv va00 rand -3 -2
+		else
+			setv va00 rand 2 3
+		endi
+		velo va00 0
+	endi
+	lock
+	inst
+	base 20
+	pose 0
+	doif ov17 <> 0
+** Kill the original flower
+		setv va17 ov17
+*		dbg: asrt type ov16 <> 0
+
+		doif ov16 <> null
+			targ ov16
+			pat: kill va17
+			setv ov17 0
+		else
+			setv ov17 0
+		endi
+	endi
+	targ ownr
+	doif ov00 = 0
+** Create petals
+		inst
+** Loop Counter
+		setv va00 0
+		setv va10 ov30
+		setv va11 ov31
+		subv va11 5
+** grab the genetic colours, for the petals
+		setv va80 ov41
+		setv va81 ov42
+		setv va82 ov43
+** make the petals appear and fall
+		inst
+		setv va89 0
+		enum 2 7 6
+			doif targ <> null
+*				dbg: asrt type ov16 <> 0
+
+				doif ov16 = ownr
+					tick 20
+					addv va89 1
+					show 1
+					setv va49 rand 5 15
+					divv va49 100.0
+					accg va49
+					doif va89 = 1
+						velo rand -2 0 rand 1 2
+					elif va89 = 2
+						velo rand 0 2 rand 1 2
+					endi
+					setv ov00 1
+				endi
+			endi
+		next
+		targ ownr
+** Put gravity on, remove floating
+** make sure you can move to where you are
+		setv va50 posl
+		setv va51 post
+		doif tmvt va50 va51 = 0
+			mvsf va50 va51
+		endi
+** if so, do it
+		attr 195
+		accg 1.5
+		elas 50
+		fric 100
+		aero 1
+** set flag
+		setv ov00 1
+	endi
+endm
+
+** Bramboo Fruit Eat
+scrp 2 8 8 12
+	lock
+	inst
+	snde "reat"
+	stim writ from 78 1
+	kill ownr
+endm
+
+** Bramboo berry Timer
+scrp 2 8 8 9
+	doif ov00 = 0 and ov01 = 0
+** Create petals
+		inst
+		seta va16 ownr
+*		dbg: asrt type va16 <> 0
+** Loop Counter
+		setv va00 0
+		setv va10 ov30
+		setv va11 ov31
+		subv va11 5
+** grab the genetic colours, for the petals
+		setv va41 ov41
+		setv va42 ov42
+		setv va43 ov43
+		setv va44 ov44
+		setv va45 ov45
+** make the petals
+		inst
+		loop
+			new: simp 2 7 6 "bramboo" 13 123 305
+			seta ov16 null
+			attr 192
+			accg 0
+			aero 1
+			fric 100
+			elas 50
+** Move slightly to the left
+			subv va10 10
+			doif game "Bramboo_Genetic_RotnSwap" = 1
+				tint va41 va42 va43 va44 va45
+			else
+				tint va41 va42 va43 128 128
+			endi
+			doif tmvt va10 va11 = 1
+				mvto va10 va11
+
+** Store the Bramboo in ov99
+				seta ov16 va16
+*				dbg: asrt type ov16 <> 0
+
+				velo 0 0
+				show 0
+				setv ov00 0
+			else
+				kill targ
+			endi
+** .
+			addv va00 1
+		untl va00 = 2
+		targ ownr
+		setv ov01 1
+	endi
+	doif fall = 0 and ov70 = 0 and ov00 = 1
+		setv ov70 1
+		accg 3
+	endi
+** If plucked / dropped, age.
+	doif ov00 = 1
+		addv ov01 1
+	endi
+** If old enough, rot down to goo.
+** Then check the local environment.
+** If there aren't too many other Bramboo around, then grow into a Bramboo plant all of your own!
+** I have lowered the time for the bramboo to regrow..
+	doif ov01 > 3
+		doif ov99 = 0
+** can't be picked up by the hand, can't be seen by a creature...
+			doif carr = null
+				attr 209
+			else
+				setv ov88 1
+			endi
+*			dbg: outs "bramboo - NOT good to grow!!"
+			setv name "goodtogrow" 0
+			frat rand 20 30
+			anim [0 1 2 3 4]
+			over
+		endi
+** Set attributes if no longer held.
+		doif ov88 = 1 and carr = null
+			attr 209
+		endi
+
+** Check local environment
+
+		call 1001 0 0
+
+** If you're "good to grow" then go right ahead!
+		doif name "goodtogrow" = 1
+*			dbg: outs "bramboo = good to grow"
+** Genetic Stuff
+			setv va40 ov40
+			setv va41 ov41
+			setv va42 ov42
+			setv va43 ov43
+			setv va44 ov44
+			setv va45 ov45
+			setv va46 ov46
+			setv va47 ov47
+			setv va48 ov48
+			setv va49 ov49
+			setv va50 ov50
+** Firstly, potentially mutate the genetic height.
+			doif va40 = 2
+** If it is at 2 then potentially increase it.
+				setv va99 rand 1 2
+				doif va99 = 1
+					addv va40 1
+				endi
+** if it is 3 or above, but less than 40 then it could either increase or decrease.
+			elif va40 >= 3 and va40 < 40
+				setv va99 rand 1 6
+				doif va99 < 4
+					subv va40 1
+				elif va99 = 6
+					addv va40 1
+				endi
+** If it is at 40, then potentially decrease it.
+			elif va40 = 40
+				setv va99 rand 1 2
+				doif va99 = 1
+					subv va40 rand 1 3
+				endi
+			endi
+*			=================
+*			Pigment Mutations
+*			=================
+*
+*			Basically I make up a fake pigment (va5x) and see if it is higher
+*			or lower than the genetic pigment (va4x). If the fake pigment is higher
+*			then the genetic pigment will increase, if it is lower then it will decrease.
+
+
+
+*			GENETIC Petal Red - Mutation
+			doif va41 > 255
+				setv va41 255
+			elif va41 < 0
+				setv va41 0
+			endi
+			setv va51 rand 100 255
+			doif va51 < va41
+				subv va41 rand 5 15
+			elif va51 > va41
+				addv va41 rand 5 15
+			endi
+
+
+
+*			GENETIC Petal Green - Mutation
+			doif va42 > 255
+				setv va42 255
+			elif va42 < 0
+				setv va42 0
+			endi
+			setv va52 rand 100 255
+			doif va52 < va42
+				subv va42 rand 5 15
+			elif va52 > va42
+				addv va42 rand 5 15
+			endi
+
+
+*			GENETIC Petal Blue - Mutation
+			doif va43 > 255
+				setv va43 255
+			elif va43 < 0
+				setv va43 0
+			endi
+			setv va53 rand 100 255
+			doif va53 < va43
+				subv va43 rand 5 15
+			elif va53 > va43
+				addv va43 rand 5 15
+			endi
+
+
+
+*			GENETIC Petal Rotation - Mutation
+			doif va44 > 255
+				setv va44 255
+			elif va44 < 0
+				setv va44 0
+			endi
+			setv va54 rand 0 255
+			doif va54 < va44
+				subv va44 rand 5 15
+			elif va54 > va44
+				addv va44 rand 5 15
+			endi
+
+*			GENETIC Petal Swap - Mutation
+			doif va45 > 255
+				setv va45 255
+			elif va45 < 0
+				setv va45 0
+			endi
+			setv va55 rand 0 255
+			doif va55 < va45
+				subv va45 rand 5 15
+			elif va55 > va45
+				addv va45 rand 5 15
+			endi
+
+
+
+*			GENETIC Fruit Red - Mutation
+			doif va46 < 255
+				setv va46 255
+			elif va46 < 0
+				setv va46 0
+			endi
+			setv va56 rand 100 255
+			doif va56 < va46
+				subv va46 rand 5 15
+			elif va56 > va46
+				addv va46 rand 5 15
+			endi
+
+
+*			GENETIC Fruit Green - Mutation
+			doif va47 > 255
+				setv va47 255
+			elif va47 < 0
+				setv va47 0
+			endi
+			setv va57 rand 100 255
+			doif va57 < va47
+				subv va47 rand 5 15
+			elif va57 > va47
+				addv va47 rand 5 15
+			endi
+
+
+
+*			GENETIC Fruit Blue - Mutation
+			doif va48 > 255
+				setv va48 255
+			elif va48 < 0
+				setv va48 0
+			endi
+			setv va58 rand 100 255
+			doif va58 < va48
+				subv va48 rand 5 15
+			elif va58 > va48
+				addv va48 rand 5 15
+			endi
+
+
+*			GENETIC Fruit Rotation - Mutation
+			doif va49 > 255
+				setv va49 255
+			elif va49 < 0
+				setv va49 0
+			endi
+			setv va59 rand 0 255
+			doif va59 < va49
+				subv va49 rand 5 15
+			elif va59 > va49
+				addv va49 rand 5 15
+			endi
+
+
+*			GENETIC Fruit Swap - Mutation
+			doif va50 > 255
+				setv va50 255
+			elif va50 < 0
+				setv va50 0
+			endi
+			setv va60 rand 0 255
+			doif va60 < va50
+				subv va50 rand 5 15
+			elif va60 > va50
+				addv va50 rand 5 15
+			endi
+
+** Save the Map Position
+			setv va00 posl
+			setv va01 post
+** Create a new Bramboo Cane!
+			inst
+** Initial Bramboo
+			new: comp 2 4 13 "bramboo" 0 0 304
+			attr 192
+			accg 5
+			perm 64
+			aero 1
+			fric 100
+			elas 10
+**	+----------------+ 
+**	| Genetic Stuff  |
+**	+----------------+
+** 	Save GENETIC HEIGHT as ov08
+			setv ov08 va40
+** 	Save GENETIC HEIGHT as ov40 (ov40 is the GENETIC HEIGHT ov)
+			setv ov40 ov08
+** Store the GENETIC Colourings
+			setv ov41 va41
+			setv ov42 va42
+			setv ov43 va43
+			setv ov44 va44
+			setv ov45 va45
+			setv ov46 va46
+			setv ov47 va47
+			setv ov48 va48
+			setv ov49 va49
+			setv ov50 va50
+** name "sections" counts how many sections have been made
+			setv name "sections" 0
+** ov70 stores the Y co-ordinate for new sections (don't think this is used, but could be handy later)
+			setv ov70 0
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+			else
+				mvsf va00 va01
+			endi
+			setv ov90 1
+			tick 50
+			kill ownr
+		endi
+	endi
+endm
+
+
+** Bramboo Seed local environment checking script
+** checks the following CAs: Light, Heat, Water, Nutrients.
+** checks local population of Bramboo
+** destroys the Bramboo seed if it's not a viable location.
+scrp 2 8 8 1001
+	inst
+** Get Local Room ID
+	setv va00 grap posx posy
+** Bramboo don't need much light at all.
+	doif prop va00 1 > .1
+		setv va10 1
+	else
+*		dbg: outs "<<Bramboo Seed>> Not enough light."
+	endi
+** Bramboo don't like the cold, yet they don't mind it hot either!
+	doif prop va00 2 > .2
+		setv va11 1
+	else
+*		dbg: outs "<<Bramboo Seed>> Not enough heat."
+	endi
+** Bramboo like a bit of water, but aren't fussy.
+	doif prop va00 3 > .1
+		setv va12 1
+	else
+*		dbg: outs "<<Bramboo Seed>> Not enough water."
+	endi
+** Bramboo require a decent amount of nutrients.
+	doif prop va00 4 > .3
+		setv va13 1
+	else
+*		dbg: outs "<<Bramboo Seed>> Not enough nutrients."
+	endi
+** Check how many Bramboo are nearby
+	rnge game "Bramboo_LocalSphere"
+	esee 2 4 13
+		addv va50 1
+	next
+	doif va50 >= game "Bramboo_MaxPop_Local"
+*		dbg: outs "<<Bramboo Seed>> Too many here already."
+	endi
+** Make sure you aren't touching some Bramboo already
+	inst
+	setv va14 1
+	etch 2 4 13
+		doif targ <> null
+			setv va14 0
+		endi
+	next
+	slow
+** Check for touching fruit (so we don't get overlaps)
+	inst
+	etch 2 8 8
+		doif targ <> null
+			doif targ <> ownr
+				setv va14 0
+			endi
+		endi
+	next
+	targ ownr
+	doif va14 = 0
+*		dbg: outs "<<Bramboo Seed>> Touching a Bramboo Fruit or Cane."
+	endi
+** Room type check
+	doif rtyp room targ = 5 or rtyp room targ = 6 or rtyp room targ = 7
+		setv va15 1
+	else
+		setv va15 0
+	endi
+	doif va10 = 1 and va11 = 1 and va12 = 1 and va13 = 1 and va14 = 1 and va50 < game "Bramboo_MaxPop_Local" and va15 = 1
+		setv va40 prop va00 3
+		setv va41 prop va00 4
+		subv va40 .1
+*		dbg: outs "YES!"
+		subv va41 .1
+		prop va00 3 va40
+		prop va00 4 va41
+** You can grow
+		setv name "goodtogrow" 1
+		setv ov99 1
+	else
+*		dbg: outs "<<Bramboo Seed>> Can't grow."
+** Slow down the tick (it will check the enviroment every time from now on)
+		tick 100
+** Keep a count though.
+		addv ov99 1
+** if it gets too high, kill it.. it's not going to grow!
+		doif ov99 > name "TimeToRot"
+			kill ownr
+		endi
+	endi
+endm
+
+** Bramboo Fruit Collision
+scrp 2 8 8 6
+	snde "dr64"
+endm
+
+
+
+
+** Bramboo Petal Timer
+scrp 2 7 6 9
+	tick 1
+	doif fall = 0 and ov00 = 1
+** Fade out and die
+		setv va00 0
+		loop
+			addv va00 16
+			alph va00 1
+		untl va00 >= 256
+		kill ownr
+	endi
+endm
+
+rscr
+enum 2 4 13
+	kill targ
+next
+enum 2 8 8
+	kill targ
+next
+enum 2 7 6
+	kill targ
+next

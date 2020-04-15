@@ -1,0 +1,347 @@
+*GB Template
+*# Pray-File "GB_Snail.agent"
+*# DS-Name "Snail (C3)"
+*# Depend snail.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Snail raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 25
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 13 7 "snail" 101 0 2500
+accg 1
+perm 99
+tick 8
+attr 195
+aero 0
+elas 5
+fric 0
+bhvr 16
+
+
+setv ov30 2
+
+setv ov31 10
+
+setv ov32 20
+
+setv ov33 28
+
+setv ov34 38
+
+setv ov35 46
+
+setv ov36 54
+
+setv ov37 60
+
+setv ov38 65
+
+setv ov39 70
+
+setv ov40 76
+
+setv ov41 81
+setv ov42 86
+
+setv ov43 92
+
+setv ov44 97
+
+
+
+setv ov00 0
+setv ov01 2000
+setv ov02 800
+setv ov05 2
+setv ov06 rand 0 1
+setv ov10 1
+setv ov11 -1
+seta ov16 null
+setv ov20 0
+setv ov61 45
+setv ov72 400
+setv ov73 400
+setv ov74 800
+setv ov75 1
+mvsf game "ch_x" game "ch_y"
+
+setv vely 0
+
+
+scrp 2 13 7 9
+	fric 100
+	addv ov01 1
+	subv ov02 1
+	addv ov20 1
+
+	doif ov02 < ov73
+		setv ov00 1
+	endi
+
+
+	doif obst 0 lt 30
+		setv ov10 1
+		setv ov11 -1
+	endi
+	doif obst 1 lt 30
+		setv ov10 -1
+		setv ov11 -1
+	endi
+
+	doif obst 2 lt 30
+		setv ov11 1
+	endi
+	doif obst 3 lt 30
+		setv ov11 -1
+	endi
+
+	doif ov02 <= 0
+		setv ov00 99
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+	subr die_
+		setv va50 posl
+		setv va51 post
+		setv va52 ov10
+		new: simp 2 10 20 "snail" 0 54 2000
+		accg 2
+		tick 90
+		attr 195
+		aero 0
+		setv ov10 va52
+		setv ov01 0
+		setv ov61 12
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+	retn
+
+	subr gfod
+		setv va47 2
+		setv va48 10
+		setv va49 0
+		inst
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+		doif targ <> null
+			targ ownr
+			gsub hunt
+			doif touc ov16 ownr <> 0
+				targ ownr
+				addv ov02 ov72
+				mesg writ ov16 12
+				doif ov02 gt ov74
+					setv ov00 0
+				endi
+				setv ov00 1
+			endi
+		else
+			targ ownr
+			setv ov00 0
+			seta ov16 null
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+
+	subr hide
+		doif ov10 >= 0
+			base ov38
+			anim [0 1 2 3 4]
+			wait 80
+			anim [4 3 2 1 0]
+		endi
+		doif ov10 < 0
+			base ov37
+			anim [0 1 2 3 4]
+			wait 80
+			anim [4 3 2 1 0]
+
+		endi
+	retn
+
+
+	subr roam
+		setv va67 rand 0 20
+		doif va67 = 0
+			gsub hide
+		endi
+		setv va66 rand 0 10
+		setv ov75 1
+		doif va66 lt 5
+			mulv ov10 -1
+		endi
+
+
+		setv ov11 1
+
+
+		gsub vect
+		gsub anim
+		gsub move
+
+		stop
+	retn
+	subr vect
+		setv va10 rand 1 3
+		setv va11 rand 6 6
+	retn
+
+	subr anim
+		doif ov10 eq 0
+			loop
+				setv ov10 rand -1 1
+			untl ov10 ne 0
+		endi
+
+		doif ov10 <= 0
+			base ov30
+			anim [0 1 2 3 4 5 6 7]
+		endi
+
+		doif ov10 > 0
+			base ov31
+			anim [0 1 2 3 4 5 6 7]
+		endi
+	retn
+
+	subr move
+		mulv va10 ov10
+		mulv va11 ov11
+
+
+		fric 5
+		velo va10 va11
+
+	retn
+
+	subr find
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va88 0
+				setv va50 relx ownr targ
+				setv va51 rely ownr targ
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		targ va58
+		doif targ <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+		slow
+	retn
+
+	subr hunt
+		inst
+		targ ov16
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 1
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 0
+		endi
+	retn
+endm
+
+scrp 2 10 20 9
+	doif ov10 <= 0 and carr = null
+		anim []
+		base 0
+		anim [0 1 2]
+		doif room targ <> -1 and carr = null
+			altr room targ 3 0.1
+			altr room targ 4 0.1
+		endi
+		over
+		kill targ
+	elif ov10 > 0 and carr = null
+		anim []
+		base 3
+		anim [0 1 2]
+		doif room targ <> -1 and carr = null
+			altr room targ 3 0.1
+			altr room targ 4 0.1
+		endi
+		over
+		kill targ
+	endi
+endm
+
+scrp 2 13 7 12
+	stim writ from 80 1
+	kill ownr
+endm
+
+
+rscr
+
+enum 2 13 7
+	kill targ
+next
+scrx 2 13 7 9
+scrx 2 13 7 6
+
+
+endm

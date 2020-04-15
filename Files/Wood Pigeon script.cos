@@ -1,0 +1,1415 @@
+*GB Template
+*# Pray-File "GB_pigeon.agent"
+*# DS-Name "Wood Pigeon"
+*# Depend woodpigeon.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Wood Pigeon conversion. After injection, place nest in an appropriate location."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 28
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 11 "woodpigeon" 86 0 2200
+accg 1.5
+tick 4
+attr 195
+elas 5
+fric 80
+bhvr 16
+
+setv ov30 0
+setv ov31 8
+setv ov32 36
+setv ov33 40
+setv ov34 22
+setv ov35 30
+setv ov36 20
+setv ov37 28
+setv ov38 16
+setv ov39 17
+setv ov40 44
+setv ov41 52
+setv ov42 62
+setv ov43 66
+setv ov00 0
+setv ov01 3000
+setv ov70 0
+seta ov17 null
+seta ov18 null
+setv ov06 va66
+seta ov16 null
+setv ov09 0
+setv ov10 1
+setv ov11 -1
+setv ov15 0
+seta ov19 null
+setv ov20 0
+setv ov61 65
+setv ov72 800
+setv ov73 650
+setv ov74 1850
+setv ov75 20
+setv ov02 800
+
+mvsf game "ch_x" game "ch_y"
+endm
+
+
+scrp 2 15 11 9
+	inst
+
+	addv ov01 1
+
+	subv ov02 1
+	doif ov01 gt 3000
+		setv va66 ov01
+		modv va66 10
+		doif va66 eq 0
+			addv ov20 1
+		endi
+	endi
+
+	doif obst 0 lt 100
+		setv ov10 1
+		setv ov11 -1
+		setv va02 rand 18 25
+		setv va02 rand 12 18
+		addv ov15 2
+	endi
+	doif obst 1 lt 100
+		setv ov10 -1
+		setv ov11 -1
+		setv va02 rand 18 25
+		setv va02 rand 12 18
+		addv ov15 2
+	endi
+
+	doif obst 2 lt 50
+		setv ov11 0
+		setv va02 rand 18 25
+		subv ov15 2
+	endi
+
+	doif carr = null
+		doif rtyp room ownr = 8
+			doif ov00 ne 99
+
+				subv ov02 10
+				setv ov11 -1
+				setv ov15 10
+				setv vely rand -25 -30
+				gsub vect
+				gsub anim
+				gsub move
+				stop
+			endi
+		endi
+	endi
+
+	subv ov15 1
+	doif ov15 gt 15
+		setv ov15 15
+	endi
+	doif ov15 lt 0
+		setv ov15 0
+	endi
+
+	doif ov02 <= 0
+		setv ov00 99
+	endi
+
+
+	doif ov00 eq 99
+		doif ov01 gt 3000
+			gsub die_
+		endi
+		doif ov01 le 3000
+			gsub die2
+		endi
+	endi
+
+	doif ov01 gt 3000
+
+
+
+
+
+
+
+
+
+		rnge 800
+	endi
+
+	doif ov01 lt 3000
+
+
+
+
+
+
+
+
+
+		rnge 100
+	endi
+
+	inst
+	doif carr = null
+		doif prop room ownr 1 < 0.25
+			doif ov19 <> null
+				setv ov00 5
+			endi
+		endi
+	endi
+	doif ov00 eq 5
+		gsub gbed
+	endi
+	slow
+
+	doif ov00 eq 98
+		doif carr = null
+			doif prop room ownr 1 > 0.25
+				plne 2200
+				setv ov00 0
+				accg 1.5
+				tick 4
+			endi
+		endi
+	endi
+
+	doif ov02 lt ov73
+		doif ov00 lt 90
+			setv ov00 2
+			doif ov01 lt 3000
+				setv va47 2
+				setv va48 14
+				setv va49 0
+				setv va45 0
+				esee va47 va48 va49
+					doif targ <> null
+						addv va45 1
+					endi
+				next
+				doif va45 gt 1
+					setv ov00 2
+				else
+					setv ov00 6
+				endi
+			endi
+		endi
+	endi
+	doif ov00 eq 6
+		gsub enst
+	endi
+	doif ov00 eq 2
+		setv va47 2
+		setv va48 14
+		setv va49 0
+		gsub gfod
+	endi
+
+	doif ov00 lt 90
+		doif ov98 le 20 and ov19 <> null
+			targ ov19
+			doif targ <> null
+				setv va50 ov02
+				targ ownr
+				doif va50 lt 180
+					setv ov00 4
+				endi
+			endi
+			targ ownr
+		endi
+	endi
+	inst
+
+	slow
+	doif ov00 eq 4 and ov19 <> null
+		targ ov19
+		doif targ <> null
+			setv va50 ov02
+			targ ownr
+			doif va50 lt 180
+				gsub gmat
+			else
+				setv ov00 0
+			endi
+		else
+			targ ownr
+			setv ov00 0
+		endi
+	endi
+
+	doif ov01 gt 3000
+
+		gsub chek
+
+		doif ov17 = null
+			gsub fmte
+		endi
+		doif ov19 = null
+			gsub fnst
+		endi
+		doif ov19 <> null
+			gsub snst
+		endi
+
+		doif ov20 gt 50
+			doif ov17 <> null
+				doif ov19 <> null
+					doif ov00 = 0
+						setv ov00 3
+					endi
+				endi
+			endi
+		endi
+		inst
+
+		slow
+		doif ov00 eq 3
+			gsub mate
+		endi
+	endi
+
+	doif ov01 le 3000
+
+		doif ov01 eq 3000
+			gsub matr
+		endi
+	endi
+
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+	doif ov00 eq 1
+		gsub nest
+	endi
+
+	stop
+
+
+	subr vect
+		doif obst 3 lt 5
+			setv va01 rand 6 12
+
+			doif rand 0 5 <> 0 and ov00 <> 1
+				setv va02 rand 2 6
+			elif ov00 = 1
+				setv va02 rand 22 24
+			endi
+			setv ov11 -1
+		endi
+		doif obst 3 gt 4
+			setv va01 rand 10 20
+			setv va02 rand 18 25
+
+
+
+
+
+		endi
+
+	retn
+
+
+	subr move
+		mulv va01 ov10
+		mulv va02 ov11
+		subv va02 ov15
+		velo va01 va02
+
+	retn
+
+	subr anim
+		setv va03 0
+
+		doif obst down lt 5
+			anim []
+			doif ov10 <= 0
+				base ov36
+				anim [4 3 2 1]
+			endi
+			doif ov10 gt 0
+				base ov37
+				anim [4 3 2 1]
+			endi
+		endi
+
+
+		doif obst down gt 4
+			anim []
+			doif ov10 <= 0
+				base ov30
+				anim [0 1 2 3 4 5 255]
+			endi
+			doif ov10 gt 0
+				base ov31
+				anim [0 1 2 3 4 5 255]
+			endi
+		endi
+	retn
+
+	subr gbed
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			inst
+			targ ownr
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				gsub slep
+			endi
+		else
+			targ ownr
+			setv ov00 0
+			seta ov19 null
+			seta ov16 null
+		endi
+		slow
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr die_
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		inst
+		new: simp 2 10 18 "woodpigeon" 24 62 49
+		accg 4
+		elas 1
+		fric 80
+		attr 192
+		perm 99
+		tick 20
+		setv ov10 va52
+		setv ov02 30
+		setv ov61 30
+		setv ov70 0
+		subv va50 20
+		subv va51 20
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+		stop
+	retn
+
+
+	subr die2
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		inst
+		new: simp 2 10 18 "woodpigeon" 24 162 49
+		elas 1
+		fric 80
+		accg 4
+		attr 192
+		perm 99
+		tick 20
+		setv ov10 va52
+		setv ov02 30
+		setv ov61 25
+		setv ov70 0
+		subv va50 20
+		subv va51 20
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+		stop
+	retn
+
+	subr slep
+		setv ov00 98
+		accg 0
+		targ ov16
+		setv va70 posx
+		setv va71 posy
+		setv va89 plne
+		targ ownr
+		subv va89 1
+		plne va89
+		subv va70 25
+		subv va71 25
+		velo 0 0
+		doif tmvt va70 va71 <> 1
+			accg 1.5
+			setv ov00 0
+			stop
+		endi
+		mvto va70 va71
+		setv ov00 98
+		tick 250
+		doif ov10 lt 0
+			pose 18
+		endi
+		doif ov10 gt 0
+			pose 19
+		endi
+
+		stop
+	retn
+
+	subr gfod
+		inst
+		setv va47 2
+		setv va48 14
+		setv va49 0
+		doif ov16 = null
+			gsub find
+			doif ov16 = null
+				setv va47 2
+				setv va48 13
+				setv va49 0
+				gsub find
+			endi
+			doif ov16 = null
+				setv va47 2
+				setv va48 8
+				setv va49 0
+				gsub find
+			endi
+			doif ov16 = null
+				setv va47 2
+				setv va48 9
+				setv va49 0
+				gsub find
+			endi
+			doif ov16 = null
+				setv va47 2
+				setv va48 3
+				setv va49 0
+				gsub find
+			endi
+			doif ov16 = null
+				targ ownr
+				setv ov00 0
+				stop
+			endi
+
+		endi
+		targ ov16
+		doif targ <> null
+			inst
+			targ ownr
+
+			gsub hunt
+
+
+			doif touc ov16 ownr <> 0
+				addv ov02 ov72
+				mesg writ ov16 12
+				doif ov02 gt ov74
+					setv ov00 0
+				endi
+				doif obst 3 lt 10
+					gsub peck
+				endi
+
+				targ ownr
+				slow
+			endi
+		endi
+		targ ownr
+		slow
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+	subr chek
+		targ ov17
+		doif targ = null
+			targ ownr
+			seta ov17 null
+		endi
+		targ ownr
+		targ ov19
+		doif targ = null
+			targ ownr
+			seta ov19 null
+		endi
+		targ ownr
+	retn
+
+	subr gmat
+		targ ov19
+		doif targ <> null
+			setv va50 ov02
+			targ ownr
+			doif va50 lt 180
+				setv va47 2
+				setv va48 6
+				setv va49 1
+				gsub find
+				doif ov16 <> null
+					gsub hunt
+
+
+					doif touc ownr ov16 <> 0
+						targ ov16
+						doif ov99 = 1
+							targ ownr
+							addv ov98 100
+							gsub peck
+							setv ov00 1
+						else
+							targ ownr
+							setv ov00 0
+							gsub roam
+							stop
+						endi
+					endi
+				else
+					setv ov00 0
+				endi
+				gsub vect
+				gsub anim
+				gsub move
+				stop
+			else
+				setv ov00 0
+			endi
+		endi
+	retn
+
+
+	subr fmte
+		setv va47 2
+		setv va48 15
+		setv va49 11
+		gsub find
+		setv va88 0
+		doif ov16 <> null
+			inst
+			esee va47 va48 va49
+				doif targ <> null
+					doif va88 eq 0
+						setv va50 ov06
+						seta va51 ov17
+						seta va52 targ
+						targ ownr
+						doif va50 ne ov06
+							doif va51 = null
+								seta ov17 va52
+								setv va88 1
+								targ ov17
+								seta ov17 ownr
+								targ ownr
+							endi
+						endi
+					endi
+				endi
+			next
+		endi
+	retn
+
+	subr fnst
+		setv va47 2
+		setv va48 17
+		setv va49 1
+		gsub find
+		setv va88 0
+		doif ov16 <> null
+			inst
+			esee va47 va48 va49
+				doif targ <> null
+					doif va88 eq 0
+						setv va50 ov71
+						seta va52 targ
+						targ ownr
+						doif va50 eq 0
+							seta ov19 va52
+							setv va88 1
+							targ ov19
+							setv ov71 1
+							targ ownr
+						endi
+					endi
+				endi
+			next
+			targ ownr
+		endi
+	retn
+	subr snst
+		seta va50 null
+		doif ov06 eq 0
+			targ ov19
+			doif targ = null
+				targ ownr
+				seta ov19 null
+			endi
+			targ ownr
+		endi
+		doif ov06 eq 1
+			targ ov17
+			doif targ <> null
+				seta va50 ov19
+			else
+				targ ownr
+				seta ov17 null
+			endi
+			targ ownr
+			doif va50 <> null
+				doif ov19 <> null
+					targ ov19
+					doif targ <> null
+						targ ownr
+						seta ov19 va50
+					endi
+				endi
+				targ ownr
+			endi
+
+		endi
+	retn
+
+	subr mate
+		seta ov16 ov17
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov17
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				rnge 600
+				setv va66 0
+				esee 2 15 11
+					addv va66 1
+				next
+
+				doif ov06 eq 1
+					doif va66 <= 4
+						setv ov70 1
+						setv ov00 1
+					else
+						setv ov00 0
+					endi
+				else
+					setv ov00 0
+				endi
+				setv ov20 0
+			endi
+		else
+			targ ownr
+			seta ov17 null
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr matr
+		setv va50 ov00
+		setv va51 ov06
+		setv va52 posx
+		setv va53 posy
+		subv va52 25
+		subv va53 25
+		inst
+		new: simp 2 15 11 "woodpigeon" 86 0 2200
+		elas 5
+		accg 1.5
+		perm 99
+		tick 4
+		attr 195
+		rnge 1000
+		bhvr 16
+
+		setv ov30 0
+
+		setv ov31 8
+
+		setv ov32 36
+
+		setv ov33 40
+
+		setv ov34 22
+
+		setv ov35 30
+
+		setv ov36 20
+
+		setv ov37 28
+
+		setv ov38 16
+
+		setv ov39 17
+
+		setv ov40 44
+
+		setv ov41 52
+
+		setv ov42 62
+
+		setv ov43 66
+
+
+		setv ov00 va50
+		setv ov01 3000
+		setv ov70 0
+		seta ov17 null
+		seta ov18 null
+		setv ov06 va51
+		seta ov16 null
+		setv ov09 0
+		setv ov10 1
+		setv ov11 -1
+		setv ov15 0
+		seta ov19 null
+		setv ov30 0
+		setv ov61 65
+		setv ov72 800
+		setv ov73 650
+		setv ov74 1850
+		setv ov75 20
+		setv ov02 200
+		doif tmvt va52 va53 <> 1
+			kill targ
+			targ ownr
+			setv ov00 0
+			velo rand -5 5 -5
+			stop
+		endi
+		mvto va52 va53
+
+		targ ownr
+		kill targ
+		stop
+
+	retn
+
+	subr enst
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov19
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				targ ov16
+				setv va89 ov02
+				targ ownr
+				doif va89 gt 0
+					negv ov75
+					mesg wrt+ ov16 256 ov75 0 0
+					negv ov75
+					addv ov02 200
+					setv ov00 0
+				else
+					setv ov00 0
+				endi
+			endi
+		else
+			targ ownr
+			seta ov19 null
+			setv ov00 0
+		endi
+		targ ownr
+		setv ov15 5
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+
+	subr roam
+		setv va66 rand 0 20
+
+		doif va66 eq 0
+			negv ov10
+		endi
+		doif obst 3 lt 5
+			doif va66 gt 15
+				gsub peck
+			endi
+		endi
+
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr peck
+		anim []
+		doif ov10 <= 0
+			base ov32
+			anim [0 1 2 3 2 1 0]
+			over
+		endi
+		doif ov10 gt 0
+			base ov33
+			anim [0 1 2 3 2 1 0]
+			over
+		endi
+	retn
+
+	subr nest
+		inst
+		doif ov19 = null
+			setv ov00 0
+			stop
+		endi
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov19
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				mesg wrt+ ov16 256 ov98 0 0
+				subv ov98 ov98
+				doif ov06 eq 1
+					doif ov70 eq 1
+						mesg wrt+ ov16 260 1 1 0
+						setv ov70 0
+					endi
+				endi
+				setv ov00 0
+			endi
+		else
+			targ ownr
+			seta ov19 null
+			setv ov00 0
+		endi
+		targ ownr
+		setv ov15 10
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+		slow
+	retn
+
+	subr crap
+		setv va50 posx
+		setv va51 posy
+		subv va50 8
+		subv va51 0
+		doif totl 2 1 10 gt 0
+			rtar 2 1 10
+			doif targ <> null
+				setv va52 ov00
+			else
+				setv va52 0
+			endi
+			targ ownr
+		endi
+
+		inst
+		new: simp 2 10 35 "woodpigeon" 4 182 49
+		elas 1
+		fric 80
+		attr 195
+		perm 99
+		accg 3
+		tick 10
+		setv ov00 va52
+		setv ov01 0
+		setv ov61 10
+		doif ov00 eq 0
+			pose 2
+		else
+			pose 0
+		endi
+		doif tmvt va50 va51 <> 1
+			kill targ
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		slow
+	retn
+
+	subr find
+
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va50 relx targ ownr
+				setv va51 rely targ ownr
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		targ ownr
+
+		doif va58 <> null
+
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+	retn
+	subr hunt
+		inst
+		targ ov16
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 0
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 0
+		endi
+	retn
+
+	subr near
+		setv va40 0
+		doif ov16 <> null
+			inst
+			targ ov16
+			setv va50 posx
+			setv va51 posy
+			setv va52 posx
+			setv va53 posy
+			subv va50 50
+			subv va51 50
+			addv va52 50
+			addv va53 50
+			targ ownr
+			doif posx gt va50
+				doif posy gt va51
+					doif posx lt va52
+						doif posy lt va53
+							setv va40 1
+						endi
+					endi
+				endi
+			endi
+			slow
+		endi
+	retn
+
+
+endm
+
+scrp 2 15 11 5
+	setv ov00 0
+	accg 1.5
+	tick 4
+endm
+
+scrp 2 15 11 6
+	inst
+	doif obst down > 5
+		doif velx <= 0
+			setv ov10 -1
+		endi
+		doif velx > 0
+			setv ov10 1
+		endi
+	endi
+
+
+	doif obst 3 < 5
+		anim []
+		doif ov10 <= 0
+			base ov36
+			anim [4 3 2 1]
+		endi
+		doif ov10 > 0
+			base ov37
+			anim [4 3 2 1]
+		endi
+	endi
+
+
+	doif obst 3 > 4
+		anim []
+		doif ov10 <= 0
+			base ov30
+			anim [0 1 2 3 4 5 255]
+		endi
+		doif ov10 > 0
+			base ov31
+			anim [0 1 2 3 4 5 255]
+		endi
+	endi
+
+	slow
+endm
+
+
+
+scrp 2 15 11 256
+	addv ov02 _p1_
+endm
+
+
+
+scrp 2 15 11 257
+	addv ov98 _p1_
+endm
+
+scrp 2 15 11 266
+endm
+
+scrp 2 10 18 9
+	subv ov02 1
+	doif ov02 gt 0
+		doif ov70 eq 0
+			doif ov10 <= 0
+				base 0
+				anim [0 1 2 3 4 5 6 7]
+				over
+			endi
+			doif ov10 gt 0
+				anim []
+				base 8
+				anim [0 1 2 3 4 5 6 7]
+				over
+			endi
+		else
+			doif ov10 <= 0
+				base 0
+				pose 16
+			endi
+			doif ov10 gt 0
+				base 0
+				pose 20
+			endi
+		endi
+	endi
+	doif ov02 le 0
+		anim []
+		doif ov10 <= 0
+			base 16
+			anim [0 1 2]
+			over
+		endi
+		doif ov10 gt 0
+			base 20
+			anim [0 1 2]
+			over
+		endi
+		wait 10
+		kill targ
+	endi
+endm
+
+scrp 2 10 18 6
+	setv ov70 1
+endm
+
+
+scrp 2 15 13 9
+	base 0
+	anim [2 3 4 5 255]
+	mesg wrt+ ov19 258 1 0 0
+	addv ov01 1
+	doif ov01 gt 20
+		setv va50 posx
+		setv va51 posy
+		seta va52 ov19
+		inst
+		new: simp 2 15 11 "woodpigeon" 86 92 2200
+		accg 1.5
+		elas 5
+		perm 50
+		tick 4
+		attr 195
+		rnge 1000
+		bhvr 16
+
+
+		setv ov30 0
+
+		setv ov31 8
+
+		setv ov32 36
+
+		setv ov33 40
+
+		setv ov34 22
+
+		setv ov35 30
+
+		setv ov36 20
+
+		setv ov37 28
+
+		setv ov38 16
+
+		setv ov39 17
+
+		setv ov40 44
+
+		setv ov41 52
+
+		setv ov42 62
+
+		setv ov43 66
+
+
+		setv ov00 0
+		setv ov01 0
+		setv ov70 0
+		seta ov17 null
+		seta ov18 null
+		setv ov06 rand 0 1
+		seta ov16 null
+		setv ov09 0
+		setv ov10 1
+		setv ov11 -1
+		setv ov15 0
+		seta ov19 va52
+		setv ov30 0
+		setv ov61 60
+		setv ov72 800
+		setv ov73 650
+		setv ov74 1850
+		setv ov75 20
+
+		setv ov02 200
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+
+		targ ownr
+		kill targ
+	endi
+endm
+
+
+scrp 2 15 13 1
+	accg 4
+	setv vely 0
+endm
+
+scrp 2 15 13 6
+	setv va50 posx
+	setv va51 posy
+
+	inst
+	new: simp 2 10 36 "woodpigeon" 1 87 49
+	accg 4
+	elas 0
+	perm 99
+	tick 30
+	attr 195
+	setv ov01 1
+	subv va50 25
+	subv va51 15
+	doif tmvt va50 va51 <> 1
+		kill targ
+		kill ownr
+		stop
+	endi
+	mvto va50 va51
+	setv ov61 15
+	setv vely 0
+	targ ownr
+	kill targ
+endm
+
+*Egg timer..?
+scrp 2 18 12 9
+	addv ov01 1
+	doif ov01 gt 20
+		setv va50 posx
+		setv va51 posy
+		seta va52 ov19
+		inst
+		new: simp 2 15 13 "woodpigeon" 7 86 49
+		elas 0
+		clac 0
+		accg 0
+		perm 99
+		tick 30
+		attr 198
+		bhvr 16
+		seta ov19 va52
+		setv ov01 1
+		setv va66 rand 35 12
+		subv va50 va66
+		subv va51 15
+		setv ov61 55
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+			mesg writ ownr 0
+			stop
+		endi
+		mvto va50 va51
+		pose 2
+		targ ownr
+		kill targ
+	endi
+	setv va88 0
+*why is it looking for robin's nests..?
+	etch 2 17 1
+		addv va88 1
+	next
+	doif va88 lt 1
+		mesg writ targ 0
+	endi
+endm
+scrp 2 18 12 1
+	accg 4
+	setv vely 0
+endm
+scrp 2 18 12 6
+	setv va50 posx
+	setv va51 posy
+	seta va52 ov19
+	inst
+	new: simp 2 10 36 "woodpigeon" 1 87 49
+	elas 0
+	accg 4
+	perm 99
+	tick 30
+	attr 195
+	setv ov01 1
+	subv va50 25
+	subv va51 15
+	doif tmvt va50 va51 <> 1
+		kill targ
+		kill ownr
+		stop
+	endi
+	mvto va50 va51
+	setv ov61 15
+	setv vely 0
+	targ ownr
+	kill targ
+endm
+
+scrp 2 10 36 9
+
+endm
+
+scrp 2 10 35 9
+endm
+
+
+scrp 2 15 11 12
+	stim writ from 80 4
+	kill ownr
+endm
+
+scrp 2 15 13 12
+	stim writ from 80 3
+	kill ownr
+endm
+
+scrp 2 18 12 12
+	stim writ from 80 2
+	kill ownr
+endm
+
+rscr
+
+
+
+enum 2 15 11
+	kill targ
+next
+scrx 2 15 11 9
+scrx 2 15 11 5
+scrx 2 15 11 256
+scrx 2 15 11 257
+scrx 2 15 11 266
+scrx 2 15 11 6
+
+
+enum 2 15 13
+	kill targ
+next
+scrx 2 15 13 9
+scrx 2 15 13 256
+scrx 2 15 13 257
+scrx 2 15 13 266
+scrx 2 15 13 1
+scrx 2 15 13 6
+
+
+enum 2 10 18
+	kill targ
+next
+scrx 2 10 18 9
+scrx 2 10 18 6
+
+enum 2 10 35
+	kill targ
+next
+scrx 2 10 35 9
+
+
+enum 2 18 12
+	kill targ
+next
+scrx 2 18 12 9
+scrx 2 18 12 6
+scrx 2 18 12 1
+
+enum 2 10 36
+	kill targ
+next
+scrx 2 10 36 9
+
+endm

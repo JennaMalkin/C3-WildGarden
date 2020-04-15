@@ -1,0 +1,1606 @@
+*GB Template
+*# Pray-File "GB_Hummingbird.agent"
+*# DS-Name "Hummingbird (C3)"
+*# Depend gb_c3_conv.c16 caterpillar.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Hummingbird conversion. After injection, place nest in an appropriate area."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 2
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+*Nest!
+new: simp 2 17 2 "hummingbird" 4 34 50
+*This is the stuff to put it in "placement mode"
+setv name "placed" 2
+attr 3
+pose 3
+tint 255 128 128 128 128
+*this is the normal stuff
+setv ov00 0
+setv ov01 0
+setv ov61 15
+setv ov70 0
+setv ov71 0
+setv ov72 2120
+setv ov73 550
+*Setting this to 1 so it doesn't move?
+setv ov80 1
+setv ov98 0
+setv ov02 0
+tick 1
+mvsf game "ch_x" game "ch_y"
+
+
+
+scrp 2 15 3 9
+	inst
+
+	addv ov01 1
+*ov02.. lifespan?
+	subv ov02 1
+	doif ov01 gt 3000
+		setv va66 ov01
+		modv va66 10
+		doif va66 eq 0
+*if ov01 is gt 3000 and evenly divisible by 10, add 1 to ov20
+			addv ov20 1
+		endi
+	endi
+*doif the left? wall is close
+	doif obst 0 lt 100
+		setv ov10 1
+		setv ov11 -1
+		setv va02 rand 18 25
+		setv va02 rand 12 18
+		addv ov15 2
+	endi
+*doif the right? wall is close
+	doif obst 1 lt 100
+		setv ov10 -1
+		setv ov11 -1
+		setv va02 rand 18 25
+		setv va02 rand 12 18
+		addv ov15 2
+	endi
+*doif the ceiling? is close
+	doif obst 2 lt 50
+		setv ov11 1
+		setv va02 rand 18 25
+		subv ov15 2
+	endi
+*ov 10 (pos--right, neg left) and 11 (neg-up, pos-down) seem to be directional pointers
+*ov 15 might be a lft/gravity thing? Higher/go up and lesser/go down?
+
+*freak out if you're underwater probably
+	doif carr = null
+		doif rtyp room ownr = 8
+			doif ov00 ne 99
+				subv ov02 10
+				setv ov11 -1
+				setv vely rand -25 -30
+				gsub vect
+				gsub anim
+				gsub move
+				stop
+			endi
+		endi
+	endi
+
+*ov15 (lift?) can't be higher than 15 or less than 0
+	subv ov15 1
+	doif ov15 gt 15
+		setv ov15 15
+	endi
+	doif ov15 lt 0
+		setv ov15 0
+	endi
+
+*I was right, ov02 is lifespan-- this kills it when it's too low
+	doif ov02 le 0
+		setv ov00 99
+	endi
+
+	doif ov00 eq 99
+		doif ov01 gt 3000
+			gsub die_
+		endi
+		doif ov01 le 3000
+			gsub die2
+		endi
+	endi
+
+*ov01 has...something to do with range?
+	doif ov01 gt 3000
+		rnge 800
+	endi
+
+	doif ov01 lt 3000
+		rnge 100
+	endi
+
+	doif carr = null
+*this is something to do with CA levels, dark and light.
+		doif prop room ownr 1 < 0.5
+			doif ov19 <> null
+*I'm actually going to comment this out... so these birds can be used in rooms 
+*with little to no light
+*		setv ov00 5
+			endi
+		endi
+	endi
+*ov00 is a STATE
+*if light is too low, go to bed?
+	doif ov00 eq 5
+		gsub gbed
+	endi
+
+	doif ov00 eq 98
+		doif carr = null
+			doif prop room ownr 1 > 0.5
+				plne 2200
+				setv ov00 0
+				accg 0
+				tick 4
+			endi
+		endi
+	endi
+
+*tiny chance of gsub crap. What.
+	setv va66 rand 0 500
+	doif va66 eq 0
+		gsub crap
+	endi
+
+*If your life is low? If you're old enough
+	doif ov02 lt ov73
+		doif ov00 lt 90
+			setv ov00 2
+			doif ov01 lt 3000
+				setv va47 2
+				setv va48 7
+				setv va49 0
+				setv va45 0
+*look for 2 7 0, that is...flowers/leaves
+				esee va47 va48 va49
+					doif targ <> null
+						addv va45 1
+					endi
+				next
+*so ov00 is some kind of state
+* 2 is near plants
+
+* 6 is not near plants.
+				doif va45 gt 1
+					setv ov00 2
+				else
+					setv ov00 6
+				endi
+			endi
+		endi
+	endi
+	doif ov00 eq 6
+*enst? Look around?
+		gsub enst
+	endi
+	doif ov00 eq 2
+*get food?
+		setv va47 2
+		setv va48 7
+		setv va49 0
+		gsub gfod
+	endi
+
+* CONFUSED.
+* ov19 is clearly an agent
+	doif ov00 lt 90
+		doif ov98 le 20 and ov19 <> null
+			targ ov19
+			doif targ <> null
+*getting the ov02 of ov19 (nest?)
+				setv va50 ov02
+				targ ownr
+				doif va50 lt 180
+					setv ov00 4
+				endi
+			endi
+			targ ownr
+		endi
+	endi
+	inst
+	slow
+*(state is 4 and you have an OV19)
+	doif ov00 eq 4 and ov19 <> null
+		targ ov19
+		doif targ <> null
+			setv va50 ov02
+			targ ownr
+			doif va50 lt 180
+*gather materials?
+* if your nest is less than stage 180?
+				gsub gmat
+			else
+				setv ov00 0
+			endi
+		else
+			targ ownr
+*state 0 otherwise
+			setv ov00 0
+		endi
+	endi
+
+	doif ov01 gt 3000
+
+		gsub chek
+*wait, is ov17 MATE?!
+		doif ov17 = null
+			gsub fmte
+		endi
+*and ov19 is NEST?!
+		doif ov19 = null
+			gsub fnst
+		endi
+		doif ov19 <> null
+			gsub snst
+		endi
+*WHAT IS OV20
+		doif ov20 gt 50
+*set state to 3 if you have no mate, or nest, or anything to do
+			doif ov17 <> null
+				doif ov19 <> null
+					doif ov00 = 0
+						setv ov00 3
+					endi
+				endi
+			endi
+		endi
+		inst
+		slow
+*so if you have no mate or nest or anything to do... look for a mate
+		doif ov00 eq 3
+			gsub mate
+		endi
+	endi
+
+*WHY IS THIS CODING SO BAD
+	doif ov01 le 3000
+		doif ov01 eq 3000
+			gsub matr
+		endi
+	endi
+*State 0. roam
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+*State 1, nest hunt?
+	doif ov00 eq 1
+		gsub nest
+	endi
+
+	stop
+
+*These are about movement
+	subr vect
+
+		setv va01 rand 0 25
+		setv va02 rand 0 25
+		addv va02 ov15
+	retn
+
+*ov10 is left/right, ov11/15 is updown
+	subr move
+		mulv va01 ov10
+		mulv va02 ov11
+		subv va02 ov15
+		velo va01 va02
+	retn
+
+	subr anim
+		setv va03 0
+		anim []
+		doif ov10 <= 0
+			base ov30
+			anim [1 3 255]
+		endi
+		doif ov10 > 0
+			base ov31
+			anim [1 3 255]
+		endi
+
+	retn
+
+*go... to bed?
+	subr gbed
+*set ov16 to your nest
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			inst
+*hunt and near before sleep
+			targ ownr
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				gsub slep
+			endi
+		else
+*if you don't have a nest, set state to roam.
+			targ ownr
+			setv ov00 0
+			seta ov19 null
+			seta ov16 null
+		endi
+		slow
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+*Why are there two dies? PRobably based on age.
+	subr die_
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		inst
+		new: simp 2 10 34 "hummingbird" 24 10 49
+		accg 4
+		elas 1
+		fric 80
+		attr 195
+		perm 99
+		tick 20
+		setv ov10 va52
+		setv ov02 30
+		setv ov61 30
+		setv ov70 0
+		subv va50 20
+		subv va51 20
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+		stop
+	retn
+
+	subr die2
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		inst
+		new: simp 2 10 34 "hummingbird" 24 48 49
+		elas 1
+		fric 80
+		accg 4
+		attr 195
+		perm 99
+		tick 20
+		setv ov10 va52
+		setv ov02 30
+		setv ov61 25
+		setv ov70 0
+		subv va50 20
+		subv va51 20
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		kill targ
+		stop
+	retn
+
+*sleep? This is done after gbed/hunt/near
+	subr slep
+		setv ov00 98
+*so is state 98 asleep? So all that state lt 90 thing is to prevent sleepwalking?
+		accg 0
+*get position and plane of nest?
+		targ ov16
+		setv va70 posx
+		setv va71 posy
+		setv va89 plne
+		targ ownr
+		subv va89 1
+		plne va89
+		subv va70 15
+		subv va71 15
+
+		velo 0 0
+		doif tmvt va50 va51 <> 1
+			setv ov00 0
+			tick 4
+			stop
+		endi
+*Ooh, so you can move safely inside it
+		mvto va70 va71
+		setv ov00 98
+		tick 250
+		anim [0]
+*pose according to direction
+		doif ov10 <= 0
+			base 0
+			pose ov32
+		endi
+		doif ov10 gt 0
+			base 0
+			pose ov33
+		endi
+
+		stop
+	retn
+
+* get food
+	subr gfod
+		inst
+*is ov16 supposed to be just be "agent of affection" or something
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+		doif targ <> null
+			inst
+			targ ownr
+
+			gsub hunt
+			gsub near
+*find, hunt near, 12 is eat script?
+			doif va40 eq 1
+				addv ov02 ov72
+				mesg writ ov16 12
+				doif ov02 gt ov74
+*roam if you're young enough?
+					setv ov00 0
+				endi
+				targ ownr
+				slow
+			endi
+		else
+		endi
+		targ ownr
+		slow
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+*gather nesting materials?
+	subr gmat
+		targ ov19
+		doif targ <> null
+			setv va50 ov02
+			targ ownr
+			doif va50 lt 180
+*if you have a nest and it's not fully built
+				setv va47 2
+				setv va48 6
+				setv va49 1
+*nests can ONLY be buit from 2-6-1, GRASS
+				gsub find
+				doif ov16 <> null
+					gsub hunt
+					gsub near
+					doif va40 eq 1
+*if you got something? Find nest?
+						addv ov98 100
+						setv ov00 1
+					endi
+				else
+*roam if you failed
+					setv ov00 0
+				endi
+				gsub vect
+				gsub anim
+				gsub move
+				stop
+			else
+				setv ov00 0
+			endi
+		endi
+	retn
+
+*Check for mate/nest?
+	subr chek
+		targ ov17
+		doif targ = null
+			targ ownr
+			seta ov17 null
+		endi
+		targ ownr
+		targ ov19
+		doif targ = null
+			targ ownr
+			seta ov19 null
+		endi
+		targ ownr
+	retn
+
+*find mate... I think va88 = 1 is sucess?
+	subr fmte
+		setv va47 2
+		setv va48 15
+		setv va49 3
+		gsub find
+*find a bird of your own kind~
+		setv va88 0
+		doif ov16 <> null
+			inst
+			esee va47 va48 va49
+				doif targ <> null
+					doif va88 eq 0
+						setv va50 ov06
+						seta va51 ov17
+						seta va52 targ
+						targ ownr
+						doif va50 ne ov06
+							doif va51 = null
+								seta ov17 va52
+								setv va88 1
+								targ ov17
+								seta ov17 ownr
+								targ ownr
+							endi
+						endi
+					endi
+				endi
+			next
+		endi
+	retn
+
+*find a nest~? va88 = 1 = yes
+*ov71 for a nest seems to be a "taken" or "not taken" flag
+	subr fnst
+		setv va47 2
+		setv va48 17
+		setv va49 2
+		gsub find
+		setv va88 0
+		doif ov16 <> null
+			inst
+			esee va47 va48 va49
+				doif targ <> null
+					doif va88 eq 0
+						setv va50 ov71
+						seta va52 targ
+						targ ownr
+						doif va50 eq 0
+							seta ov19 va52
+							setv va88 1
+							targ ov19
+							setv ov71 1
+							targ ownr
+						endi
+					endi
+				endi
+			next
+			targ ownr
+		endi
+	retn
+
+*?? What is ov06?
+	subr snst
+		seta va50 null
+		doif ov06 eq 0
+			inst
+			targ ov19
+			doif targ = null
+				targ ownr
+				seta ov19 null
+			endi
+			targ ownr
+		endi
+		doif ov06 eq 1
+			inst
+			targ ov17
+			doif targ <> null
+				seta va50 ov19
+			else
+				targ ownr
+				seta ov17 null
+			endi
+			targ ownr
+			doif va50 <> null
+				doif ov19 <> null
+					targ ov19
+					doif targ <> null
+						targ ownr
+						seta ov19 va50
+					endi
+				endi
+				targ ownr
+			endi
+
+		endi
+	retn
+
+*go to mate
+	subr mate
+		seta ov16 ov17
+		inst
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov17
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				doif ov06 eq 1
+					setv ov70 1
+*if sucess, go to nest?
+					setv ov00 1
+				else
+					setv ov00 0
+				endi
+				setv ov20 0
+			endi
+		else
+			targ ownr
+			seta ov17 null
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+*Mate...? Creates a new bird..
+	subr matr
+		setv va50 ov00
+		setv va51 ov06
+		setv va52 posx
+		setv va53 posy
+		subv va52 25
+		subv va53 25
+		inst
+		new: simp 2 15 3 "hummingbird" 10 0 2500
+		elas 5
+		accg 0
+		perm 49
+		tick 4
+		attr 195
+		rnge 1000
+		bhvr 16
+
+		setv ov30 2
+		setv ov31 6
+		setv ov32 0
+		setv ov33 1
+		setv ov34 10
+
+		setv ov00 va50
+		setv ov01 3000
+		setv ov70 0
+		seta ov17 null
+		seta ov18 null
+		setv ov06 va51
+		seta ov16 null
+		setv ov09 0
+		setv ov10 1
+		setv ov11 -1
+		setv ov15 0
+		seta ov19 null
+		setv ov61 60
+		setv ov72 800
+		setv ov73 650
+		setv ov74 1850
+		setv ov75 20
+		setv ov02 200
+		doif tmvt va52 va53 <> 1
+			kill targ
+			targ ownr
+			setv ov00 0
+			stop
+		else
+			mvto va52 va53
+			kill ownr
+		endi
+		stop
+
+	retn
+
+*something nest?
+	subr enst
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov19
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+				targ ov16
+*ov02 in the nest has to be high enough
+				setv va89 ov02
+				targ ownr
+				doif va89 gt 0
+					negv ov75
+*message the nest with negative whatever ov75 was.
+					mesg wrt+ ov16 256 ov75 0 0
+					negv ov75
+*does this add to your lifespan?
+					addv ov02 200
+					setv ov00 0
+				else
+					setv ov00 0
+				endi
+			endi
+		else
+			targ ownr
+			seta ov19 null
+			setv ov00 0
+		endi
+		targ ownr
+*nagivation? 
+		setv ov15 5
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr roam
+		setv va66 rand 0 20
+
+		doif va66 eq 0
+			negv ov10
+		endi
+		doif va66 eq 1
+			negv ov11
+		endi
+
+
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+*go to nest
+	subr nest
+		inst
+		doif ov19 = null
+			setv ov00 0
+			stop
+		endi
+		seta ov16 ov19
+		targ ov16
+		doif targ <> null
+			targ ownr
+			seta ov16 ov19
+			gsub hunt
+			gsub near
+			doif va40 eq 1
+*SERIOUSLY WHAT THE CRAP.
+*WHERE did ov98 come from, where did ov70 come from.. and ov06
+				mesg wrt+ ov16 256 ov98 0 0
+*WHAT IS THE POINT OF THIS why not just set it to 0...
+				subv ov98 ov98
+				doif ov06 eq 1
+					doif ov70 eq 1
+						mesg wrt+ ov16 260 1 0 0
+						setv ov70 0
+					endi
+				endi
+				setv ov00 0
+			endi
+		else
+			targ ownr
+			seta ov19 null
+			setv ov00 0
+		endi
+		targ ownr
+		setv ov15 10
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+		slow
+	retn
+
+*This actually is what it sounds like.
+	subr crap
+		setv va50 posx
+		setv va51 posy
+		subv va50 8
+		subv va51 0
+*2 1 10 doesn't even EXIST.
+		doif totl 2 1 10 gt 0
+			rtar 2 1 10
+			doif targ <> null
+				setv va52 ov00
+			else
+				setv va52 0
+			endi
+			targ ownr
+		endi
+
+		inst
+		new: simp 2 10 5 "hummingbird" 4 78 49
+		elas 1
+		fric 80
+		attr 195
+		perm 99
+		accg 3
+		tick 10
+		setv ov00 va52
+		setv ov61 10
+		setv ov01 0
+		doif ov00 eq 0
+			pose 2
+		else
+			pose 0
+		endi
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		targ ownr
+		slow
+	retn
+
+*Find Something you know the classifiers for
+	subr find
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va50 relx targ ownr
+				setv va51 rely targ ownr
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		targ ownr
+
+		doif va58 <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+	retn
+
+*Hunt a certain agent -- find the difference between you and it, and move towards it
+	subr hunt
+		inst
+		targ ov16
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 1
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 0
+		endi
+	retn
+
+*this sets va40 to 1 if you're within 100px of your target.
+	subr near
+		setv va40 0
+		doif ov16 <> null
+			inst
+			targ ov16
+			setv va50 posx
+			setv va51 posy
+			setv va52 posx
+			setv va53 posy
+			subv va50 50
+			subv va51 50
+			addv va52 50
+			addv va53 50
+			targ ownr
+			doif posx gt va50
+				doif posy gt va51
+					doif posx lt va52
+						doif posy lt va53
+							setv va40 1
+						endi
+					endi
+				endi
+			endi
+			slow
+		endi
+	retn
+
+
+endm
+
+scrp 2 15 3 5
+	setv ov00 0
+	accg 0
+	tick 4
+endm
+
+scrp 2 15 3 6
+	inst
+	doif velx <= 0
+		setv ov10 -1
+	endi
+	doif velx > 0
+		setv ov10 1
+	endi
+
+	doif obst 3 > 4
+		anim []
+		doif ov10 <= 0
+			base ov30
+			anim [1 3 255]
+		endi
+		doif ov10 > 0
+			base ov31
+			anim [1 3 255]
+		endi
+	endi
+
+	slow
+endm
+
+
+
+scrp 2 15 3 256
+	addv ov02 _p1_
+endm
+
+
+
+scrp 2 15 3 257
+	addv ov98 _p1_
+endm
+
+scrp 2 15 3 266
+endm
+
+*Timer for a dead hummingbird
+scrp 2 10 34 9
+	subv ov02 1
+	doif ov02 gt 0
+		doif ov70 eq 0
+			anim []
+			doif ov10 <= 0
+				base 0
+				anim [0 1 2 3 4 5 6 7]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+				endi
+				over
+			endi
+			doif ov10 gt 0
+				base 12
+				anim [0 1 2 3 4 5 6 7]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+				endi
+				over
+			endi
+		else
+			anim []
+			doif ov10 <= 0
+				base 8
+				anim [0]
+			endi
+			doif ov10 gt 0
+				base 20
+				anim [0]
+			endi
+		endi
+	endi
+	doif ov02 le 0
+		anim []
+		doif carr = null
+			doif ov10 <= 0
+				base 8
+				anim [0 1 2 3]
+				over
+			endi
+			doif ov10 gt 0
+				base 20
+				anim [0 1 2 3]
+				over
+			endi
+			wait 10
+			kill targ
+		endi
+	endi
+endm
+
+*Drop dead bird
+scrp 2 10 34 6
+	setv ov70 1
+endm
+
+*Timer for a BABY hummingbird
+scrp 2 15 7 9
+	base 0
+	anim [2 3 4 5 255]
+	mesg wrt+ ov19 258 1 0 0
+	addv ov01 1
+	doif ov01 gt 20
+		setv va50 posx
+		setv va51 posy
+		seta va52 ov19
+		inst
+		new: simp 2 15 3 "hummingbird" 10 38 49
+		accg 0
+		elas 5
+		perm 50
+		tick 4
+		attr 195
+		rnge 1000
+		bhvr 16
+
+		setv ov30 2
+		setv ov31 6
+		setv ov32 0
+		setv ov33 1
+		setv ov34 10
+
+
+		setv ov00 0
+		setv ov01 0
+		setv ov70 0
+		seta ov17 null
+		seta ov18 null
+		setv ov06 rand 0 1
+		seta ov16 null
+		setv ov09 0
+		setv ov10 1
+		setv ov11 -1
+		setv ov15 0
+		seta ov19 va52
+		setv ov61 55
+		setv ov72 800
+		setv ov73 650
+		setv ov74 1850
+		setv ov75 20
+
+		setv ov02 200
+		doif tmvt va50 va51 <> 1
+			kill targ
+			stop
+		endi
+
+		mvto va50 va51
+
+		targ ownr
+		kill targ
+	endi
+endm
+
+*the baby is pushed?
+scrp 2 15 7 1
+	accg 4
+	setv vely 0
+endm
+
+*The baby collides...? It dies D:
+scrp 2 15 7 6
+	setv va50 posx
+	setv va51 posy
+
+	inst
+	new: simp 2 10 4 "hummingbird" 1 73 49
+	accg 4
+	elas 0
+	perm 99
+	tick 30
+	bhvr 16
+	attr 195
+	setv ov01 1
+	subv va50 25
+	subv va51 15
+	doif tmvt va50 va51 <> 1
+		kill targ
+		stop
+	endi
+
+	mvto va50 va51
+	setv ov61 15
+	setv vely 0
+	targ ownr
+	kill targ
+endm
+
+*egg timer
+scrp 2 18 3 9
+	addv ov01 1
+	doif ov01 gt 20
+		setv va50 posx
+		setv va51 posy
+		seta va52 ov19
+*!* More birds...
+		reps rand 1 4
+			inst
+			new: simp 2 15 7 "hummingbird" 6 72 2200
+			elas 0
+			clac 0
+			accg 0
+			perm 99
+			bhvr 16
+			tick 30
+			attr 198
+			seta ov19 va52
+			setv ov01 1
+			setv va66 rand 35 12
+			subv va50 va66
+			subv va51 15
+			doif tmvt va50 va51 <> 1
+				kill targ
+				stop
+			endi
+		repe
+
+		mvto va50 va51
+		setv ov61 55
+		pose 2
+		targ ownr
+		kill targ
+	endi
+	setv va88 0
+	etch 2 17 2
+		addv va88 1
+	next
+	doif va88 lt 1
+		mesg writ targ 0
+	endi
+endm
+
+*Egg push
+scrp 2 18 3 1
+	accg 4
+	setv vely 0
+endm
+
+*Egg collision
+scrp 2 18 3 6
+	setv va50 posx
+	setv va51 posy
+	inst
+	new: simp 2 10 4 "hummingbird" 1 73 49
+	elas 0
+	accg 4
+	perm 99
+	tick 30
+	attr 195
+	setv ov01 1
+	subv va50 25
+	subv va51 15
+	doif tmvt va50 va51 <> 1
+		kill targ
+		kill ownr
+		stop
+	endi
+
+	mvto va50 va51
+	setv ov61 12
+	setv vely 0
+	targ ownr
+	kill targ
+endm
+
+scrp 2 10 4 9
+	kill ownr
+endm
+scrp 2 10 5 9
+	kill ownr
+endm
+
+*drop script
+scrp 2 17 2 5
+	setv va00 228
+	tint va00 128 128 128 128
+	reps 10
+		doif movs = 0
+			wait 10
+			subv va00 10
+			tint va00 128 128 128 128
+		else
+			tint 255 128 128 128 128
+			stop
+		endi
+	repe
+	inst
+	doif movs ne 0
+		stop
+	endi
+	setv name "placed" 1
+	tint 128 128 128 128 128
+	attr 0
+	sndc "beam"
+	setv va00 posx
+	setv va01 posy
+**Create a couple happy little birds~
+	reps 2
+		new: simp 2 15 3 "hummingbird" 10 0 2200
+		accg 0
+		aero 30
+		tick 4
+		attr 195
+		elas 5
+		fric 80
+		bhvr 16
+
+		setv ov30 2
+		setv ov31 6
+		setv ov32 0
+		setv ov33 1
+		setv ov34 10
+
+		setv ov00 0
+		setv ov01 3000
+		setv ov70 0
+		seta ov17 null
+		seta ov18 null
+		setv ov06 va66
+		seta ov16 null
+		setv ov09 0
+		setv ov10 -1
+		setv ov11 -1
+		setv ov15 0
+		seta ov19 null
+		setv ov20 0
+		setv ov61 60
+		setv ov72 800
+		setv ov73 650
+		setv ov74 1850
+		setv ov75 20
+		setv ov02 20000
+		mvsf va00 va01
+	repe
+endm
+
+
+*Nest timer
+scrp 2 17 2 9
+**Is it in placement mode?
+	doif name "placed" eq 2
+*stop at the end
+		stop
+	endi
+	doif ov80 <> 0
+		tick 20
+	endi
+	doif ov80 = 0
+*never do this...
+		gsub put_
+	endi
+
+	doif ov02 gt 0
+	endi
+	doif ov02 le 0
+		addv ov01 1
+		setv va88 0
+		doif ov01 gt 20
+			setv ov71 0
+		endi
+	endi
+*ov71 seems to indicate that either the nest is at least in stage 1, or has been around a while.
+	doif ov02 gt 60
+		setv ov01 0
+		setv ov71 1
+		setv va88 1
+	endi
+	doif ov02 gt 120
+		setv va88 2
+	endi
+	doif ov02 gt 180
+		setv va88 3
+	endi
+	pose va88
+*va88 and pose seem to just indicate how big it is
+	doif pose eq 3
+*I think ov70 indicates a bird has nested there
+		doif ov70 eq 1
+			setv va66 0
+			esee 2 15 3
+				addv va66 1
+			next
+			doif va66 <= 4
+				gsub egg_
+			endi
+			setv ov70 0
+		endi
+	endi
+	stop
+
+*This is done if ov80 is 0
+	subr put_
+
+		setv va50 0
+		setv va55 0
+		reps 10
+			inst
+			addv va55 1
+			seta va00 targ
+*enum all nests
+			enum 2 17 2
+				inst
+*see if their ov80 is between 1 and 10?
+				doif ov80 eq va55
+					setv va50 1
+				endi
+			next
+			targ va00
+			doif va50 eq 0
+*set va52 to the number that another nest's ov80 is
+				setv va52 va55
+			endi
+			setv va50 0
+
+			slow
+		repe
+
+*Ahh... more hardcoded stuff >:
+		doif va52 eq 1
+			setv va90 3314
+			setv va91 926
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+			setv ov80 va52
+		endi
+		doif va52 eq 2
+			setv va90 3076
+			setv va91 891
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 3
+			setv va90 5580
+			setv va91 1147
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 4
+			setv va90 5200
+			setv va91 670
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 5
+			setv va90 5600
+			setv va91 1253
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 6
+			setv va90 4213
+			setv va91 964
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 7
+			setv va90 4016
+			setv va91 791
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 8
+			setv va90 4462
+			setv va91 692
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 9
+			setv va90 3932
+			setv va91 849
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+		doif va52 eq 10
+			setv va90 3202
+			setv va91 895
+			subv va90 ov72
+			subv va91 ov73
+			mvto va90 va91
+
+			setv ov80 va52
+		endi
+
+	retn
+
+	subr egg_
+		dbg: outs "An egg is appearing at"
+		dbg: outs rtif rtim "%#c"
+
+		setv va50 posx
+		setv va51 posy
+		inst
+		new: simp 2 18 3 "hummingbird" 1 72 49
+		accg 0
+		perm 99
+		tick 30
+		attr 199
+		seta ov19 ownr
+		setv ov01 1
+		setv va52 rand 35 12
+		subv va50 va52
+		subv va51 35
+		setv ov61 30
+		doif tmvt va50 va51 <> 1
+			kill targ
+			stop
+		endi
+
+		mvto va50 va51
+		pose 0
+		targ ownr
+		slow
+	retn
+
+endm
+
+scrp 2 17 2 256
+	addv ov02 _p1_
+endm
+
+scrp 2 17 2 257
+	setv ov71 _p1_
+endm
+
+scrp 2 17 2 258
+	subv ov02 _p1_
+endm
+
+scrp 2 17 2 260
+	setv ov70 _p1_
+endm
+
+scrp 2 15 3 12
+	stim writ from 80 4
+	kill ownr
+
+endm
+
+scrp 2 15 7 12
+	stim writ from 80 4
+	kill ownr
+
+endm
+
+
+rscr
+
+
+
+enum 2 15 3
+	kill targ
+next
+scrx 2 15 3 9
+scrx 2 15 3 5
+scrx 2 15 3 256
+scrx 2 15 3 257
+scrx 2 15 3 266
+scrx 2 15 3 6
+
+
+enum 2 15 7
+	kill targ
+next
+scrx 2 15 7 9
+scrx 2 15 7 256
+scrx 2 15 7 257
+scrx 2 15 7 266
+scrx 2 15 7 1
+scrx 2 15 7 6
+
+
+
+
+enum 2 17 2
+	kill targ
+next
+scrx 2 17 2 9
+scrx 2 17 2 256
+scrx 2 17 2 257
+scrx 2 17 2 258
+scrx 2 17 2 260
+
+enum 2 10 34
+	kill targ
+next
+scrx 2 10 34 9
+scrx 2 10 34 6
+
+enum 2 10 5
+	kill targ
+next
+scrx 2 10 5 9
+
+
+enum 2 18 3
+	kill targ
+next
+scrx 2 18 3 9
+scrx 2 18 3 6
+scrx 2 18 3 1
+
+enum 2 10 4
+	kill targ
+next
+scrx 2 10 4 9
+
+endm

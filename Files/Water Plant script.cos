@@ -1,0 +1,82 @@
+*GB Template
+*# Pray-File "GB_Waterplant.agent"
+*# DS-Name "Water Plant"
+*# Depend waterplant.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Water Plant raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 15
+*# GB_Category = 4
+*# Agent Author = "Creature Labs"
+
+new: simp 2 4 2 "waterplant" 8 0 3000
+attr 192
+elas 0
+anim [0 1 2 3 4 5 6 7 255]
+mvsf game "ch_x" game "ch_y"
+tick 600
+setv ov61 10
+seta ov17 null
+
+
+scrp 2 4 2 9
+
+	doif ov17 eq null
+		inst
+		setv va00 posl
+		addv va00 22
+		setv va01 post
+		addv va01 76
+		setv va02 plne
+		addv va02 1
+		seta va98 targ
+		new: simp 2 6 3 "waterplant" 1 16 va02
+		mvto va00 va01
+		seta va99 targ
+		seta ov17 va98
+		targ ownr
+		seta ov17 va99
+	else
+		doif ov60 lt ov61
+			mesg writ ov17 300
+			addv ov60 1
+		endi
+	endi
+
+
+
+
+
+
+endm
+
+
+scrp 2 6 3 300
+	addv ov51 1
+	setv ov99 1
+endm
+
+
+scrp 2 6 3 12
+	doif ov99 eq 0
+		stop
+	endi
+	subv ov51 1
+	doif ov51 le 1
+		setv ov99 0
+	endi
+	targ ov17
+	doif targ ne null
+		subv ov60 1
+	endi
+endm
+
+
+
+
+rscr
+enum 2 4 2
+	kill targ
+next

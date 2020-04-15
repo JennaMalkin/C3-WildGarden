@@ -1,0 +1,361 @@
+*GB Template
+*# Pray-File "GB_OrangeSponge.agent"
+*# DS-Name "Orange Sponge"
+*# Depend oraponge.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Orange Sponge raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 8
+*# GB_Category = 4
+*# Agent Author = "Creature Labs"
+
+
+new: simp 2 4 7 "oraponge" 59 0 4200
+attr 197
+perm 100
+elas 0
+clac -1
+accg 1
+aero 5
+fric 100
+pose 4
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 0
+setv ov01 399
+setv ov05 8
+setv ov61 50
+tick 10
+
+scrp 2 4 7 9
+
+	addv ov01 1
+
+
+	doif rtyp room ownr <> 9
+		gsub deth
+	endi
+
+
+	doif ov01 > 700
+		gsub deth
+	endi
+
+
+	doif ov01 >= 0 and ov01 <= 25
+		pose 4
+		setv ov05 0
+	elif ov01 > 25 and ov01 < 75 and ov05 = 0
+		pose 5
+		setv ov05 1
+	elif ov01 >= 75 and ov01 < 100 and ov05 = 1
+		pose 6
+		setv ov05 2
+	elif ov01 >= 100 and ov01 < 150 and ov05 = 2
+		pose 7
+		setv ov05 3
+	elif ov01 >= 150 and ov01 < 200 and ov05 = 3
+		pose 8
+		setv ov05 4
+	elif ov01 >= 200 and ov01 < 250 and ov05 = 4
+		base 9
+		setv ov05 5
+	elif ov01 >= 250 and ov01 < 300 and ov05 = 5
+		base 19
+		setv ov05 6
+	elif ov01 >= 300 and ov01 < 350 and ov05 = 6
+		base 29
+		setv ov05 7
+	elif ov01 >= 350 and ov01 < 400 and ov05 = 7
+		base 39
+		setv ov05 8
+	elif ov01 >= 400 and ov01 < 450 and ov05 = 8
+		base 49
+		setv ov05 9
+	elif ov01 >= 700
+		gsub deth
+	endi
+	doif ov05 >= 5 and ov05 <= 10
+		gsub anim
+	endi
+
+
+	doif ov05 = 0 or ov05 = 1
+		gsub chek
+	endi
+
+
+
+	doif ov05 = 10
+		addv ov40 1
+		doif ov40 = 20
+			setv ov05 9
+		endi
+	endi
+
+
+	doif ov05 = 9
+		setv va00 rand 1 30
+		doif va00 = 10
+			gsub seed
+		endi
+	endi
+
+	subr chek
+		setv va00 0
+		doif va00 = 0
+			setv va40 0
+			rnge 500
+			esee 2 4 7
+				addv va40 1
+			next
+			doif va40 > 7
+				gsub deth
+			endi
+			addv va00 1
+		endi
+		doif va00 = 1
+			setv va40 0
+			etch 2 4 7
+				addv va40 1
+			next
+			doif va40 >= 2
+				gsub deth
+			endi
+		endi
+	retn
+	subr anim
+		anim [0 1 2 3 4 5 6 7 8 9 255]
+	retn
+	subr seed
+		setv va60 posl
+		setv va61 post
+		addv va60 2
+		subv va61 58
+		setv va70 0
+		rnge 500
+		esee 2 3 6
+			addv va50 1
+		next
+		doif va50 <= 4
+			setv va51 rand 1 3
+		elif va50 >= 5 and va50 <= 7
+			setv va51 rand 1 2
+		elif va50 >= 8 or va50 <= 10
+			setv va51 1
+		elif va50 > 10
+			setv va51 0
+			gsub deth
+			stop
+		endi
+		doif va51 <> 0
+			reps va51
+				inst
+				new: simp 2 3 6 "oraponge" 4 0 500
+				attr 199
+				bhvr 32
+				accg 0
+				aero 0
+				perm 100
+				elas 0
+				fric 100
+				seta va16 targ
+				puhl -1 7 67
+				doif tmvt va60 va61 = 1
+					mvto va60 va61
+				elif tmvt va60 va61 = 0
+					targ va16
+					kill targ
+					stop
+				endi
+				velo rand -1 1 -1
+				setv ov00 0
+				setv ov01 0
+				setv ov61 20
+				tick 3
+				slow
+			repe
+			targ ownr
+			setv ov05 10
+		endi
+	retn
+	subr deth
+		doif carr = null
+			doif ov05 = 0
+				base 0
+				frat 3
+				anim [4]
+			elif ov05 = 1
+				base 0
+				frat 3
+				anim [5 4]
+			elif ov05 = 9 or ov05 = 10
+				base 0
+				frat 5
+				anim [49 39 29 19 9 8 7 6 5 4]
+			endi
+			over
+			kill targ
+		elif carr <> null
+			setv ov99 99
+		endi
+	retn
+endm
+scrp 2 3 6 9
+	doif ov00 = 0
+
+		gsub room
+
+
+		addv ov01 1
+
+
+		doif ov99 = 99
+			gsub deth
+		endi
+
+
+		doif ov01 > 1500
+			gsub deth
+		endi
+
+
+		doif ov01 > 1000 and ov01 < 1500
+			accg .05
+			wait 75
+			setv ov00 1
+		endi
+
+
+		gsub anim
+		gsub rndm
+		gsub obst
+		gsub move
+
+	elif ov00 = 1 and carr = null
+		gsub grow
+	endi
+
+
+	subr deth
+		doif carr = null
+			kill targ
+		elif carr <> null
+			setv ov99 99
+		endi
+	retn
+
+
+	subr grow
+		setv va00 posl
+		setv va01 post
+
+		inst
+		new: simp 2 4 7 "oraponge" 59 0 4200
+		attr 197
+		perm 100
+		elas 20
+		clac -1
+		accg 1
+		aero 5
+		fric 100
+		pose 4
+		seta va16 targ
+		doif tmvt va00 va01 = 1
+			mvto va00 va01
+		elif tmvt va00 va01 = 0
+			targ va16
+			kill targ
+			stop
+		endi
+		setv ov01 0
+		setv ov05 0
+		setv ov61 50
+		tick 10
+		slow
+		targ ownr
+		gsub deth
+	retn
+
+
+	subr rndm
+		loop
+			setv ov10 rand -2 2
+		untl ov10 <> 0
+		doif obst down < 500
+			loop
+				setv ov11 rand -1 1
+			untl ov11 <> 0
+		elif obst down >= 500
+			loop
+				setv ov11 rand -1 2
+			untl ov11 <> 0
+		endi
+	retn
+
+
+	subr anim
+		anim [0 1 2 3 255]
+	retn
+
+
+	subr obst
+		doif obst down < 20 and obst _up_ > 200
+			accg 3
+			setv ov00 1
+			wait 10
+			stop
+		elif obst down < 20 and obst _up_ <= 200
+			setv ov11 -1
+		endi
+		doif obst left < 50
+			setv ov10 rand 1 2
+		endi
+		doif obst rght < 50
+			setv ov10 rand -2 -1
+		endi
+		doif obst _up_ < 20
+			setv ov11 1
+		endi
+	retn
+
+
+	subr room
+		doif rtyp room ownr <> 9
+			loop
+				addv ov86 1
+				doif ov86 >= 0 and ov86 <= 6
+					addv ov87 .03
+				elif ov86 > 6 and ov86 < 200
+					addv ov87 .08
+				endi
+				accg ov87
+			untl rtyp room ownr = 9 or ov86 >= 200
+			doif ov86 >= 200
+				wait rand 100 400
+				gsub deth
+			endi
+		endi
+		doif rtyp room ownr = 9
+			setv ov86 0
+			setv ov87 0
+		endi
+		accg ov87
+	retn
+
+
+	subr move
+		velo ov10 ov11
+	retn
+endm
+
+rscr
+enum 2 4 7
+	kill targ
+next
+enum 2 3 6
+	kill targ
+next
+scrx 2 4 7 9
+scrx 2 3 6 9

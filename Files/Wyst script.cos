@@ -1,0 +1,404 @@
+*GB Template
+*# Pray-File "GB_Wysts.agent"
+*# DS-Name "Wyst"
+*# Depend wysts.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Wyst raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 14
+*# GB_Category = 5
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 18 "wysts" 92 0 rand 100 5000
+attr 199
+bhvr 48
+elas 30
+perm 100
+accg 0
+aero 0
+fric 99
+clac -1
+
+mvsf game "ch_x" game "ch_y"
+
+setv ov01 0
+setv ov61 30
+setv ov70 0
+tick 10
+
+scrp 2 15 18 12
+
+	targ from
+	stim writ from 80 1
+	kill ownr
+endm
+
+scrp 2 15 18 9
+
+	doif carr = null
+
+
+		gsub base
+
+
+		addv ov01 1
+
+
+
+		gsub room
+
+
+
+
+		gsub rndm
+
+
+
+		gsub obst
+		gsub anim
+		gsub move
+
+
+		doif ov01 > 700
+
+			gsub deth
+		endi
+
+
+		doif ov01 > 300
+			setv va55 rand 0 20
+			doif va55 = 5
+				setv ov70 1
+			endi
+		endi
+
+
+		doif ov99 = 99
+			gsub deth
+		endi
+
+
+		doif ov70 = 1
+			gsub brth
+		endi
+
+
+
+		subr anim
+			doif ov10 < 0
+				base ov30
+				frat 5
+				anim [0 1 2 3 4 5 6 7 8 9 10 255]
+			elif ov10 > 0
+				base ov30
+				frat 5
+				anim [15 14 13 12 19 18 17 16 22 21 20 15 255]
+			endi
+		retn
+
+
+
+		subr base
+			doif ov01 <= 100
+				setv ov05 0
+
+				setv ov30 0
+			elif ov01 >= 101 and ov01 <= 200 and ov05 = 0
+				inst
+				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
+					velo 0 0
+					setv ov05 1
+
+					setv ov30 22
+					gsub anim
+				endi
+				slow
+			elif ov01 >= 201 and ov01 <= 300 and ov05 = 1
+				inst
+				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
+					velo 0 0
+					setv ov05 2
+
+					setv ov30 44
+					gsub anim
+				endi
+				slow
+			elif ov01 >= 301 and ov01 <= 400 and ov05 = 2
+				inst
+				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
+					velo 0 0
+					setv ov05 3
+
+					setv ov30 66
+					gsub anim
+				endi
+				slow
+			endi
+		retn
+
+
+		subr brth
+			doif obst left > 30 and obst rght > 30 and obst _up_ > 30 and obst down > 30
+				setv va89 0
+				inst
+				rnge 500
+				esee 2 15 18
+					doif targ <> null
+						addv va89 1
+					endi
+				next
+				slow
+				doif va89 > 5
+					setv ov08 1
+				elif va89 >= 2 and va89 <= 5
+					setv ov08 rand 1 2
+				elif va89 < 2
+					setv ov08 rand 1 3
+				endi
+				setv va80 posl
+				setv va81 post
+				reps ov08
+					new: simp 2 18 16 "wysts" 4 88 3000
+
+					bhvr 32
+
+
+					attr 199
+					clac -1
+					elas 50
+					accg 1
+					aero 7
+					perm 75
+					fric 99
+					setv ov61 30
+
+					doif tmvt va80 va81 = 1
+						mvto va80 va81
+					elif tmvt va80 va81 = 0
+						mvsf va80 va81
+					endi
+					tick 1
+				repe
+				targ ownr
+
+				gsub deth
+			endi
+		retn
+
+
+		subr obst
+			doif obst left < 50
+				setv ov10 rand 1 2
+			endi
+			doif obst rght < 50
+				setv ov10 rand -2 -1
+			endi
+			doif obst _up_ < 20
+				setv ov11 1
+			endi
+			doif obst down < 20
+				setv ov11 -1
+			endi
+		retn
+
+
+		subr rndm
+			loop
+				setv ov10 rand -3 3
+			untl ov10 <> 0
+			loop
+				setv ov11 rand -3 3
+			untl ov11 <> 0
+		retn
+
+
+		subr move
+			velo ov10 ov11
+		retn
+
+
+		subr deth
+			doif carr = null
+				kill ownr
+			elif carr <> null
+				setv ov99 99
+			endi
+		retn
+
+
+		subr vent
+			setv va51 0
+			setv va52 0
+			setv va53 0
+			rnge 500
+			inst
+			esee 2 23 11
+				doif targ <> null
+
+					addv va53 1
+					setv va51 relx ownr targ
+					setv va52 rely ownr targ
+				endi
+			next
+			slow
+
+			doif va53 > 0
+
+				doif va51 < 0 and ov10 = -1
+					setv ov10 rand -1 -2
+				elif va51 < 0 and ov10 = 1
+					setv ov10 rand -1 -2
+				elif va51 > 0 and ov10 = -1
+					setv ov10 rand 1 2
+				elif va51 > 0 and ov10 = 1
+					setv ov10 rand 1 2
+				endi
+				doif va52 < 0
+					setv ov11 rand -1 -2
+				elif va52 > 0
+					setv ov11 rand 1 2
+				endi
+			else
+
+				gsub rndm
+			endi
+		retn
+
+
+
+
+		subr room
+			doif rtyp room ownr <> 9
+				loop
+					addv ov86 1
+					doif ov86 >= 0 and ov86 <= 6
+						addv ov87 .03
+					elif ov86 > 6 and ov86 < 200
+						addv ov87 .08
+					endi
+					accg ov87
+				untl rtyp room ownr = 9 or ov86 >= 200
+				doif ov86 >= 200
+					wait rand 100 400
+					gsub deth
+				endi
+			endi
+			doif rtyp room ownr = 9
+				setv ov86 0
+				setv ov87 0
+			endi
+			accg ov87
+		retn
+	endi
+endm
+scrp 2 15 18 4
+endm
+scrp 2 18 16 9
+	doif rtyp room ownr <> 9
+		kill targ
+	endi
+	doif rtyp room ownr = 9
+		accg 1
+	endi
+	doif ov80 = 0
+		gsub drft
+	elif ov80 = 1
+		setv va88 0
+
+		loop
+			addv va88 1
+			velo rand -2 2 rand -2 2
+		untl obst left > 15 and obst rght > 15 or va88 >= 40
+		doif va88 >= 40
+			kill ownr
+		endi
+		gsub htch
+	endi
+	subr drft
+		setv va70 rand 0 10
+		doif va70 = 1
+			setv ov11 -1
+		elif va70 = 2
+			setv ov11 1
+		elif va70 = 3
+			setv ov10 -1
+		elif va70 = 4
+			setv ov10 1
+		endi
+		gsub obst
+		gsub anim
+		gsub move
+	retn
+	subr obst
+		doif obst 0 < 50
+			setv ov10 1
+		endi
+		doif obst 1 < 50
+			setv ov10 -1
+		endi
+		doif obst 2 < 50
+			setv ov11 1
+		endi
+		doif obst 3 < 20
+			accg 2
+			setv ov80 1
+		endi
+	retn
+	subr anim
+		anim [0 1 2 3 255]
+	retn
+	subr move
+		velo ov10 ov11
+	retn
+	subr htch
+		setv va90 0
+		setv va00 rand 2000 20000
+		wait 1
+		loop
+			addv va90 1
+			velo rand -3 3 rand -1 -5
+			gsub anim
+			wait 10
+		untl va90 = 25
+		setv va90 posl
+		setv va91 post
+		inst
+		new: simp 2 15 18 "wysts" 92 0 rand 100 5000
+		bhvr 48
+		attr 199
+		elas 30
+		perm 100
+		accg 0
+		aero 0
+		fric 99
+		seta va16 targ
+		doif tmvt va90 va91 = 1
+			mvto va90 va91
+			setv ov61 30
+
+			setv ov01 0
+			tick 1
+			slow
+			kill ownr
+		elif tmvt va90 va91 = 0
+			targ va16
+			kill targ
+			kill ownr
+			stop
+		endi
+	retn
+endm
+
+rscr
+enum 2 15 18
+	kill targ
+next
+enum 2 18 16
+	kill targ
+next
+scrx 2 15 18 9
+scrx 2 15 18 12
+scrx 2 18 16 9
+endm

@@ -1,0 +1,636 @@
+*GB Template
+*# Pray-File "GB_hedgehog.agent"
+*# DS-Name "Hedgehog"
+*# Depend hedgehog.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Hedgehog raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 14
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 5 "hedgehog" 50 0 2500
+accg 1
+perm 99
+tick 8
+attr 195
+aero 0
+elas 5
+bhvr 16
+fric 20
+
+setv ov30 0
+
+setv ov31 8
+
+setv ov32 16
+
+setv ov33 20
+
+setv ov34 24
+
+setv ov35 27
+
+setv ov36 30
+
+setv ov37 34
+
+setv ov38 38
+
+setv ov39 44
+
+
+
+
+
+setv ov00 0
+setv ov01 1000
+setv ov02 800
+setv ov05 2
+setv ov06 va66
+setv ov10 1
+setv ov11 1
+seta ov16 null
+setv ov20 0
+setv ov61 60
+setv ov70 0
+setv ov72 400
+setv ov73 400
+setv ov74 800
+setv ov75 1
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 0
+setv vely 0
+doif va66 = 0
+	setv va66 1
+else
+	setv va66 0
+endi
+
+
+scrp 2 15 5 9
+	fric 100
+	addv ov01 1
+	subv ov02 1
+	doif ov01 > 1000
+		addv ov20 1
+	endi
+	doif carr = null
+		doif rtyp room ownr = 8 or rtyp room ownr = 9
+			subv ov02 100
+		endi
+	endi
+
+	doif ov70 > 0
+		addv ov70 1
+	endi
+	doif ov01 gt 1000
+		doif ov05 eq 1
+			gsub matr
+		endi
+	endi
+
+	doif ov01 > 1000 and ov20 > 200 and ov00 <> 3
+		setv ov00 2
+	endi
+
+	doif ov70 > 10
+		setv ov00 7
+	endi
+
+	doif ov02 < ov73
+		setv ov00 1
+	endi
+
+	doif obst 0 lt 30
+		setv ov10 1
+		setv ov11 -1
+	endi
+	doif obst 1 lt 30
+		setv ov10 -1
+		setv ov11 -1
+	endi
+
+	doif obst 2 lt 30
+		setv ov11 1
+	endi
+	doif obst 3 lt 30
+		setv ov11 -1
+	endi
+
+	doif ov02 <= 0 or ov01 > 2000
+		setv ov00 99
+	endi
+
+	doif ov00 = 99
+		gsub die_
+	endi
+
+	doif ov00 = 1
+		gsub gfod
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+	doif ov00 = 7
+		gsub layg
+	endi
+
+	doif ov00 eq 2
+		seta ov16 null
+		setv va47 2
+		setv va48 15
+		setv va49 5
+		setv va45 ov06
+		doif ov16 = null
+			gsub find
+		endi
+		targ ov16
+
+		doif targ <> null
+			targ ownr
+			setv ov00 6
+		else
+			targ ownr
+			setv ov00 0
+		endi
+		targ ownr
+	endi
+
+	doif ov00 = 6
+		gsub mate
+	endi
+
+
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+	subr die_
+		setv va50 posl
+		setv va51 post
+		setv va52 ov10
+
+
+		doif ov01 gt 1000
+			new: simp 2 10 15 "hedgehog" 50 0 2000
+		else
+			new: simp 2 10 15 "hedgehog" 50 50 2000
+		endi
+		accg 2
+
+		setv ov34 24
+
+		setv ov35 27
+		tick 4
+		attr 195
+		aero 0
+		setv ov10 va52
+		setv ov61 20
+		setv ov01 0
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+		endi
+		mvto va50 va51
+		setv vely 0
+		kill ownr
+		anim []
+		doif ov10 >= 0
+			base ov39
+			anim [0 1 2 3 4]
+		endi
+		doif ov10 < 0
+			base ov38
+			anim [0 1 2 3 4]
+		endi
+		over
+	retn
+
+	subr gfod
+		inst
+		setv va47 2
+		setv va48 14
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		doif ov16 = null
+			setv va47 2
+			setv va48 13
+			setv va49 0
+			gsub find
+		endi
+		doif ov16 = null
+			setv va47 2
+			setv va48 8
+			setv va49 0
+			gsub find
+		endi
+		doif ov16 = null
+			setv va47 2
+			setv va48 9
+			setv va49 0
+			gsub find
+		endi
+		doif ov16 = null
+			setv va47 2
+			setv va48 3
+			setv va49 0
+			gsub find
+		endi
+
+		targ ov16
+		doif targ <> null
+			inst
+			targ ownr
+			gsub hunt
+			doif touc ownr ov16 <> 0
+				addv ov02 ov72
+				mesg writ ov16 12
+				doif ov02 gt ov74
+					setv ov00 0
+				endi
+				targ ownr
+				slow
+			endi
+		else
+			doif va48 eq 3
+				targ ownr
+				setv ov00 0
+			endi
+		endi
+		targ ownr
+		slow
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+	subr hide
+		anim []
+		doif ov10 >= 0
+			base ov39
+			anim [0 1 2 3 4]
+			wait 80
+			anim [4 3 2 1 0]
+		endi
+		doif ov10 < 0
+			base ov38
+			anim [0 1 2 3 4]
+			wait 80
+			anim [4 3 2 1 0]
+
+		endi
+	retn
+
+	subr mate
+		targ ov16
+		doif targ <> null
+			inst
+			targ ownr
+			gsub hunt
+			doif touc ownr ov16 <> 0
+				doif ov06 eq 0
+					setv ov70 1
+					setv ov00 4
+				else
+					setv ov00 0
+				endi
+				setv ov20 0
+			endi
+			slow
+		else
+			targ ownr
+			setv ov00 0
+		endi
+		targ ownr
+		gsub vect
+		gsub anim
+		gsub move
+		stop
+	retn
+
+
+	subr matr
+		setv va00 ov00
+		setv va06 ov06
+		setv va10 ov10
+		setv va50 posl
+		setv va51 post
+		subv va50 0
+		subv va51 12
+		inst
+		new: simp 2 15 5 "hedgehog" 50 0 2500
+		accg 1
+		perm 99
+		tick 8
+		attr 195
+		aero 0
+		elas 5
+		fric 20
+		bhvr 16
+
+		setv ov30 0
+
+		setv ov31 8
+
+		setv ov32 16
+
+		setv ov33 20
+
+		setv ov34 24
+
+		setv ov35 27
+
+		setv ov36 30
+
+		setv ov37 34
+
+		setv ov38 38
+
+		setv ov39 44
+
+		setv ov00 0
+		setv ov01 1000
+		setv ov02 800
+		setv ov05 2
+		setv ov06 va06
+		setv ov10 va10
+		setv ov11 1
+		seta ov16 null
+		setv ov20 0
+		setv ov61 60
+		setv ov70 0
+		setv ov72 400
+		setv ov73 400
+		setv ov74 800
+		setv ov75 1
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+			gsub roam
+			stop
+		endi
+		mvto va50 va51
+		setv vely 0
+		kill ownr
+		stop
+	retn
+
+	subr layg
+		setv va50 posl
+		setv va51 post
+
+
+		setv va66 0
+		enum 2 15 5
+			addv va66 1
+		next
+		doif va66 < 4
+			inst
+			reps 2
+				new: simp 2 15 5 "hedgehog" 50 50 2500
+				accg 1
+				perm 99
+				tick 8
+				attr 195
+				aero 0
+				elas 5
+				fric 20
+				bhvr 16
+
+				setv ov30 0
+
+				setv ov31 8
+
+				setv ov32 16
+
+				setv ov33 20
+
+				setv ov34 24
+
+				setv ov35 27
+
+				setv ov36 30
+
+				setv ov37 34
+
+				setv ov38 38
+
+				setv ov39 44
+
+				setv ov00 0
+				setv ov01 1
+				setv ov02 800
+				setv ov05 1
+				setv ov06 va66
+				setv ov10 1
+				setv ov11 1
+				seta ov16 null
+				setv ov20 0
+				setv ov61 55
+				setv ov70 0
+				setv ov72 400
+				setv ov73 400
+				setv ov74 800
+				setv ov75 1
+				doif tmvt va50 va51 <> 1
+					kill targ
+				else
+					mvto va50 va51
+					setv vely 0
+				endi
+				doif va66 = 0
+					setv va66 1
+				else
+					setv va66 0
+				endi
+
+			repe
+		endi
+		targ ownr
+		gsub anim
+		setv ov70 0
+		setv ov00 0
+		setv ov20 0
+		stop
+	retn
+
+
+	subr roam
+		setv va67 rand 0 20
+		doif va67 = 0
+			gsub hide
+		endi
+		setv va66 rand 0 10
+		setv ov75 1
+		doif va66 lt 5
+			mulv ov10 -1
+		endi
+
+		gsub vect
+		gsub anim
+		gsub move
+
+		stop
+	retn
+	subr vect
+		setv va10 rand 8 8
+		setv va11 rand 6 6
+	retn
+
+	subr anim
+		doif ov10 eq 0
+			loop
+				setv ov10 rand -1 1
+			untl ov10 ne 0
+		endi
+
+		doif ov10 <= 0
+			base ov30
+			anim [0 1 2 3 4 5 6 7]
+		endi
+
+		doif ov10 > 0
+			base ov31
+			anim [0 1 2 3 4 5 6 7]
+		endi
+	retn
+
+	subr move
+		mulv va10 ov10
+		mulv va11 ov11
+		fric 20
+		velo va10 va11
+		setv vely 0
+	retn
+
+	subr find
+		inst
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va88 0
+				setv va50 relx ownr targ
+				setv va51 rely ownr targ
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		doif va58 <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+		slow
+	retn
+
+	subr hunt
+		inst
+		targ ov16
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 1
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 0
+		endi
+	retn
+
+endm
+
+scrp 2 10 15 9
+	elas 1
+	fric 80
+	addv ov01 1
+
+	accg 3
+	doif carr = null
+		doif ov10 le 0
+			base 0
+			pose 0
+			doif ov01 gt 200
+				base ov34
+				anim [0 1 2]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+				endi
+				over
+				kill targ
+			endi
+
+		endi
+		doif ov10 gt 0
+			base ov35
+			pose 4
+			doif ov01 gt 200
+				base ov35
+				anim [0 1 2]
+				doif room targ <> -1 and carr = null
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+				endi
+				over
+				kill targ
+			endi
+
+		endi
+	endi
+endm
+
+scrp 2 15 5 12
+	stim writ from 80 4
+	kill ownr
+
+endm
+
+rscr
+
+enum 2 15 5
+	kill targ
+next
+scrx 2 15 5 9
+scrx 2 15 5 6
+
+
+endm

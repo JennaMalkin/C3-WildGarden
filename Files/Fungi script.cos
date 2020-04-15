@@ -1,0 +1,319 @@
+*GB Template
+*# Pray-File "GB_Fungi.agent"
+*# DS-Name "Fungi"
+*# Depend fungi.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Fungi raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 7
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+new: simp 2 3 10 "fungi" 7 110 600
+
+attr 195
+bhvr 16
+elas 0
+fric 100
+anim [0 1 2 3 255]
+perm rand 30 70
+mvsf game "ch_x" game "ch_y"
+velo rand -10 10 rand -10 0
+tick 10
+
+setv ov72 rand 10 40
+setv ov80 1
+setv ov82 1
+setv ov87 0
+
+
+scrp 2 3 10 4
+	anim []
+endm
+
+scrp 2 3 10 5
+	anim [0 1 2 3 255]
+endm
+
+scrp 2 3 10 6
+	doif wall eq down
+		anim []
+	endi
+endm
+
+scrp 2 3 10 12
+	stim writ from 77 1
+	kill ownr
+endm
+
+
+scrp 2 3 10 9
+	inst
+
+
+	doif totl 2 8 5 gt 70
+		kill ownr
+	endi
+
+
+	doif fall eq 0 and carr eq null
+		doif rtyp room targ eq 8 or rtyp room targ eq 9
+			kill ownr
+		endi
+
+		gsub envi
+
+		gsub dorm
+	endi
+
+
+	subr envi
+
+		doif prop room targ 1 le ov80
+			setv va00 1
+		endi
+
+		doif prop room targ 2 le ov82
+			setv va01 1
+		endi
+
+		doif prop room targ 4 ge ov87
+			setv va02 1
+		endi
+
+
+		doif va00 eq 1 and va01 eq 1 and va02 eq 1
+			gsub grow
+		endi
+	retn
+
+
+	subr grow
+		setv va00 posl
+		setv va01 post
+		subv va00 8
+		subv va01 20
+		setv va90 perm
+
+		setv va99 rand 0 4
+		mulv va99 22
+		new: simp 2 8 5 "fungi" 22 va99 600
+		attr 195
+		bhvr 16
+		elas 0
+		fric 100
+		perm va90
+		accg 2
+		doif tmvt va00 va01 ne 1
+			kill targ
+			kill ownr
+		endi
+		mvto va00 va01
+		tick rand 600 1200
+		kill ownr
+	retn
+
+	subr dorm
+		doif pose lt 4
+
+			attr 16
+			anim [4 5 6]
+			over
+		endi
+
+		subv ov72 1
+
+		doif ov72 le 0
+			doif room targ ne -1
+				altr room targ 3 0.1
+				altr room targ 4 0.1
+				kill ownr
+			else
+				kill ownr
+			endi
+		endi
+	retn
+endm
+
+
+scrp 2 8 5 9
+
+
+
+
+
+
+
+	addv ov01 1
+
+
+	doif ov00 eq 0
+		doif pose lt 3
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+
+			doif ov01 ge 20
+				setv ov00 1
+				stop
+			endi
+		endi
+	endi
+
+
+	doif ov00 eq 1
+		doif pose lt 7
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+
+			inst
+			setv va00 posl
+			setv va01 post
+			new: simp 2 3 10 "fungi" 7 110 600
+
+			attr 195
+			bhvr 16
+			elas 0
+			fric 100
+			anim [0 1 2 3 255]
+			perm rand 40 70
+			doif tmvt va00 va01 <> 1
+				kill targ
+				targ ownr
+				setv ov00 2
+				stop
+			endi
+			mvto va00 va01
+			velo rand -10 10 rand -10 0
+			tick rand 300 600
+
+
+			setv ov72 rand 10 40
+
+			setv ov80 1
+
+			setv ov82 1
+
+			setv ov87 0
+
+			targ ownr
+			setv ov00 2
+		endi
+	endi
+
+
+	doif ov00 eq 2
+		doif pose lt 11
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			altr room targ 3 0.2
+			altr room targ 4 0.2
+			kill ownr
+		endi
+	endi
+
+
+
+	doif ov00 eq 3
+
+		doif carr eq null and fall eq 0
+			doif ov99 eq -1
+				doif pose lt 21
+					setv va00 pose
+					addv va00 1
+					pose va00
+				else
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+					kill ownr
+				endi
+			elif ov99 eq 1
+				doif pose lt 16
+					setv va00 pose
+					addv va00 1
+					pose va00
+				else
+					altr room targ 3 0.2
+					altr room targ 4 0.2
+					kill ownr
+				endi
+			endi
+		endi
+	endi
+endm
+
+
+scrp 2 8 5 4
+
+
+
+	setv ov00 3
+	doif ov99 eq 0
+		setv ov99 rand 0 1
+		doif ov99 eq 0
+			setv ov99 -1
+		endi
+	endi
+
+	doif ov99 eq -1
+		doif pose lt 17
+			pose 17
+		endi
+	endi
+	doif ov99 eq 1
+		doif pose lt 12
+			pose 12
+		endi
+	endi
+endm
+
+
+scrp 2 8 5 12
+	inst
+
+	setv va00 posl
+	setv va01 post
+	stim writ from 78 1
+	new: simp 2 3 10 "fungi" 7 110 600
+
+	attr 195
+	bhvr 16
+	elas 0
+	fric 100
+	anim [0 1 2 3 255]
+	perm rand 30 70
+	doif tmvt va00 va01 eq 1
+		mvto va00 va01
+		velo rand -10 10 rand -10 0
+		tick rand 300 600
+
+
+		setv ov72 rand 10 40
+
+		setv ov80 1
+
+		setv ov82 1
+
+		setv ov87 0
+	else
+		kill targ
+	endi
+	kill ownr
+endm
+
+
+
+rscr
+enum 2 3 10
+	kill targ
+next
+enum 2 8 5
+	kill targ
+next

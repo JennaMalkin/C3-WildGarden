@@ -1,0 +1,296 @@
+*GB Template
+*# Pray-File "GB_Carrot.agent"
+*# DS-Name "Carrots (DS)"
+*# Depend gb_carrot.c16 carr.c16
+*# Attach gb_carrot.c16
+
+*# desc = "DS Carrot raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_carrot.c16"
+*# Agent Animation Gallery = "gb_carrot"
+*# Agent Sprite First Image = 0
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+new: simp 2 11 9 "carr" 0 0 563
+attr 194
+bhvr 48
+perm 64
+accg 4
+aero 3
+elas 20
+fric 100
+pose 6
+mvsf game "ch_x" game "ch_y"
+emit 8 .5
+tick 10
+setv ov00 1
+** Which way does it face?
+setv va00 rand 0 1
+doif va00 = 0
+	sets name "direction" "left"
+elif va00 = 1
+	sets name "direction" "right"
+endi
+** Make it fall out differently each time
+velo rand -1 -5 rand 3 9
+
+
+**100% copypasted scripts
+
+** Carrot Pickup
+scrp 2 11 9 4
+	doif ov00 = 0
+		pose 1
+		tick 1000
+		setv ov98 1
+	endi
+endm
+
+** Carrot Timer
+** This script has two purposes: 1 is to turn carrots lying around into detritus after a while,
+** 2 is to turn invisible growing carrotseed into visible carrots (to stop continuous eating of carrots!)
+scrp 2 11 9 9
+	doif ov00 = 0 and carr = null
+		setv va00 posl
+		setv va01 post
+** Depending on the direction of the carrot, the detritus points that way also.
+		doif name "direction" = "left"
+			inst
+			new: simp 2 10 52 "carr" 3 3 563
+			attr 192
+			perm 64
+			accg 1
+			elas 20
+			fric 100
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+			else
+				mvsf va00 va01
+			endi
+			tick 100
+			slow
+			KILL OWNR
+		elif name "direction" = "right"
+			inst
+			new: simp 2 10 52 "carr" 3 7 563
+			attr 192
+			perm 64
+			accg 1
+			elas 20
+			fric 100
+			doif tmvt va00 va01 = 1
+				mvto va00 va01
+			else
+				mvsf va00 va01
+			endi
+			tick 100
+			slow
+			KILL OWNR
+		endi
+** Carrot is in invisible growth mode..
+	elif ov00 = 1
+** Check the local environment.
+		call 1000 0 0
+** The following code will only be executed if the local environment is fine, else the seed is killed.
+		pose 0
+		bhvr 48
+		tick 0
+		emit 8 .5
+		attr 194
+		perm 64
+		setv ov00 0
+	endi
+endm
+
+** Carrot Seed local environment checking script
+** checks the following CAs: Light, Heat, Water, Nutrients.
+** checks local population of carrots
+** destroys the carrot seed if it's not a viable location.
+scrp 2 11 9 1000
+	inst
+** Get Local Room ID
+	setv va00 grap posx posy
+** Carrots need a bit of light, but aren't fussy.
+	doif prop va00 1 > .3
+		setv va10 1
+	else
+*		dbg: outs "<<Carrot Seed>> Not enough light."
+	endi
+** Carrots like it warm, and don't mind it hot!
+	doif prop va00 2 > .3
+		setv va11 1
+	else
+*		dbg: outs "<<Carrot Seed>> Not enough heat."
+	endi
+** Carrots like a bit of water, but aren't fussy.
+	doif prop va00 3 > .1
+		setv va12 1
+	else
+*		dbg: outs "<<Carrot Seed>> Not enough water."
+	endi
+** Carrots don't require many nutrients at all.
+	doif prop va00 4 > .1
+		setv va13 1
+	else
+*		dbg: outs "<<Carrot Seed>> Not enough nutrients."
+	endi
+** Check how many carrots are nearby
+	rnge game "Carrot_LocalSphere"
+	esee fmly gnus spcs
+		addv va50 1
+	next
+	doif va50 >= game "Carrot_MaxPop_Local"
+*		dbg: outs "<<Carrot Seed>> Too many here already."
+	endi
+** Room type check!
+	doif rtyp room targ = 5 or rtyp room targ = 6 or rtyp room targ = 7
+		setv va14 1
+	else
+		setv va14 0
+	endi
+	targ ownr
+	doif va10 = 1 and va11 = 1 and va12 = 1 and va13 = 1 and va14 = 1 and va50 < game "Carrot_MaxPop_Local" and va00 <> -1
+		setv va40 prop va00 3
+		setv va41 prop va00 4
+		subv va40 .1
+		subv va41 .1
+		prop va00 3 va40
+		prop va00 4 va41
+	elif ov99 = 1
+** Initial Carrots, no change to the CAs.
+		setv ov99 0
+	else
+		kill targ
+		stop
+	endi
+endm
+
+
+
+** Carrot Drop
+scrp 2 11 9 5
+	inst
+	doif _p1_ <> 1
+		doif ov00 = 0
+			doif name "direction" = "left"
+				pose 2
+			elif name "direction" = "right"
+				pose 6
+			endi
+		endi
+	else
+		setv va00 posl
+		setv va01 post
+** Depending on the direction of the carrot, the detritus points that way also.
+		doif name "direction" = "left"
+			inst
+			new: simp 2 10 52 "carr" 3 10 563
+			attr 208
+			BHVR 0
+			perm 64
+			accg 4
+			aero 3
+			elas 20
+			fric 100
+			doif tmvt va00 va01 = 0
+				mvsf va00 va01
+			else
+				mvto va00 va01
+			endi
+			tick 100
+			slow
+		elif name "direction" = "right"
+			inst
+			new: simp 2 10 52 "carr" 3 14 563
+			attr 208
+			BHVR 0
+			perm 64
+			accg 4
+			aero 3
+			elas 20
+			fric 100
+			doif tmvt va00 va01 = 0
+				mvsf va00 va01
+			else
+				mvto va00 va01
+			endi
+			tick 100
+			slow
+		endi
+	endi
+endm
+
+
+
+** Carrot Collision
+scrp 2 11 9 6
+	doif ov98 = 1
+		snde "dr64"
+	endi
+endm
+
+
+
+** Carrot Eat Script
+scrp 2 11 9 12
+	lock
+	inst
+	snde "ceat"
+	doif from <> null
+		targ from
+		stim writ targ 79 2
+** Sodium Thiosulphate
+		chem 96 .05
+	endi
+	slow
+	targ ownr
+** Clear initial carrot flag
+	doif ov99 = 1
+		setv ov99 0
+	endi
+	pose 18
+	bhvr 0
+	emit 8 0
+	attr 208
+	setv ov00 1
+	setv ov98 0
+** ov00 = 0 if the carrot is plucked or freshing vended, and ready to be eaten.
+** ov00 = 1 if the carrot is now in growth mode, and has not been plucked or vended and is invisible to creatures.
+** ov00 = 2 if the carrot is growing, visible to creatures and ready to be plucked.
+	tick 1000
+	mesg wrt+ ownr 5 1 0 0
+endm
+
+** Carrot Detritus Timer
+scrp 2 10 52 9
+	frat 40
+	anim [0 1 2]
+	over
+	wait 20
+	setv va00 grap posx posy
+	setv va40 prop va00 3
+	setv va41 prop va00 4
+	addv va40 .3
+	addv va41 .2
+	prop va00 3 va40
+	prop va00 4 va41
+	kill ownr
+endm
+
+rscr
+*lol, let's not kill the carrot pod...
+*enum 2 23 4
+*	kill targ
+*next
+enum 2 11 9
+	kill targ
+next
+enum 2 10 52
+	kill targ
+next
+*scrx 2 23 4 1
+*scrx 2 11 9 4
+*scrx 2 11 9 9
+*scrx 2 11 9 1000
+*scrx 2 11 9 5
+*scrx 2 11 9 12

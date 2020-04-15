@@ -1,0 +1,374 @@
+*GB Template
+*# Pray-File "GB_Uglee.agent"
+*# DS-Name "Uglee"
+*# Depend uglee.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Uglee raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 27
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 16 8 "uglee" 96 0 3000
+attr 194
+perm 80
+elas 0
+fric 5
+accg 2
+
+pupt -1 38 40
+
+
+setv ov10 rand 0 1
+doif ov10 eq 0
+	setv ov10 -1
+endi
+
+mvsf game "ch_x" game "ch_y"
+tick 9
+
+
+setv ov61 50
+
+setv ov69 230
+
+setv ov70 6130
+
+setv ov71 6900
+
+
+setv ov72 0
+
+setv ov73 rand 50 150
+
+setv ov74 5
+
+
+
+
+
+
+scrp 2 16 8 9
+	tick 9
+
+
+	inst
+	doif rand 0 5 eq 0
+		doif carr eq null
+
+			setv va00 0
+			rtar 1 1 11
+			doif targ ne null
+				setv va00 ov00
+			endi
+			targ ownr
+			doif va00 eq 0
+
+				setv va02 216
+			else
+				setv va02 218
+			endi
+
+			setv va00 posx
+			setv va01 posy
+			subv va01 10
+			new: simp 2 10 6 "graz" 2 va02 1999
+			attr 192
+			aero 5
+			accg 5
+			elas 0
+			doif tmvt va00 va01 <> 1
+				kill targ
+			else
+				mvto va00 va01
+			endi
+			slow
+			targ ownr
+		endi
+	endi
+
+
+
+
+
+
+
+	doif ov00 eq 0
+		doif ov72 eq 0
+			gsub wait
+		endi
+		addv ov72 1
+		doif ov72 ge ov73
+			setv ov00 1
+			setv ov72 0
+		endi
+	endi
+
+	doif ov00 eq 1
+		doif posl ge ov70 and posr le ov71
+			doif posl le ov70 or posr ge ov71
+				negv ov10
+				tick 20
+			endi
+			inst
+			setv va00 0
+			doif rand 0 3 eq 0
+
+				setv va60 posx
+				setv va90 ov10
+				etch 2 21 4
+					setv va61 posx
+					doif va90 lt 0
+						doif va60 ge va61
+							setv va00 1
+							seta va01 targ
+						endi
+					else
+						doif va60 le va61
+							setv va00 1
+							seta va01 targ
+						endi
+					endi
+				next
+			endi
+			slow
+			targ ownr
+			doif va00 eq 1
+				setv va99 ov10
+				mulv va99 rand 8 11
+				targ va01
+				doif targ ne null
+					velo va99 -30
+				endi
+				targ ownr
+				gsub eat_
+			else
+				gsub walk
+			endi
+		else
+			gsub fly_
+			setv ov00 3
+			setv ov10 -1
+		endi
+	endi
+
+
+
+	doif ov00 eq 2
+		setv ov69 230
+
+		doif posb ge ov69
+			setv ov12 -12
+		else
+			setv ov12 -9
+		endi
+		doif ov80 eq 0
+			gsub fly_
+		else
+			gsub cary
+		endi
+		doif posl lt ov70
+			setv va00 rand 3 6
+			doif ov10 lt 0
+				negv ov10
+			endi
+		endi
+		doif posr gt ov71
+			setv va00 rand -6 -3
+			doif ov10 gt 0
+				negv ov10
+			endi
+		endi
+
+		setv velx va00
+
+		doif posl ge ov70 and posr le ov71
+			setv ov00 0
+			setv ov12 0
+			gsub fly_
+			doif ov80 eq 1
+
+				doif ov16 ne null
+					mesg writ ov16 5
+				endi
+				loop
+					wait 1
+				untl fall eq 0
+				gsub eat_
+				inst
+				targ ov16
+				doif targ ne null
+					doif gnus eq 18 and spcs eq 18
+						pose 9
+					endi
+				endi
+				targ ownr
+				seta ov16 null
+				setv ov80 0
+				slow
+				gsub chew
+				wait 50
+				setv ov72 0
+
+			endi
+		endi
+	endi
+
+
+	doif ov00 eq 3
+
+		addv ov72 1
+		doif ov72 ge ov73
+			setv ov00 2
+			setv ov72 0
+		endi
+
+		doif obst left le 50 and ov10 lt 0
+			negv ov10
+		elif obst rght le 50 and ov10 gt 0
+			negv ov10
+		endi
+
+		setv va01 ov10
+		mulv va01 rand 3 6
+		setv velx va01
+
+		setv ov69 320
+		doif posb ge ov69
+			setv ov12 -12
+		else
+			setv ov12 -8
+		endi
+		gsub fly_
+		subv ov74 1
+		doif ov74 le 0
+			setv va00 0
+			esee 2 18 18
+				addv va00 1
+			next
+			doif va00 ge 3
+				gsub dive
+			endi
+			setv ov74 5
+		endi
+
+	endi
+
+
+	doif ov00 eq 4
+		loop
+			wait 1
+		untl fall eq 0
+		setv va00 0
+		inst
+		etch 2 18 18
+			doif pose ne 9
+				setv va00 1
+				seta va01 targ
+			endi
+		next
+		targ ownr
+		doif va00 eq 1
+			targ ownr
+			seta ov16 va01
+			mesg writ va01 4
+			setv ov80 1
+		endi
+		setv vely -20
+		setv ov00 2
+		slow
+	endi
+
+
+
+	subr dive
+		setv velx 0
+		gsub fly_
+		setv va00 posl
+		setv va01 posr
+		setv va99 0
+		inst
+		esee 2 18 18
+			doif posx ge va00 and posx lt va01
+				setv va99 1
+			endi
+		next
+		slow
+		doif va99 eq 1
+			setv vely 5
+			setv ov00 4
+		endi
+	retn
+
+
+
+
+	subr walk
+		doif fall eq 1
+			stop
+		endi
+		doif ov10 lt 0
+			anim [0 1 2 3 4 5 6 7 255]
+			setv velx -10
+		else
+			anim [8 9 10 11 12 13 14 15 255]
+			setv velx 10
+		endi
+	retn
+
+	subr wait
+		setv velx 0
+		doif ov10 lt 0
+			anim [16 17 18 19 20 21 22 23 255]
+		else
+			anim [24 25 26 27 28 29 30 31 255]
+		endi
+	retn
+
+	subr fly_
+		doif ov10 lt 0
+			anim [36 37 38 39 32 33 34 35 255]
+		else
+			anim [44 45 46 47 40 41 42 43 255]
+		endi
+		setv vely ov12
+		sndc "ug_1"
+	retn
+
+	subr cary
+		doif ov10 lt 0
+			anim [48 49 50 51 52 53 54 55 255]
+		else
+			anim [56 57 58 59 60 61 62 63 255]
+		endi
+		setv vely ov12
+	retn
+
+	subr eat_
+		setv velx 0
+		doif ov10 lt 0
+			anim [64 65 66 67 68 69 70 71]
+		else
+			anim [72 73 74 75 76 77 78 79]
+		endi
+		over
+	retn
+
+	subr chew
+		setv velx 0
+		doif ov10 lt 0
+			anim [80 81 82 83 84 85 86 87 255]
+		else
+			anim [88 89 90 91 92 93 94 95 255]
+		endi
+	retn
+endm
+
+
+
+rscr
+enum 2 16 8
+	kill targ
+next

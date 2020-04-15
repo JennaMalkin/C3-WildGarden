@@ -1,0 +1,188 @@
+*GB Template
+*# Pray-File "GB_Aquamites.agent"
+*# DS-Name "Aquamites"
+*# Depend gb_c3_conv2.c16 aquamites.c16
+*# Attach gb_c3_conv2.c16
+
+*# desc = "C3 Aquamites raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv2.c16"
+*# Agent Animation Gallery = "gb_c3_conv2"
+*# Agent Sprite First Image = 1
+*# GB_Category = 5
+*# Agent Author = "Creature Labs"
+
+new: simp 2 13 8 "aquamites" 10 0 3000
+attr 197
+elas 50
+accg 0
+aero 7
+perm 75
+fric 99
+clac -1
+setv ov01 500
+setv ov61 10
+setv ov99 0
+setv ov86 0
+setv ov87 0
+
+
+anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 255]
+mvsf game "ch_x" game "ch_y"
+tick 20
+
+scrp 2 13 8 9
+	doif carr = null
+
+		gsub room
+
+
+		doif ov99 = 99
+			gsub deth
+		endi
+
+
+		doif ov01 <= 0
+
+			gsub deth
+		elif ov01 >= 75
+
+			setv va33 0
+			rnge 500
+			esee 2 13 8
+				addv va33 1
+			next
+			targ ownr
+			doif va33 <> 0
+				mulv va33 2
+			endi
+
+			setv va00 rand 1 2
+			doif va33 < 5
+				setv ov90 1
+				gsub repr
+			elif va33 > 10 and va00 = 2
+				kill ownr
+				stop
+			endi
+		endi
+
+		subr drft
+			setv va70 rand 1 4
+			doif va70 = 1
+				setv ov11 -1
+			elif va70 = 2
+				setv ov11 1
+			elif va70 = 3
+				setv ov10 -1
+			elif va70 = 4
+				setv ov10 1
+			endi
+			gsub obst
+			gsub move
+		retn
+
+
+		subr repr
+			doif carr = null
+
+
+
+
+				setv va64 posl
+				setv va65 post
+				reps ov90
+					inst
+					new: simp 2 13 8 "aquamites" 10 0 3000
+					attr 197
+					elas 50
+					accg 0
+					aero 7
+					perm 75
+					fric 99
+					clac -1
+
+
+					anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 255]
+					mvto va64 va65
+					setv ov01 500
+					setv ov61 10
+					setv ov99 0
+					setv ov86 0
+					setv ov87 0
+					setv ov20 va20
+					setv ov21 va21
+					setv ov22 va22
+					tick 1
+					slow
+				repe
+			endi
+		retn
+
+
+		subr obst
+			doif obst 0 < 50
+				setv ov10 1
+			endi
+			doif obst 1 < 50
+				setv ov10 -1
+			endi
+			doif obst 2 < 50
+				setv ov11 1
+			endi
+
+
+
+
+
+
+			doif obst 3 < 10
+				setv ov11 -1
+			endi
+		retn
+
+
+		subr room
+			doif rtyp room ownr <> 9
+				loop
+					addv ov86 1
+					doif ov86 >= 0 and ov86 <= 6
+						addv ov87 .03
+					elif ov86 > 6 and ov86 < 100
+						addv ov87 .08
+					endi
+					accg ov87
+				untl rtyp room ownr = 9 or ov86 >= 100
+				doif ov86 >= 100
+					gsub deth
+				endi
+			endi
+			doif rtyp room ownr = 9
+				setv ov86 0
+				setv ov87 0
+				gsub drft
+			endi
+			accg ov87
+		retn
+
+
+		subr deth
+			doif carr = null
+				kill ownr
+			elif carr <> null
+				setv ov99 99
+			endi
+		retn
+
+
+
+		subr move
+			velo ov10 ov11
+		retn
+	endi
+endm
+rscr
+enum 2 13 8
+	kill targ
+next
+scrx 2 13 8 9
+endm

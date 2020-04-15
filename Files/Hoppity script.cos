@@ -1,0 +1,633 @@
+*GB Template
+*# Pray-File "GB_Hoppity.agent"
+*# DS-Name "Hoppity"
+*# Depend hoppity.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Hoppity raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 15
+*# GB_Category = 3
+*# Agent Author = "Creature Labs"
+
+new: simp 2 15 12 "hoppity" 140 0 2000
+accg 4
+perm 60
+tick 4
+attr 195
+aero 5
+elas 5
+fric 90
+
+
+setv ov30 0
+
+setv ov31 10
+
+setv ov32 20
+
+setv ov33 30
+
+setv ov34 40
+
+setv ov35 48
+
+setv ov36 56
+
+setv ov37 69
+
+setv ov38 83
+
+setv ov39 96
+
+
+setv ov00 0
+setv ov01 2000
+setv ov02 401
+setv ov05 2
+setv ov06 rand 0 1
+setv ov10 -1
+setv ov11 -1
+seta ov16 null
+setv ov20 0
+setv ov61 90
+setv ov72 600
+setv ov73 600
+setv ov74 1000
+setv ov75 1
+
+
+
+
+mvsf game "ch_x" game "ch_y"
+setv vely 0
+
+
+scrp 2 15 12 9
+	addv ov01 1
+	subv ov02 3
+	doif carr <> null
+		setv ov00 0
+	endi
+	doif ov05 = 2
+		addv ov20 1
+	endi
+
+	doif ov01 > 500 and ov00 = 0 and ov05 = 1
+		gsub matr
+	endi
+
+	doif carr = null
+		doif rtyp room ownr = 8 or rtyp room ownr = 9
+			subv ov02 40
+		endi
+	endi
+
+
+
+	doif ov05 = 0
+		doif va52 < 0
+			base 140
+			anim [0 1 2 3 4 5]
+			over
+		else
+			base 146
+			anim [0 1 2 3 4 5]
+			over
+		endi
+		setv ov05 1
+	endi
+
+
+
+
+	doif ov20 > 400 and ov00 = 0
+		setv ov00 6
+	endi
+	doif ov01 gt 2010
+		setv va66 ov01
+		modv va66 10
+		doif va66 eq 0
+			addv ov20 1
+		endi
+	endi
+
+	doif ov02 < ov73
+		setv ov00 1
+	endi
+
+	doif obst 0 lt 30
+		setv ov10 1
+		setv ov11 -1
+	endi
+	doif obst 1 lt 30
+		setv ov10 -1
+		setv ov11 -1
+	endi
+
+	doif obst 2 lt 30
+		setv ov11 1
+	endi
+	doif obst 3 lt 30
+		setv ov11 -1
+	endi
+
+	doif ov02 <= 0
+		setv ov00 99
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+	doif ov00 eq 99
+		gsub die_
+	endi
+
+	doif ov00 = 3
+		fric 100
+		doif ov10 <= 0
+			anim []
+			base ov38
+			attr 195
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+
+		elif ov10 > 0
+			anim []
+			base ov39
+			attr 195
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+
+		endi
+		setv ov00 0
+	endi
+	inst
+	doif ov00 = 2 and carr = null and room targ <> 8 and room targ <> 9
+		fric 100
+		doif ov10 <= 0
+			anim []
+			base ov36
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+
+
+			attr 192
+		elif ov10 > 0
+			anim []
+			base ov37
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+
+			attr 192
+		endi
+		wait rand 50 200
+		setv ov00 3
+	endi
+	slow
+
+	doif ov00 = 1
+		gsub gfod
+	endi
+
+	doif ov00 = 6
+		gsub baby
+	endi
+
+	doif ov00 eq 0
+		gsub roam
+	endi
+
+
+	subr die_
+		setv va50 posx
+		setv va51 posy
+		setv va52 ov10
+		subv va50 20
+		subv va51 8
+		doif ov05 = 2
+			new: simp 2 10 22 "hoppity" 108 0 2000
+		else
+			new: simp 2 10 22 "hoppity" 248 0 2000
+		endi
+		accg 2
+
+		tick 800
+		attr 195
+		aero 0
+		setv ov10 va52
+		setv ov61 40
+		setv ov01 0
+		doif tmvt va50 va51 <> 1
+			kill targ
+			kill ownr
+			stop
+		endi
+		mvto va50 va51
+		doif ov10 <= 0
+			base 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+		else
+			base 0
+			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
+		endi
+		setv vely 0
+		targ ownr
+		kill targ
+	retn
+
+	subr roam
+		setv va66 rand 0 10
+		doif ov75 = 0
+			doif va66 lt 5
+				velo 0 0
+				fric 100
+				negv ov10
+			endi
+			doif va66 gt 5
+
+				setv ov11 -1
+				setv ov75 1
+				fric 90
+			else
+				fric 10
+				setv ov11 1
+			endi
+
+
+
+
+
+
+
+
+
+
+
+			gsub vect
+			gsub anim
+			gsub move
+		else
+			doif vely > 0
+				doif ov10 <= 0
+					base ov30
+					anim [6]
+				endi
+
+				doif ov10 > 0
+					base ov31
+					anim [6]
+				endi
+
+			endi
+		endi
+		stop
+	retn
+
+	subr gfod
+		fric 10
+		seta ov16 null
+		setv va47 2
+		setv va48 11
+		setv va49 0
+		doif ov16 = null
+			gsub find
+		endi
+		doif ov16 = null
+			setv va47 2
+			setv va48 8
+			setv va49 0
+			gsub find
+		endi
+		doif ov16 <> null
+			gsub hunt
+			doif touc ownr ov16 <> 0
+				fric 100
+				doif ov10 <= 0
+					anim []
+					base ov32
+					anim [0 1 2 3 4 5 6 7 8 9 6 7 8 9 6 7 8 9]
+				else
+					anim []
+					base ov33
+					anim [0 1 2 3 4 5 6 7 8 9 6 7 8 9 6 7 8 9]
+				endi
+				addv ov02 ov72
+				over
+				setv ov00 0
+			endi
+			gsub vect
+			gsub anim
+			gsub move
+		else
+			setv ov00 0
+			gsub roam
+		endi
+	retn
+
+	subr baby
+		setv va50 posl
+		setv va51 post
+		setv va52 ov10
+		inst
+		rnge 600
+		esee 2 15 12
+			addv va66 1
+		next
+		doif va66 <= 4
+			new: simp 2 15 12 "hoppity" 160 140 2000
+			accg 4
+			perm 60
+			attr 195
+			aero 5
+			elas 5
+			fric 90
+
+
+			setv ov30 0
+
+			setv ov31 10
+
+			setv ov32 20
+
+			setv ov33 30
+
+			setv ov34 40
+
+			setv ov35 48
+
+			setv ov36 56
+
+			setv ov37 69
+
+			setv ov38 83
+
+			setv ov39 96
+
+
+			setv ov00 0
+			setv ov01 2000
+			setv ov02 401
+			setv ov05 0
+			setv ov06 rand 0 1
+			setv ov10 -1
+			setv ov11 -1
+			seta ov16 null
+			setv ov20 0
+			setv ov61 85
+			setv ov72 400
+			setv ov73 400
+			setv ov74 800
+			setv ov75 1
+
+			doif tmvt va50 va51 <> 1
+				kill targ
+				targ ownr
+			else
+				mvto va50 va51
+				setv vely 0
+				tick 4
+				targ ownr
+				setv ov20 0
+				setv ov00 0
+			endi
+		endi
+		targ ownr
+		setv ov00 0
+		slow
+	retn
+
+	subr matr
+		setv va50 posl
+		setv va51 post
+		setv va52 ov10
+		subv va50 10
+		subv va51 10
+		inst
+		new: simp 2 15 12 "hoppity" 140 0 2000
+		accg 4
+		perm 60
+		attr 195
+		aero 5
+		elas 5
+		fric 90
+
+
+		setv ov30 0
+
+		setv ov31 10
+
+		setv ov32 20
+
+		setv ov33 30
+
+		setv ov34 40
+
+		setv ov35 48
+
+		setv ov36 56
+
+		setv ov37 69
+
+		setv ov38 83
+
+		setv ov39 96
+
+
+		setv ov00 0
+		setv ov01 2000
+		setv ov02 401
+		setv ov05 2
+		setv ov06 rand 0 1
+		setv ov10 -1
+		setv ov11 -1
+		seta ov16 null
+		setv ov20 0
+		setv ov61 90
+		setv ov72 600
+		setv ov73 600
+		setv ov74 1000
+		setv ov75 1
+
+		doif tmvt va50 va51 <> 1
+			kill targ
+			targ ownr
+		else
+			mvto va50 va51
+			setv vely 0
+			tick 4
+			targ ownr
+			kill targ
+		endi
+
+		setv ov00 0
+		slow
+	retn
+
+
+	subr vect
+		setv va10 rand 8 14
+		setv va11 rand 15 20
+	retn
+
+	subr anim
+
+		doif ov11 = -1
+			doif vely <= 0
+				anim []
+				doif ov10 <= 0
+					base ov30
+					anim [0 1 2 3 4 5]
+				endi
+
+				doif ov10 > 0
+					base ov31
+					anim [0 1 2 3 4 5]
+				endi
+			else
+				doif ov10 <= 0
+					base ov30
+					anim [6 7 8]
+				endi
+
+				doif ov10 > 0
+					base ov31
+					anim [6 7 8]
+				endi
+			endi
+		else
+			doif ov10 <= 0
+				anim []
+				base ov34
+				anim [0 1 2 3 4 5 6 7 255]
+			endi
+
+			doif ov10 > 0
+				anim []
+				base ov35
+				anim [0 1 2 3 4 5 6 7 255]
+			endi
+		endi
+	retn
+
+	subr move
+		mulv va10 ov10
+		mulv va11 ov11
+		velo va10 va11
+	retn
+	subr hunt
+		inst
+		targ ov16
+		doif targ <> null
+			setv va50 posx
+			setv va51 posy
+			targ ownr
+			doif posx lt va50
+				setv ov10 1
+			endi
+			doif posx gt va50
+				setv ov10 -1
+			endi
+			doif posy lt va51
+				setv ov11 1
+			endi
+			doif posy gt va51
+				setv ov11 -1
+			endi
+		else
+			targ ownr
+			seta ov16 null
+			setv ov00 0
+		endi
+	retn
+
+	subr find
+		setv va99 99999999
+		seta va58 null
+		inst
+		esee va47 va48 va49
+			doif targ <> null
+				setv va88 0
+				setv va50 relx ownr targ
+				setv va51 rely ownr targ
+				doif va50 lt 0
+					negv va50
+				endi
+				doif va51 lt 0
+					negv va51
+				endi
+				setv va52 va50
+				mulv va52 va52
+				setv va53 va51
+				mulv va53 va53
+				setv va54 va52
+				addv va54 va53
+				doif va54 lt va99
+					seta va58 targ
+					setv va99 va54
+				endi
+			endi
+		next
+		doif va58 <> null
+			targ ownr
+			seta ov16 va58
+		else
+			targ ownr
+			seta ov16 null
+		endi
+		targ ownr
+		slow
+	retn
+
+
+endm
+
+scrp 2 15 12 6
+	inst
+	setv ov75 0
+	doif rand 0 10 < 11
+		doif carr = null
+			setv ov00 2
+		endi
+	endi
+	doif wall = down
+		doif ov10 <= 0
+			anim []
+			base ov30
+			anim [8 0]
+		elif ov10 > 0
+			anim []
+			base ov31
+			anim [8 0]
+		endi
+	endi
+
+endm
+
+scrp 2 10 22 9
+	doif carr = null
+		doif ov10 <= 0
+			base 0
+			anim [13 14 15]
+
+		else
+			base 16
+			anim [13 14 15]
+		endi
+		over
+		doif room targ <> -1 and carr = null
+			altr room targ 3 0.4
+			altr room targ 4 0.4
+		endi
+		kill targ
+	endi
+endm
+
+
+rscr
+
+enum 2 15 12
+	kill targ
+next
+scrx 2 15 12 9
+scrx 2 15 12 6
+
+endm

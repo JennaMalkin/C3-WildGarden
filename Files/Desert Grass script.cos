@@ -1,0 +1,623 @@
+*GB Template
+*# Pray-File "GB_Desert Grass.agent"
+*# DS-Name "Desert Grass"
+*# Depend desertgrass.c16
+*# Attach gb_c3_conv.c16
+
+*# desc = "C3 Desert Grass raw, buggy, unsupported conversion."
+*# Agent Animation File = "gb_c3_conv.c16"
+*# Agent Animation Gallery = "gb_c3_conv"
+*# Agent Sprite First Image = 5
+*# GB_Category = 2
+*# Agent Author = "Creature Labs"
+
+new: simp 2 6 4 "desertgrass" 25 0 rand 200 500
+attr 192
+pose 3
+elas 0
+
+seta ov17 null
+seta ov18 null
+
+setv ov30 6
+
+setv ov31 20
+
+setv ov32 14
+
+setv ov38 7
+
+setv ov34 21
+
+setv ov35 24
+
+
+setv ov50 0.1
+
+setv ov51 0.005
+
+setv ov52 0.5
+
+setv ov53 1
+
+setv ov54 10
+
+setv ov55 0.1
+
+setv ov56 0.0001
+
+setv ov57 0.5
+
+setv ov58 0.001
+
+setv ov60 0
+
+setv ov61 5
+
+setv ov62 0.0002
+
+setv ov63 1000
+
+setv ov65 0
+
+
+setv ov66 30
+
+setv ov67 30
+
+setv ov68 0
+
+setv ov69 0
+
+
+setv ov70 0.0001
+setv ov71 0.0002
+setv ov72 0.0002
+
+setv ov73 40
+setv ov74 10
+
+setv ov80 300
+setv ov82 100
+
+
+setv va04 wdth
+subv va04 va02
+divv va04 2
+setv va05 hght
+
+subv va05 va03
+subv va00 va04
+subv va01 va05
+mvsf game "ch_x" game "ch_y"
+
+
+tick ov80
+
+
+
+
+
+
+scrp 2 3 13 9
+
+
+
+
+
+
+	doif totl 2 3 13 gt 30
+		gsub dead
+	endi
+
+
+	doif ov00 eq 1 and carr eq null and fall eq 0
+
+
+		doif rtyp room targ lt 5 or rtyp room targ gt 8
+
+			gsub nope
+		elif prop room targ 1 gt ov80 or prop room targ 1 lt ov81
+
+			gsub nope
+		elif prop room targ 3 gt ov85 or prop room targ 3 lt ov86
+
+			gsub nope
+		elif prop room targ 2 gt ov84 and prop room targ 2 lt ov83
+
+			gsub nope
+			gsub dorm
+		elif prop room targ 2 gt ov82 or prop room targ 2 lt ov83
+
+			gsub nope
+		else
+			rnge 100
+
+			setv va00 0
+			esee 2 6 4
+				addv va00 1
+			next
+			doif va00 ge 2
+
+				gsub dorm
+			else
+
+				gsub grow
+			endi
+		endi
+	endi
+
+
+	subr grow
+
+		inst
+
+		setv va00 posl
+		setv va01 post
+		setv va02 wdth
+		setv va03 hght
+
+		new: simp 2 6 4 "desertgrass" 25 0 rand 200 500
+
+
+
+		seta ov17 null
+		seta ov18 null
+
+		setv ov30 6
+
+		setv ov31 20
+
+		setv ov32 14
+
+		setv ov38 7
+
+		setv ov34 21
+
+		setv ov35 24
+
+
+		setv ov50 0.1
+
+		setv ov51 0.005
+
+		setv ov52 0.5
+
+		setv ov53 1
+
+		setv ov54 10
+
+		setv ov55 0.1
+
+		setv ov56 0.0001
+
+		setv ov57 0.5
+
+		setv ov58 0.001
+
+		setv ov60 0
+
+		setv ov61 5
+
+		setv ov62 0.0002
+
+		setv ov63 1000
+
+		setv ov65 0
+
+
+		setv ov66 30
+
+		setv ov67 30
+
+		setv ov68 0
+
+		setv ov69 0
+
+
+		setv ov70 0.0001
+		setv ov71 0.0002
+		setv ov72 0.0002
+
+		setv ov73 40
+		setv ov74 10
+
+		setv ov80 300
+		setv ov82 100
+
+		setv va04 wdth
+		subv va04 va02
+		divv va04 2
+		setv va05 hght
+
+		subv va05 va03
+		subv va00 va04
+		subv va01 va05
+
+		doif tmvt va00 va01 eq 1
+			mvto va00 va01
+		else
+			mvsf va00 va01
+		endi
+
+		tick ov80
+
+		kill ownr
+	retn
+
+	subr dorm
+		subv ov02 1
+		doif ov02 le 0
+			gsub dead
+		endi
+		subv ov72 1
+		doif ov72 le 0
+			tick ov71
+		else
+			tick ov70
+		endi
+	retn
+
+	subr nope
+		subv ov02 1
+		doif ov02 le 0
+			gsub dead
+		endi
+	retn
+
+	subr dead
+		inst
+		doif room targ ne -1
+
+			altr room targ 3 0.001
+			altr room targ 4 0.001
+			kill targ
+		else
+			kill targ
+		endi
+	retn
+endm
+
+
+scrp 2 6 4 9
+
+
+
+
+
+
+
+
+
+	doif ov00 eq 5
+		doif pose gt ov32
+			setv va00 pose
+			subv va00 1
+			pose va00
+			subv ov60 1
+		else
+			kill ownr
+		endi
+		stop
+	endi
+
+
+
+
+	gsub up_t
+
+	gsub loss
+
+	gsub what
+
+
+
+
+	doif ov00 eq 0
+		doif pose ne ov30
+			setv va00 pose
+			addv va00 1
+			pose va00
+		elif pose eq ov30
+			setv ov00 1
+		endi
+		setv ov60 pose
+	endi
+
+	doif ov60 gt 0
+		setv ov99 1
+	else
+		setv ov99 0
+	endi
+
+
+	doif ov00 eq 1
+		subv ov66 1
+		doif ov66 le 0
+			base 0
+			pose ov34
+			setv ov00 3
+		endi
+	endi
+
+
+	doif ov00 eq 3
+		doif pose lt ov35
+			base 0
+			setv va00 pose
+			addv va00 1
+			pose va00
+		else
+			subv ov67 1
+		endi
+		setv va00 posx
+		setv va01 post
+		doif ov67 le 0
+			doif ov67 gt -2
+				inst
+				setv va98 rand 0 3
+				mulv va98 4
+				addv va98 25
+				new: simp 2 3 13 "desertgrass" 4 va98 100
+				attr 195
+				bhvr 48
+				elas 0
+				fric 50
+
+
+				setv ov00 1
+
+				setv ov02 100
+
+				setv ov70 100
+				setv ov71 600
+
+				setv ov72 50
+
+				setv ov80 1
+				setv ov81 0.01
+
+				setv ov82 1
+				setv ov83 0.01
+				setv ov84 0.001
+
+				setv ov85 1
+				setv ov86 0.01
+
+				velo rand -5 5 rand -10 0
+				anim [0 1 2 3 255]
+				tick ov70
+				doif tmvt va00 va01 eq 1
+					mvto va00 va01
+				else
+					mvsf va00 va01
+				endi
+
+				emit 7 0.3
+			else
+				targ ownr
+				base 0
+				pose ov31
+				setv ov00 5
+			endi
+		endi
+	endi
+
+
+
+
+
+	subr up_t
+
+		setv va01 prop room targ 1
+
+		setv va02 prop room targ 2
+
+		setv va03 prop room targ 3
+
+		setv va04 prop room targ 4
+
+
+
+		doif ov50 lt ov52
+
+			doif ov51 le va03
+				setv va90 ov51
+			else
+				setv va90 va03
+			endi
+
+			setv va00 va90
+			negv va00
+			doif room targ ne -1
+				altr room targ 3 va00
+
+				addv ov50 va90
+				setv va90 0
+			endi
+		endi
+
+
+
+		doif ov55 lt ov57
+
+			doif ov56 le va04
+				setv va91 ov56
+			else
+				setv va91 va04
+			endi
+
+			setv va00 va91
+			negv va00
+
+
+			divv va00 2
+			doif room targ ne -1
+				altr room targ 4 va00
+			endi
+
+			doif va01 lt ov58
+
+				divv va91 2
+			endi
+
+			addv ov55 va91
+			setv va91 0
+		endi
+
+
+		doif ov55 lt ov57
+
+			doif va01 gt ov58
+
+				setv va91 ov62
+
+				mulv va91 ov60
+
+				addv ov55 va91
+			endi
+		endi
+	retn
+
+
+	subr loss
+
+		setv va02 prop room targ 2
+
+
+		setv va92 ov60
+
+		addv va92 1
+
+		setv va00 va02
+		divv va00 ov63
+
+		mulv va92 va00
+
+		subv ov50 va92
+
+
+
+		divv va92 2
+		doif room targ ne -1
+			altr room targ 3 va92
+		endi
+	retn
+
+
+
+	subr what
+		doif ov00 ne 5
+
+			doif ov50 le 0 or ov55 le 0
+				base 0
+				pose ov31
+				setv ov00 5
+				stop
+			endi
+
+			setv va03 ov52
+			divv va03 ov54
+
+			doif ov50 lt va03
+				setv ov64 1
+			else
+				setv ov64 0
+			endi
+
+			doif ov64 eq 1
+				base ov38
+				setv ov00 2
+				setv ov66 ov73
+				setv ov67 ov74
+
+
+
+			endi
+		endi
+	retn
+
+
+
+
+endm
+
+
+
+scrp 2 6 4 12
+	lock
+
+	doif ov99 eq 0
+		stop
+	endi
+
+
+
+
+
+
+
+
+
+
+	doif ov00 eq 1 or ov00 eq 3
+		setv ov00 0
+		setv va00 ov30
+		subv va00 1
+		base 0
+		pose va00
+	elif ov00 eq 0
+		base 0
+		setv va00 pose
+		subv va00 1
+		pose va00
+	endi
+
+
+
+
+
+	setv ov60 pose
+	doif ov60 gt 0
+		setv ov99 1
+	else
+		setv ov99 0
+	endi
+
+
+
+
+
+endm
+
+
+
+scrp 2 3 13 12
+	lock
+	stim writ from 77 1
+	wait 1
+	kill ownr
+endm
+
+
+scrp 2 3 13 6
+	doif wall eq down
+		anim []
+	endi
+endm
+
+
+scrp 2 3 13 5
+	anim [0 1 2 3 255]
+endm
+
+
+rscr
+enum 2 3 13
+	kill targ
+next
+enum 2 6 4
+	kill targ
+next
+scrx 2 6 4 9
+scrx 2 3 13 9
