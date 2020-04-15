@@ -13,6 +13,7 @@
 
 new: simp 2 13 9 "balloonbug" 42 0 3000
 attr 198
+bhvr 59
 clac 0
 
 elas 0
@@ -59,7 +60,7 @@ scrp 2 13 9 9
 				addv va99 1
 			next
 
-			doif va99 le 3
+			doif va99 le 10
 				setv va98 totl 2 18 24
 
 				doif va98 lt 3
@@ -80,12 +81,17 @@ scrp 2 13 9 9
 		endi
 	endi
 	targ ownr
-
+	
+*die if older than 5 to 15 minutes old
+	doif ov01 ge rand 1200 3600
+		gsub die
+		stop
+	endi
 
 	subv ov02 1
 
 
-	doif ov02 le rand 100 200 and ov00 ne 3
+	doif ov02 le rand 100 200 and ov00 ne 3 and ov00 ne 1
 
 		doif ov00 eq 1
 			setv ov91 100
