@@ -352,6 +352,35 @@ scrp 2 13 9 9
 		endi
 		slow
 	retn
+
+subr die
+**Check direction
+        doif ov12 gt 0 or ov10 gt 0
+            pose 39
+        elif ov12 lt 0 or ov10 lt 0
+            pose 36
+        else
+            pose 39
+        endi
+        accg 1
+        loop
+            wait 10
+        untl fall = 0
+        wait rand 50 100
+        doif pose eq 36
+            pose 37
+        else
+            pose 40
+        endi
+        wait rand 50 100
+        doif pose eq 37
+            pose 38
+        else
+            pose 41
+        endi
+        wait rand 50 100
+        kill ownr
+retn
 endm
 
 
