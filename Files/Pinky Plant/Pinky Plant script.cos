@@ -13,7 +13,7 @@
 
 new: simp 2 4 5 "starplant" 10 0 100
 attr 192
-bhvr 1
+bhvr 11
 tick rand 20 80
 mvsf game "ch_x" game "ch_y"
 elas 0
@@ -21,7 +21,7 @@ velo rand -10 10 0
 
 scrp 2 4 5 1
 	targ from
-	stim writ from 62 1
+	stim writ from 84 1
 endm
 
 scrp 2 4 5 9
@@ -32,8 +32,20 @@ scrp 2 4 5 9
 	endi
 endm
 
+scrp 2 4 5 2
+	targ from
+	stim writ from 84 1
+endm
 
-
+scrp 2 4 5 3
+ 	stim writ from 84 1 
+ 	targ ownr
+ 	doif pose gt 0 
+ 	setv va00 pose
+ 		 subv va00 1
+ 	pose va00
+ 	endi
+endm  
 
 
 
@@ -42,3 +54,6 @@ enum 2 4 5
 	kill targ
 next
 scrx 2 4 5 9
+scrx 2 4 5 1
+scrx 2 4 5 2
+scrx 2 4 5 3
