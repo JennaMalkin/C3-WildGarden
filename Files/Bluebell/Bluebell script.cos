@@ -52,6 +52,20 @@ scrp 2 4 6 9
 	endi
 endm
 
+scrp 2 4 6 2
+	targ from
+	stim writ from 84 1
+endm
+
+scrp 2 4 6 3
+ 	stim writ from 84 1 
+ 	targ ownr
+ 	doif pose gt 0 
+ 	setv va00 pose
+ 		 subv va00 1
+ 	pose va00
+ 	endi
+ 	endm  
 
 rscr
 enum 2 4 6
@@ -59,4 +73,5 @@ enum 2 4 6
 next
 scrx 2 4 6 9
 scrx 2 4 6 1
-
+scrx 2 4 6 2
+scrx 2 4 6 3
