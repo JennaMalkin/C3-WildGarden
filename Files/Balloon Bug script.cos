@@ -362,7 +362,7 @@ scrp 2 18 24 9
 	new: simp 2 13 9 "balloonbug" 42 0 3000
 	attr 198
 	clac 0
-
+bhvr 59
 	elas 0
 
 	setv ov61 40
@@ -383,7 +383,38 @@ scrp 2 18 24 9
 	kill ownr
 endm
 
+*hit script
+scrp 2 13 9 3
+	snde "cmc3"
+	inst
+	doif from <> null
+		targ from
+		doif crea targ = 1
+* REDUCE Pain, Fear and Anger!
+			driv 0 -0.45
+			driv 10 -0.35
+			driv 12 -0.35
+		endi
+	endi
+	kill ownr
+endm
 
+*eat script
+scrp 2 13 9 12
+	snde "chwp"
+	stim writ from 80 1
+	kill ownr
+endm
+
+*pull
+scrp 2 13 9 2
+	doif ov00 eq 0
+*make the change activity counter large enough to trip
+		setv ov91 100
+	endi
+	stim writ targ 85 1
+	targ ownr
+endm
 
 
 rscr
