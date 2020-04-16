@@ -24,7 +24,7 @@ velo rand -10 10 0
 
 scrp 2 4 6 1
 	targ from
-	stim writ from 62 1
+	stim writ from 84 1
 endm
 
 scrp 2 4 6 9
@@ -58,3 +58,5 @@ enum 2 4 6
 	kill targ
 next
 scrx 2 4 6 9
+scrx 2 4 6 1
+
