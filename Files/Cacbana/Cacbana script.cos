@@ -336,8 +336,8 @@ scrp 2 5 2 9
 
 	doif ov00 eq 1
 		subv ov66 1
-
-		doif prop room targ 1 le 0.4
+*Trigger opening at night instead of in the dark
+		doif time eq 4
 
 			setv va00 ov33
 			doif ov64 eq 1
