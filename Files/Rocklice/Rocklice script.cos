@@ -60,6 +60,8 @@ endm
 
 scrp 2 16 6 12
 	stim writ from 80 5
+setv va00 posx
+setv va01 post
 	reps 5
 		new: simp 2 10 30 "bone" 12 0 100
 		attr 199
