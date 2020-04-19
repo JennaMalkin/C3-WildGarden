@@ -40,22 +40,25 @@ setv ov61 50
 
 
 
-setv va51 rand 1 4
+setv va51 rand 1 2
+***Seems the same as angelfish, so same changes here
+**Bugs
 doif va51 = 1
 	setv ov75 13
-	setv ov71 8
+	setv ov71 0
 	setv ov76 1
+**Seeds
 elif va51 = 2
 	setv ov75 3
-	setv ov71 6
+	setv ov71 0
 	setv ov76 2
 elif va51 = 3
 	setv ov75 3
-	setv ov71 7
+	setv ov71 0
 	setv ov76 3
 elif va51 = 4
 	setv ov75 3
-	setv ov71 8
+	setv ov71 0
 	setv ov76 4
 endi
 
@@ -247,22 +250,25 @@ scrp 2 18 15 9
 
 
 
-			setv va51 rand 1 4
+			setv va51 rand 1 2
+***Picks between bugs and seeds
+**Bugs
 			doif va51 = 1
 				setv ov75 13
-				setv ov71 8
+				setv ov71 0
 				setv ov76 1
+**Seeds
 			elif va51 = 2
 				setv ov75 3
-				setv ov71 6
+				setv ov71 0
 				setv ov76 2
 			elif va51 = 3
 				setv ov75 3
-				setv ov71 7
+				setv ov71 0
 				setv ov76 3
 			elif va51 = 4
 				setv ov75 3
-				setv ov71 8
+				setv ov71 0
 				setv ov76 4
 			endi
 
@@ -822,28 +828,33 @@ scrp 2 15 15 9
 			slow
 			doif va53 = 0
 
-				setv va76 ov76
-				loop
-					setv va00 rand 1 4
-					setv va51 rand 1 4
+*				setv va76 ov76
+*				loop
+					setv va00 rand 1 2
+				doif va51 eq 1
+					setv va51 2
+				else
+					setv va51 1
+				endi
+					
 					doif va51 = 1
 						setv ov75 13
-						setv ov71 8
+						setv ov71 0
 						setv ov76 1
 					elif va51 = 2
 						setv ov75 3
-						setv ov71 6
+						setv ov71 0
 						setv ov76 2
 					elif va51 = 3
 						setv ov75 3
-						setv ov71 7
+						setv ov71 0
 						setv ov76 3
 					elif va51 = 4
 						setv ov75 3
-						setv ov71 8
+						setv ov71 0
 						setv ov76 4
 					endi
-				untl ov76 <> va76
+*				untl ov76 <> va76
 			endi
 		untl va53 = 1 or va60 = 7
 		doif va53 = 1
