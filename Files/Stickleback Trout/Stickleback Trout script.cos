@@ -32,9 +32,9 @@ setv ov61 60
 setv ov72 400
 setv ov73 400
 setv ov74 800
-
-
-
+*	setv va50 rand 3500 3500
+*	setv va51 rand 1020 1020
+*	mvto va50 va51
 
 mvsf game "ch_x" game "ch_y"
 setv vely 0
@@ -44,28 +44,27 @@ else
 	setv va66 1
 endi
 
-
+**Stickleback Dropped
 scrp 2 15 9 5
-
+*	perm 99
 	accg 4
 endm
-
+**Stickleback Eaten
 scrp 2 15 9 12
 	stim writ from 80 4
 	kill ownr
 
 endm
-
+**Stickleback Timer
 scrp 2 15 9 9
 	addv ov01 1
 	subv ov02 1
 	addv ov20 1
-
-
-
-
-
-
+*	doif perm = 99
+*		doif rtyp grap posl post = 8 and rtyp grap posr post = 8 and rtyp grap posl posb = 8 and rtyp grap posr posb = 8
+*			perm 100
+*		endi
+*	endi
 
 	doif rtyp room ownr <> 8 and rtyp room ownr <> 9
 		accg 4
@@ -75,12 +74,13 @@ scrp 2 15 9 9
 	doif ov02 <= 0 or ov01 > 8000
 		setv ov00 99
 	endi
-
-
-
-
-
-
+*	doif ov01 gt 2010
+*		setv va66 ov01
+*		modv va66 10
+*		doif va66 eq 0
+*			addv ov20 1
+*		endi
+*	endi
 
 	doif ov01 gt 1500
 		doif ov05 eq 1
@@ -114,9 +114,9 @@ scrp 2 15 9 9
 			setv ov11 1
 			subv ov02 40
 			setv vely 4
-
+*			gsub vect
 			gsub anim
-
+*			gsub move
 			stop
 		elif rtyp room ownr = 9
 			subv ov02 40
@@ -179,8 +179,8 @@ scrp 2 15 9 9
 		setv va50 posl
 		setv va51 post
 		setv va52 ov10
-
-
+*		subv va50 20
+*		subv va51 8
 		doif ov01 gt 2000
 			new: simp 2 10 7 "trout" 8 16 2000
 		else
@@ -243,7 +243,7 @@ scrp 2 15 9 9
 		gsub vect
 		gsub anim
 		gsub move
-
+*		velo 0 -20
 		stop
 	retn
 
@@ -286,8 +286,8 @@ scrp 2 15 9 9
 	subr layg
 		setv va50 posl
 		setv va51 post
-
-
+*		subv va50 15
+*		subv va51 18
 		doif ov10 le 0
 			subv va50 0
 		endi
@@ -343,9 +343,9 @@ scrp 2 15 9 9
 			setv va51 ov06
 			setv va52 posl
 			setv va53 post
-
-
-
+*		subv va52 32
+*		subv va53 25
+*			inst
 			new: simp 2 15 9 "trout" 23 0 4000
 			accg 0
 			perm 30
@@ -503,9 +503,9 @@ scrp 2 15 9 9
 			endi
 			mulv va10 ov10
 			mulv va11 ov11
-
-
-			velo va10 va11
+*		setv velx va10
+*		setv vely va11
+		velo va10 va11
 		endi
 	retn
 	subr find
@@ -675,7 +675,7 @@ scrp 2 18 6 9
 endm
 
 
-
+***REMOVER
 rscr
 
 enum 2 15 9
