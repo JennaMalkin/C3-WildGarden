@@ -27,23 +27,28 @@ setv ov01 0
 setv ov02 550
 setv ov05 0
 seta ov16 null
-
-setv va51 rand 1 4
+**Between bugs and seeds instead of bugs,seeds,seeds, and more seeds
+setv va51 rand 1 2
+** ov75 = genus, ov71 = species
 doif va51 = 1
+**Bugs
 	setv ov75 13
-	setv ov71 8
+	setv ov71 0
 	setv ov76 1
 elif va51 = 2
+**Seeds
 	setv ov75 3
-	setv ov71 6
+	setv ov71 0
 	setv ov76 2
 elif va51 = 3
+**Seeds again
 	setv ov75 3
-	setv ov71 7
+	setv ov71 0
 	setv ov76 3
 elif va51 = 4
+**Also Seeds
 	setv ov75 3
-	setv ov71 8
+	setv ov71 0
 	setv ov76 4
 endi
 
@@ -231,23 +236,27 @@ scrp 2 18 14 9
 
 
 
-
-			setv va51 rand 1 4
+***Also changed to be only between bugs and seeds
+			setv va51 rand 1 2
+***Determines what to eat again
+**Ov75 = genus, ov71 = species
 			doif va51 = 1
+***Bugs
 				setv ov75 13
-				setv ov71 8
+				setv ov71 0
 				setv ov76 1
 			elif va51 = 2
+***Rest are seeds
 				setv ov75 3
-				setv ov71 6
+				setv ov71 0
 				setv ov76 2
 			elif va51 = 3
 				setv ov75 3
-				setv ov71 7
+				setv ov71 0
 				setv ov76 3
 			elif va51 = 4
 				setv ov75 3
-				setv ov71 8
+				setv ov71 0
 				setv ov76 4
 			endi
 
@@ -763,29 +772,41 @@ scrp 2 15 14 9
 			next
 			slow
 			doif va53 = 0
-
-				setv va76 ov76
-				loop
-					setv va00 rand 1 4
-					setv va51 rand 1 4
+**More Choosing what to eat
+*				setv va76 ov76
+*				loop
+**Changed as there will only be 2 options for the angelfish - bugs or seeds
+*Currently even for now
+					setv va00 rand 1 2
+**Not sure what va00 is set here for
+***  Used to be a loop that would randomly change between what was being looked for, since there's only 2 it'll automatically
+*** go for the other option instead.
+					doif va51 eq 1
+						setv va51 2
+					else
+						setv va51 1
+					endi
+					
+***Bugs
 					doif va51 = 1
 						setv ov75 13
-						setv ov71 8
+						setv ov71 0
 						setv ov76 1
-					elif va51 = 2
+***Seeds
+					else
 						setv ov75 3
-						setv ov71 6
+						setv ov71 0
 						setv ov76 2
 					elif va51 = 3
 						setv ov75 3
-						setv ov71 7
+						setv ov71 0
 						setv ov76 3
 					elif va51 = 4
 						setv ov75 3
-						setv ov71 8
+						setv ov71 0
 						setv ov76 4
 					endi
-				untl ov76 <> va76
+*				untl ov76 <> va76
 			endi
 		untl va53 = 1 or va60 = 7
 		doif va53 = 1
