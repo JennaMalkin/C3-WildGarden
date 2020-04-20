@@ -11,6 +11,15 @@
 *# GB_Category = 5
 *# Agent Author = "Creature Labs"
 
+
+* Wysts
+**
+** Wysts love the hot waters of the thermal vents, and from it they
+** gain the energy they need to live. Wysts don't shoal together, 
+** instead they randomly swim around - preferring to be close to
+** the thermal vents.
+**
+
 new: simp 2 15 18 "wysts" 92 0 rand 100 5000
 attr 199
 bhvr 48
@@ -20,53 +29,53 @@ accg 0
 aero 0
 fric 99
 clac -1
-
+*	tint 255 255 255 128 128
 mvsf game "ch_x" game "ch_y"
-
+** ov01 is the life force, which rises.
 setv ov01 0
 setv ov61 30
 setv ov70 0
 tick 10
 
 scrp 2 15 18 12
-
+** wyst eat script
 	targ from
 	stim writ from 80 1
 	kill ownr
 endm
 
 scrp 2 15 18 9
-
+** Function this way when not being carried.
 	doif carr = null
 
-
+**Make sure the Wyst has the correct pose bases.
 		gsub base
 
-
+** Age the Wyst slightly.
 		addv ov01 1
 
 
-
+** Run the room monitor.
 		gsub room
 
-
-
-
+** Move, avoiding obstacles - either randomly or towards the vents.
+*		setv va00 rand 1 10
+*		doif va00 = 1
 		gsub rndm
-
-
-
+*		else
+*			gsub vent
+*		endi
 		gsub obst
 		gsub anim
 		gsub move
 
-
+** Die of old age.
 		doif ov01 > 700
-
+*			dbg: outs "Wysts: Death due to old age."
 			gsub deth
 		endi
 
-
+** Randomly become pregnant if old enough.
 		doif ov01 > 300
 			setv va55 rand 0 20
 			doif va55 = 5
@@ -74,18 +83,18 @@ scrp 2 15 18 9
 			endi
 		endi
 
-
+** Die if marked for death.
 		doif ov99 = 99
 			gsub deth
 		endi
 
-
+** If pregnant, give birth.
 		doif ov70 = 1
 			gsub brth
 		endi
 
 
-
+** Direction based animation.
 		subr anim
 			doif ov10 < 0
 				base ov30
@@ -99,18 +108,18 @@ scrp 2 15 18 9
 		retn
 
 
-
+** Setting the base poses & age variables
 		subr base
 			doif ov01 <= 100
 				setv ov05 0
-
+** Baby stage.
 				setv ov30 0
 			elif ov01 >= 101 and ov01 <= 200 and ov05 = 0
 				inst
 				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
 					velo 0 0
 					setv ov05 1
-
+** Child stage.
 					setv ov30 22
 					gsub anim
 				endi
@@ -120,7 +129,7 @@ scrp 2 15 18 9
 				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
 					velo 0 0
 					setv ov05 2
-
+** Adolescent stage.
 					setv ov30 44
 					gsub anim
 				endi
@@ -130,7 +139,7 @@ scrp 2 15 18 9
 				doif obst left > 50 and obst rght > 50 and obst _up_ > 50 and obst down > 50
 					velo 0 0
 					setv ov05 3
-
+** Adult stage
 					setv ov30 66
 					gsub anim
 				endi
@@ -138,7 +147,7 @@ scrp 2 15 18 9
 			endi
 		retn
 
-
+** Egg creation & birth control.
 		subr brth
 			doif obst left > 30 and obst rght > 30 and obst _up_ > 30 and obst down > 30
 				setv va89 0
@@ -161,10 +170,10 @@ scrp 2 15 18 9
 				setv va81 post
 				reps ov08
 					new: simp 2 18 16 "wysts" 4 88 3000
-
+* NEED AN EAT SCRIPT FOR THE EGGS
 					bhvr 32
 
-
+* bhvr 48
 					attr 199
 					clac -1
 					elas 50
@@ -173,7 +182,7 @@ scrp 2 15 18 9
 					perm 75
 					fric 99
 					setv ov61 30
-
+*					tint 255 255 255 128 128
 					doif tmvt va80 va81 = 1
 						mvto va80 va81
 					elif tmvt va80 va81 = 0
@@ -182,12 +191,12 @@ scrp 2 15 18 9
 					tick 1
 				repe
 				targ ownr
-
+*				dbg: outs "Wysts: Death due to traumatic childbirth."
 				gsub deth
 			endi
 		retn
 
-
+** Obstacle avoidance.
 		subr obst
 			doif obst left < 50
 				setv ov10 rand 1 2
@@ -203,7 +212,7 @@ scrp 2 15 18 9
 			endi
 		retn
 
-
+** Random movement.
 		subr rndm
 			loop
 				setv ov10 rand -3 3
@@ -213,12 +222,12 @@ scrp 2 15 18 9
 			untl ov11 <> 0
 		retn
 
-
+** Movement.
 		subr move
 			velo ov10 ov11
 		retn
 
-
+** Die, or be marked to die.
 		subr deth
 			doif carr = null
 				kill ownr
@@ -227,7 +236,7 @@ scrp 2 15 18 9
 			endi
 		retn
 
-
+** Swim towards the vents, if you can.
 		subr vent
 			setv va51 0
 			setv va52 0
@@ -236,16 +245,16 @@ scrp 2 15 18 9
 			inst
 			esee 2 23 11
 				doif targ <> null
-
+*					dbg: outs "Vent Found"
 					addv va53 1
 					setv va51 relx ownr targ
 					setv va52 rely ownr targ
 				endi
 			next
 			slow
-
+*			dbg: outv va53
 			doif va53 > 0
-
+*				dbg: outs "Trying to head towards the vent."
 				doif va51 < 0 and ov10 = -1
 					setv ov10 rand -1 -2
 				elif va51 < 0 and ov10 = 1
@@ -261,14 +270,14 @@ scrp 2 15 18 9
 					setv ov11 rand 1 2
 				endi
 			else
-
+*				dbg: outs "Couldn't find a vent"
 				gsub rndm
 			endi
 		retn
 
 
 
-
+** Room monitor - pinched from my gumin grass seeds.
 		subr room
 			doif rtyp room ownr <> 9
 				loop
@@ -377,7 +386,7 @@ scrp 2 18 16 9
 		doif tmvt va90 va91 = 1
 			mvto va90 va91
 			setv ov61 30
-
+** ov01 is the life force, which rises.
 			setv ov01 0
 			tick 1
 			slow
