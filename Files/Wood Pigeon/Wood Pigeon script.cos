@@ -18,20 +18,33 @@ attr 195
 elas 5
 fric 80
 bhvr 16
-
+*fly left
 setv ov30 0
+*fly right
 setv ov31 8
+*peck left
 setv ov32 36
+*peck right
 setv ov33 40
+*sing left
 setv ov34 22
+*sing right
 setv ov35 30
+*hop left
 setv ov36 20
+*hop right
 setv ov37 28
+*glide left
 setv ov38 16
+*glide right
 setv ov39 17
+*dive left
 setv ov40 44
+*dive right
 setv ov41 52
+*die left
 setv ov42 62
+*die right
 setv ov43 66
 setv ov00 0
 setv ov01 3000
@@ -56,7 +69,7 @@ setv ov02 800
 mvsf game "ch_x" game "ch_y"
 endm
 
-
+**Wood Pigeon Timer
 scrp 2 15 11 9
 	inst
 
@@ -131,28 +144,28 @@ scrp 2 15 11 9
 	endi
 
 	doif ov01 gt 3000
-
-
-
-
-
-
-
-
-
+*		setv va89 800
+*		addv va89 obst 3
+*		rnge va89
+*		doif rnge gt 1200
+*			rnge 1200
+*		endi
+*		doif rnge lt 0
+*			rnge 1200
+*		endi
 		rnge 800
 	endi
 
 	doif ov01 lt 3000
-
-
-
-
-
-
-
-
-
+*		setv va89 50
+*		addv va89 obst 3
+*		rnge va89
+*		doif rnge gt 200
+*			rnge 200
+*		endi
+*		doif rnge lt 0
+*			rnge 200
+*		endi
 		rnge 100
 	endi
 
@@ -295,7 +308,7 @@ scrp 2 15 11 9
 	subr vect
 		doif obst 3 lt 5
 			setv va01 rand 6 12
-
+*			setv va02 rand 10 25
 			doif rand 0 5 <> 0 and ov00 <> 1
 				setv va02 rand 2 6
 			elif ov00 = 1
@@ -306,13 +319,12 @@ scrp 2 15 11 9
 		doif obst 3 gt 4
 			setv va01 rand 10 20
 			setv va02 rand 18 25
-
-
-
-
-
+*			doif ov00 = 1 or ov00 = 3
+*				setv va01 rand 5 10
+*				setv va02 rand 8 15
+*			endi
 		endi
-
+*		addv va02 ov15
 	retn
 
 
@@ -515,8 +527,8 @@ scrp 2 15 11 9
 			targ ownr
 
 			gsub hunt
-
-
+*			gsub near
+*			doif va40 eq 1
 			doif touc ov16 ownr <> 0
 				addv ov02 ov72
 				mesg writ ov16 12
@@ -565,8 +577,8 @@ scrp 2 15 11 9
 				gsub find
 				doif ov16 <> null
 					gsub hunt
-
-
+*					gsub near
+*					doif va40 eq 1
 					doif touc ownr ov16 <> 0
 						targ ov16
 						doif ov99 = 1
@@ -740,33 +752,33 @@ scrp 2 15 11 9
 		attr 195
 		rnge 1000
 		bhvr 16
-
+*fly left
 		setv ov30 0
-
+*fly right
 		setv ov31 8
-
+*peck left
 		setv ov32 36
-
+*peck right
 		setv ov33 40
-
+*sing left
 		setv ov34 22
-
+*sing right
 		setv ov35 30
-
+*hop left
 		setv ov36 20
-
+*hop right
 		setv ov37 28
-
+*glide left
 		setv ov38 16
-
+*glide right
 		setv ov39 17
-
+*dive left
 		setv ov40 44
-
+*dive right
 		setv ov41 52
-
+*die left
 		setv ov42 62
-
+*die right
 		setv ov43 66
 
 
@@ -1173,33 +1185,33 @@ scrp 2 15 13 9
 		rnge 1000
 		bhvr 16
 
-
+*fly left
 		setv ov30 0
-
+*fly right
 		setv ov31 8
-
+*peck left
 		setv ov32 36
-
+*peck right
 		setv ov33 40
-
+*sing left
 		setv ov34 22
-
+*sing right
 		setv ov35 30
-
+*hop left
 		setv ov36 20
-
+*hop right
 		setv ov37 28
-
+*glide left
 		setv ov38 16
-
+*glide right
 		setv ov39 17
-
+*dive left
 		setv ov40 44
-
+*dive right
 		setv ov41 52
-
+*die left
 		setv ov42 62
-
+*die right
 		setv ov43 66
 
 
@@ -1244,7 +1256,7 @@ endm
 scrp 2 15 13 6
 	setv va50 posx
 	setv va51 posy
-
+*setv va52 ov19
 	inst
 	new: simp 2 10 36 "woodpigeon" 1 87 49
 	accg 4
@@ -1365,7 +1377,7 @@ endm
 rscr
 
 
-
+***REMOVER
 enum 2 15 11
 	kill targ
 next
