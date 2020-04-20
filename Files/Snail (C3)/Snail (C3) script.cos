@@ -21,36 +21,36 @@ elas 5
 fric 0
 bhvr 16
 
-
+*left
 setv ov30 2
-
+*right
 setv ov31 10
-
+*down on left
 setv ov32 20
-
+* down on right	
 setv ov33 28
-
+* up on right
 setv ov34 38
-
+* up on left
 setv ov35 46
-
+* Blank - Unused?
 setv ov36 54
-
+* left hide
 setv ov37 60
-
+* right hide
 setv ov38 65
-
+* Blank - Unused?
 setv ov39 70
-
+* down on left hide
 setv ov40 76
-
+* down on right hide
 setv ov41 81
 setv ov42 86
-
+* up on right hide
 setv ov43 92
-
+* up on left hide
 setv ov44 97
-
+***Unused ones might've been for being on the ceiling?
 
 
 setv ov00 0
@@ -71,7 +71,7 @@ mvsf game "ch_x" game "ch_y"
 
 setv vely 0
 
-
+**Snail Timer
 scrp 2 13 7 9
 	fric 100
 	addv ov01 1
@@ -195,10 +195,10 @@ scrp 2 13 7 9
 		doif va66 lt 5
 			mulv ov10 -1
 		endi
-
-
+*		doif va66 gt 5
+*			setv ov11 rand -1 1
 		setv ov11 1
-
+*		endi
 
 		gsub vect
 		gsub anim
@@ -232,11 +232,11 @@ scrp 2 13 7 9
 	subr move
 		mulv va10 ov10
 		mulv va11 ov11
-
-
+*		setv velx va10
+*		setv vely va11
 		fric 5
 		velo va10 va11
-
+*		setv vely 0
 	retn
 
 	subr find
@@ -304,7 +304,7 @@ scrp 2 13 7 9
 		endi
 	retn
 endm
-
+***Dead Snail Rotting
 scrp 2 10 20 9
 	doif ov10 <= 0 and carr = null
 		anim []
@@ -328,13 +328,13 @@ scrp 2 10 20 9
 		kill targ
 	endi
 endm
-
+**Snail Eaten
 scrp 2 13 7 12
 	stim writ from 80 1
 	kill ownr
 endm
 
-
+**REMOVER
 rscr
 
 enum 2 13 7
