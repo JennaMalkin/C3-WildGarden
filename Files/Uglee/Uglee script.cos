@@ -11,6 +11,7 @@
 *# GB_Category = 3
 *# Agent Author = "Creature Labs"
 
+***UGLEE
 new: simp 2 16 8 "uglee" 96 0 3000
 attr 194
 perm 80
@@ -29,35 +30,45 @@ endi
 mvsf game "ch_x" game "ch_y"
 tick 9
 
+**OV00 is state
+*0=waiting
+*1=pacing
+*2=going home
+*3=hunting
+*4=on floor - got egg?
 
+**OV12 is Y-velocity
+*-9 makes it maintain current height
+
+**bioenergy
 setv ov61 50
-
+**OV69 is height of home area - changes!
 setv ov69 230
-
+**OV70 is left extent of home area
 setv ov70 6130
-
+**OV71 is right extent of home area
 setv ov71 6900
 
-
+**OV72 is boredom counter
 setv ov72 0
-
+**OV73 is boredom threshold
 setv ov73 rand 50 150
-
+**OV74 is hunting counter
 setv ov74 5
 
+**OV80 is 'do I have food to carry' flag
+*0=no, 1=yes
 
 
-
-
-
+******uglee timer
 scrp 2 16 8 9
 	tick 9
 
-
+***poo check
 	inst
 	doif rand 0 5 eq 0
 		doif carr eq null
-
+*check toilet control
 			setv va00 0
 			rtar 1 1 11
 			doif targ ne null
@@ -65,7 +76,7 @@ scrp 2 16 8 9
 			endi
 			targ ownr
 			doif va00 eq 0
-
+*make poo invisible
 				setv va02 216
 			else
 				setv va02 218
@@ -94,7 +105,7 @@ scrp 2 16 8 9
 
 
 
-
+*waiting
 	doif ov00 eq 0
 		doif ov72 eq 0
 			gsub wait
@@ -105,7 +116,7 @@ scrp 2 16 8 9
 			setv ov72 0
 		endi
 	endi
-
+*pacing
 	doif ov00 eq 1
 		doif posl ge ov70 and posr le ov71
 			doif posl le ov70 or posr ge ov71
@@ -115,7 +126,7 @@ scrp 2 16 8 9
 			inst
 			setv va00 0
 			doif rand 0 3 eq 0
-
+*			flick rocks out of the way
 				setv va60 posx
 				setv va90 ov10
 				etch 2 21 4
@@ -155,10 +166,10 @@ scrp 2 16 8 9
 	endi
 
 
-
+**going home
 	doif ov00 eq 2
 		setv ov69 230
-
+*		sets the height of flight
 		doif posb ge ov69
 			setv ov12 -12
 		else
@@ -189,7 +200,7 @@ scrp 2 16 8 9
 			setv ov12 0
 			gsub fly_
 			doif ov80 eq 1
-
+*				lock
 				doif ov16 ne null
 					mesg writ ov16 5
 				endi
@@ -211,30 +222,30 @@ scrp 2 16 8 9
 				gsub chew
 				wait 50
 				setv ov72 0
-
+*				unlk
 			endi
 		endi
 	endi
 
-
+**hunting
 	doif ov00 eq 3
-
+*		boredom
 		addv ov72 1
 		doif ov72 ge ov73
 			setv ov00 2
 			setv ov72 0
 		endi
-
+*		obstacle detection
 		doif obst left le 50 and ov10 lt 0
 			negv ov10
 		elif obst rght le 50 and ov10 gt 0
 			negv ov10
 		endi
-
+*		sets the speed of flight
 		setv va01 ov10
 		mulv va01 rand 3 6
 		setv velx va01
-
+*		sets the height of flight
 		setv ov69 320
 		doif posb ge ov69
 			setv ov12 -12
@@ -256,7 +267,7 @@ scrp 2 16 8 9
 
 	endi
 
-
+*on floor - got egg?
 	doif ov00 eq 4
 		loop
 			wait 1
@@ -282,7 +293,7 @@ scrp 2 16 8 9
 	endi
 
 
-
+*dive
 	subr dive
 		setv velx 0
 		gsub fly_
@@ -304,7 +315,7 @@ scrp 2 16 8 9
 
 
 
-
+*walking
 	subr walk
 		doif fall eq 1
 			stop
@@ -317,7 +328,7 @@ scrp 2 16 8 9
 			setv velx 10
 		endi
 	retn
-
+*waiting
 	subr wait
 		setv velx 0
 		doif ov10 lt 0
@@ -326,7 +337,7 @@ scrp 2 16 8 9
 			anim [24 25 26 27 28 29 30 31 255]
 		endi
 	retn
-
+*flying
 	subr fly_
 		doif ov10 lt 0
 			anim [36 37 38 39 32 33 34 35 255]
@@ -336,7 +347,7 @@ scrp 2 16 8 9
 		setv vely ov12
 		sndc "ug_1"
 	retn
-
+*carrying
 	subr cary
 		doif ov10 lt 0
 			anim [48 49 50 51 52 53 54 55 255]
@@ -345,7 +356,7 @@ scrp 2 16 8 9
 		endi
 		setv vely ov12
 	retn
-
+*eating
 	subr eat_
 		setv velx 0
 		doif ov10 lt 0
@@ -355,7 +366,7 @@ scrp 2 16 8 9
 		endi
 		over
 	retn
-
+*chewing
 	subr chew
 		setv velx 0
 		doif ov10 lt 0
@@ -367,7 +378,7 @@ scrp 2 16 8 9
 endm
 
 
-
+***********REMOVAL
 rscr
 enum 2 16 8
 	kill targ

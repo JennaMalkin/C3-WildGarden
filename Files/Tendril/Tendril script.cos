@@ -10,7 +10,8 @@
 *# Agent Sprite First Image = 26
 *# GB_Category = 2
 *# Agent Author = "Creature Labs"
-
+*****TENDRIL
+*create seed
 new: simp 2 3 11 "tendril" 10 32 500
 attr 195
 bhvr 16
@@ -22,35 +23,37 @@ mvsf game "ch_x" game "ch_y"
 velo rand -15 15 rand -10 0
 tick 10
 
-
+*	dormancy counter - reaches 0 and dies
 setv ov72 rand 10 40
-
+*	max light to sprout
 setv ov80 1
-
+*	max heat to sprout
 setv ov82 1
-
+*	min nutrients to sprout
 setv ov87 0
 
+***Scripts below cancel looping animations
+***SEED pickup
 scrp 2 3 11 4
 	anim []
 endm
-
+***SEED drop
 scrp 2 3 11 5
 	anim [0 1 2 3 4 5 255]
 endm
-
+***SEED collision
 scrp 2 3 11 6
 	doif wall eq down
 		anim []
 	endi
 endm
-
+***SEED eat
 scrp 2 3 11 12
 	stim writ from 77 1
 	kill ownr
 endm
 
-
+***SEED timer
 scrp 2 3 11 9
 	inst
 	doif rtyp room targ eq 8 or rtyp room targ eq 9
@@ -61,7 +64,7 @@ scrp 2 3 11 9
 		kill ownr
 	endi
 
-
+*cap population
 	doif totl 2 3 11 gt 20
 		doif room targ ne -1 and carr = null
 			altr room targ 3 0.1
@@ -73,30 +76,30 @@ scrp 2 3 11 9
 	endi
 
 
-
+*	if not being carried or falling
 	doif fall eq 0 and carr eq null
-
+*	check environment to test whether can sprout
 		gsub envi
-
+*	if don't survive envi test, go dormant
 		gsub dorm
 	endi
 
-
+**environment test - grow if successful
 	subr envi
-
+*	light check
 		doif prop room targ 1 le ov80
 			setv va00 1
 		endi
-
+*	heat check
 		doif prop room targ 2 le ov82
 			setv va01 1
 		endi
-
+*	nutrient check
 		doif prop room targ 4 ge ov87
 			setv va02 1
 		endi
 
-
+*	count number of others around
 		rnge 500
 		setv va99 0
 		esee 2 5 4
@@ -107,14 +110,14 @@ scrp 2 3 11 9
 			stop
 		endi
 
-
+*	can I grow?
 		doif va00 eq 1 and va01 eq 1 and va02 eq 1
 			gsub grow
 		endi
 	retn
 
 
-
+**growing into plant routine
 	subr grow
 		setv va00 posl
 		setv va01 post
@@ -139,17 +142,17 @@ scrp 2 3 11 9
 		kill ownr
 	retn
 
-
+**dormancy routine
 	subr dorm
 		doif pose lt 9
-
+*	make it invisible
 			attr 16
 			anim [6 7 8 9]
 			over
 		endi
-
+*	reduce dormancy counter
 		subv ov72 1
-
+*	if been dormant too long, die
 		doif ov72 le 0
 			doif room targ ne -1 and carr = null
 				altr room targ 3 0.1
@@ -163,33 +166,35 @@ scrp 2 3 11 9
 endm
 
 
-
+****TENDRIL plant timer
 scrp 2 5 4 9
+**OV00 is state
+*0=growing
+*1=pod growing
+*2=pod-drop - produce seed
+*3=dying
 
-
-
-
-
-
-
+*increase age
+**Age is unused in the script
 	addv ov01 1
 
-
+**growing
 	doif ov00 eq 0
 		doif pose lt 8
 			setv va00 pose
 			addv va00 1
 			pose va00
 		else
-
-
+*	if in right pose and old enough, start to pod
+**	Current script disregards age and only cares about pose
+*			doif ov01 ge 50
 			setv ov00 1
 			stop
-
+*			endi
 		endi
 	endi
 
-
+**podding
 	doif ov00 eq 1
 		doif pose lt 13
 			setv va00 pose
@@ -201,7 +206,7 @@ scrp 2 5 4 9
 		endi
 	endi
 
-
+**pod-drop
 	doif ov00 eq 2
 		anim [14 15 16 17 18]
 		over
@@ -229,13 +234,13 @@ scrp 2 5 4 9
 			tick rand 3000 6000
 
 
-
+*	dormancy counter - reaches 0 and dies
 			setv ov72 rand 10 40
-
+*	max light to sprout
 			setv ov80 1
-
+*	max heat to sprout
 			setv ov82 1
-
+*	min nutrients to sprout
 			setv ov87 0
 		repe
 
@@ -243,8 +248,7 @@ scrp 2 5 4 9
 		anim [19 20 21 22]
 		setv ov00 3
 	endi
-
-
+**die
 	doif ov00 eq 3
 		doif pose lt 31
 			setv va00 pose

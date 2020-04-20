@@ -39,13 +39,13 @@ anim [5 7]
 mvsf game "ch_x" game "ch_y"
 setv vely 0
 
-
+**Wasp Eat Script
 scrp 2 14 6 12
 	stim writ from 80 1
 	kill ownr
 endm
 
-
+**Wasp Push Script
 scrp 2 14 6 1
 	seta ov17 from
 	setv ov88 80
@@ -63,16 +63,16 @@ scrp 2 14 6 9
 	doif ov02 < ov73
 		setv ov00 1
 	endi
-
+***I'm not sure why this is repeated?
 	doif ov00 eq 99
-
+*gsub die_
 	endi
 
-
+***Die!
 	doif ov00 eq 99
 		gsub die_
 	endi
-
+**Someone pushed you?
 	doif ov17 <> null
 		doif ov88 > 0
 			subv ov88 1
@@ -84,7 +84,11 @@ scrp 2 14 6 9
 			endi
 		endi
 	endi
-
+***ov00 should be the state
+** 0 = Roaming
+** 1 = Looking Food Food
+** 2 Unused but in a comment
+** 99 = Die!
 	doif ov00 = 1
 		gsub gfod
 	endi
@@ -176,15 +180,15 @@ scrp 2 14 6 9
 		doif ov16 <> null
 			targ ownr
 			gsub hunt
-
-
+*			gsub near
+*			doif va40 eq 1
 			doif touc ownr ov16 <> 0
-
-
-
-
-
-
+*				targ ownr
+*				addv ov02 ov72
+*				mesg writ ov16 12
+*				doif ov02 gt ov74
+*					setv ov00 2
+*				endi
 				targ ov16
 				doif fmly = 4
 					stim writ targ 88 1
@@ -261,7 +265,8 @@ scrp 2 14 6 9
 	retn
 
 	subr obst
-
+***Assuming this is left, right, up, and down
+**Might be wise to change this to check the LEFT, RGHT, _UP_, and DOWN looking at how this differs from how obst works in DS
 		doif obst 0 lt 120
 			setv ov10 1
 		endi
@@ -272,10 +277,10 @@ scrp 2 14 6 9
 		doif obst 2 lt 60
 			setv ov11 1
 		endi
-
-
-
-
+*** Can't detect being close to the floor?
+*		doif obst 3 lt 100
+*			setv ov11 -1
+*		endi
 	retn
 
 	subr vect
@@ -398,13 +403,13 @@ scrp 2 14 6 9
 	retn
 
 endm
-
+***Bumped into a Wall!
 scrp 2 14 6 6
 	inst
 	setv ov12 0
 	setv ov13 0
 endm
-
+***Rotting Dead Wasp
 scrp 2 10 28 9
 	inst
 	doif carr = null

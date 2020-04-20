@@ -53,11 +53,11 @@ setv ov80 0
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 rand -10 -20
 
-
+***Rocklice Pushed
 scrp 2 16 6 1
 	stim writ from 88 1
 endm
-
+***Rocklice Eaten
 scrp 2 16 6 12
 	stim writ from 80 5
 setv va00 posx
@@ -80,7 +80,7 @@ setv va01 post
 	targ ownr
 	kill ownr
 endm
-
+***Rocklice Timer
 scrp 2 16 6 9
 	doif ov00 <> 2
 		addv ov01 1
@@ -88,21 +88,21 @@ scrp 2 16 6 9
 	endi
 	addv ov20 1
 	doif ov01 gt 1100
-
-
-
-
-
+*		setv va66 ov01
+*		modv va66 10
+*		doif va66 eq 0
+*			addv ov20 1
+*		endi
 		gsub die_
 	endi
 
 	doif ov02 < ov72 and ov00 <> 2
 		setv ov00 1
 	endi
-
-
-
-
+***Mising an die state?
+*	doif ov00 eq 99
+*		gsub die_
+*	endi
 
 	doif rand 0 1000 = 0 and ov00 <> 2
 		setv ov00 97
@@ -142,14 +142,13 @@ scrp 2 16 6 9
 		setv va51 post
 		setv va52 ov10
 		subv va51 4
-
-
-
+*		subv va50 20
+*		subv va51 8
+*		doif ov01 gt 2000
 		new: simp 2 10 32 "rocklice" 21 72 2000
-
-
-
-		accg 2
+*		else
+*			new: simp "rocklice" 8 40 2000
+*		endi		accg 2
 		elas 0
 		fric 80
 		tick 4
@@ -331,10 +330,11 @@ scrp 2 16 6 9
 		base ov38
 		anim [0 1 2 3 4 5 6 7 8]
 		over
-
-
-
-	retn
+***Not sure why this was repeated
+*		base ov35
+*		anim [8 7 6 5 4 3 2 1 0 8 7 6 5 4 3 2 1 0]
+*		over
+		retn
 
 	subr bury
 		lock
@@ -550,12 +550,12 @@ scrp 2 16 6 9
 		endi
 	retn
 endm
-
+***Rocklice collision
 scrp 2 16 6 6
 	inst
 	doif obst down <= 5 and _p2_ > 5
 		snde "rckl"
-
+*doif ov80 = 1 and obst down <= 5 and _p2_ > 0
 		doif _p1_ > 0
 			anim []
 			base ov32
@@ -572,7 +572,7 @@ scrp 2 16 6 6
 	endi
 	setv ov80 0
 endm
-
+***Rocklice Egg Timer
 scrp 2 18 13 9
 	doif posx < 0 or posy < 0
 		kill ownr
@@ -641,7 +641,7 @@ scrp 2 18 13 9
 			setv ov90 1
 		endi
 		targ ownr
-
+*kill targ
 		over
 
 	endi
@@ -652,7 +652,7 @@ scrp 2 18 13 9
 		kill targ
 	endi
 endm
-
+***Dead Rocklice Rotting
 scrp 2 10 32 9
 	addv ov01 1
 	doif ov01 > 40
@@ -681,13 +681,13 @@ scrp 2 10 32 9
 		kill targ
 	endi
 endm
-
+***Rocklice Egg Eaten
 scrp 2 18 13 12
 	stim writ from 80 2
 	kill ownr
 endm
 
-
+***REMOVER
 rscr
 
 enum 2 16 6
