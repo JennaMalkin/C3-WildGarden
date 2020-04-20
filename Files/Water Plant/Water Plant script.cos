@@ -20,9 +20,9 @@ tick 600
 setv ov61 10
 seta ov17 null
 
-
+********water plant timer
 scrp 2 4 2 9
-
+**if have no leaves create some
 	doif ov17 eq null
 		inst
 		setv va00 posl
@@ -45,20 +45,20 @@ scrp 2 4 2 9
 		endi
 	endi
 
+**if have no flowers and conditions are right, grow some
 
-
-
+**It wasn't completed as far as I know :/
 
 
 endm
 
-
+*****water plant leaves - grow
 scrp 2 6 3 300
 	addv ov51 1
 	setv ov99 1
 endm
 
-
+******water plant leaves eat
 scrp 2 6 3 12
 	doif ov99 eq 0
 		stop
@@ -75,7 +75,7 @@ endm
 
 
 
-
+*****removal
 rscr
 enum 2 4 2
 	kill targ
