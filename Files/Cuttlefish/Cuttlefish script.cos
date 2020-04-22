@@ -23,7 +23,7 @@ endi
 mvsf game "ch_x" game "ch_y"
 
 tick 1
-
+*bioenergy
 setv ov61 50
 setv ov12 2
 setv ov13 0
@@ -34,10 +34,22 @@ setv ov71 -1
 
 setv ov99 1
 rnge 200
+**Temporary change to beast as they don't breed and can't be eaten
+cato 16
+**Pushable,Pullable, and Hitable
+bhvr 11
+***OV00 is state
+*0=random
 
+***ov12 is x component of circular movement
+***ov13 is y component of circular movement
 
+**ov70 is stage of movement 0=up/right 1=up/left 2=down/left 3=down/right
+**ov71 is clockwise/anticlockwise flag for direction of arc (-1/1)
 
+*ov99 is the step size
 
+*****cuttlefish timer
 scrp 2 15 20 9
 
 	gsub room
@@ -54,24 +66,34 @@ scrp 2 15 20 9
 
 
 	inst
-	esee 2 16 3
+***Was Piranha Checker
+**Now checks for the hand!
+	esee 2 1 0
 		setv va00 1
 	next
 	doif va00 eq 1
+**Blue cuttlefish
 		base 54
 	else
 		setv va00 0
-		esee 2 16 4
-			setv va00 1
+***Was Rainbow Shark Checker
+**Now counts any that aren't it's species
+		esee 2 16 0
+			doif fmly ne 2 and gnus ne 15 and spcs ne 20
+				setv va00 1
+			endi
 		next
 		doif va00 eq 1
+**Red cuttlefish
 			base 108
 		else
 			setv va00 0
+***Creature nearby?
 			esee 4 0 0
 				setv va00 1
 			next
 			doif va00 eq 1
+**Yellow cuttlefish
 				base 162
 			endi
 		endi
@@ -80,7 +102,7 @@ scrp 2 15 20 9
 	slow
 
 
-
+***Random circlar motion
 	doif ov00 eq 0
 		doif ov12 gt 5
 			setv ov12 5
@@ -109,7 +131,7 @@ scrp 2 15 20 9
 		doif ov70 eq 0
 			doif ov71 eq -1
 				doif ov12 le 0
-
+***chose new vector - either 1(clock) or 2(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 1 2
 						doif va00 eq 2
@@ -122,7 +144,7 @@ scrp 2 15 20 9
 				endi
 			else
 				doif ov13 ge 0
-
+*new vectors are 2(clock) or 3(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 2 3
 						doif va00 eq 2
@@ -141,7 +163,7 @@ scrp 2 15 20 9
 		doif ov70 eq 1
 			doif ov71 eq -1
 				doif ov13 le 0
-
+*new vectors are 2(clock) or 3(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 2 3
 						doif va00 eq 3
@@ -154,7 +176,7 @@ scrp 2 15 20 9
 				endi
 			else
 				doif ov12 le 0
-
+*new vectors are 3(anti) or 0(clock)
 					doif rand 0 3 ne 3
 						setv va00 rand 0 1
 						doif va00 eq 1
@@ -175,7 +197,7 @@ scrp 2 15 20 9
 		doif ov70 eq 2
 			doif ov71 eq -1
 				doif ov12 ge 0
-
+*new vectors are 3(clock) or 0(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 0 1
 						doif va00 eq 1
@@ -190,7 +212,7 @@ scrp 2 15 20 9
 				endi
 			else
 				doif ov13 le 0
-
+*new vectors are 0(clock) or 1(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 0 1
 						doif va00 eq 0
@@ -209,7 +231,7 @@ scrp 2 15 20 9
 		doif ov70 eq 3
 			doif ov71 eq -1
 				doif ov13 ge 0
-
+*new vectors are 0(clock) or 1(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 0 1
 						doif va00 eq 1
@@ -222,7 +244,7 @@ scrp 2 15 20 9
 				endi
 			else
 				doif ov12 ge 0
-
+*new vectors are 1(clock) or 2(anti)
 					doif rand 0 3 ne 3
 						setv va00 rand 1 2
 						doif va00 eq 1
@@ -246,8 +268,8 @@ scrp 2 15 20 9
 				addv ov86 1
 				doif ov86 >= 0
 					addv ov87 1
-
-
+*				elif ov86 > 6 and ov86 < 100
+*					addv ov87 .08
 				endi
 				accg ov87
 			untl rtyp room ownr = 9 or ov86 >= 100
@@ -302,7 +324,7 @@ scrp 2 15 20 9
 		over
 	retn
 
-
+*fade out
 	subr fout
 		anim []
 		base 50
@@ -310,7 +332,7 @@ scrp 2 15 20 9
 		over
 	retn
 
-
+*fade in
 	subr f_in
 		anim []
 		base 50
@@ -321,15 +343,24 @@ scrp 2 15 20 9
 
 endm
 
+scrp 2 15 20 1
+stim writ from 88 1
+endm
 
+scrp 2 15 20 2
+stim writ from 88 1
+endm
 
+scrp 2 15 20 3
+stim writ from 87 1
+endm
 
-
-
-
-
+**************REMOVAL
 rscr
 enum 2 15 20
 	kill targ
 next
 scrx 2 15 20 9
+scrx 2 15 20 1
+scrx 2 15 20 2
+scrx 2 15 20 3
