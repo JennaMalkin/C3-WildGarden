@@ -404,7 +404,7 @@ scrp 2 18 24 9
 	new: simp 2 13 9 "balloonbug" 42 0 3000
 	attr 198
 	clac 0
-*	bhvr 59
+	bhvr 59
 	elas 0
 *bioenergy
 	setv ov61 40
