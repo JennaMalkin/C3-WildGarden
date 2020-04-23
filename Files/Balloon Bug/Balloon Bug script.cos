@@ -17,7 +17,7 @@ bhvr 59
 clac 0
 
 elas 0
-
+*bioenergy
 setv ov61 40
 mvsf game "ch_x" game "ch_y"
 
@@ -35,6 +35,7 @@ endi
 
 
 **100% copypasted scripts
+***balloon bug activate
 scrp 2 13 9 1
 	doif ov00 eq 0
 
@@ -47,11 +48,24 @@ scrp 2 13 9 1
 endm
 
 
-
+*****Balloon bug timer
 scrp 2 13 9 9
+**OV00 is state
+*0=in air
+*1=on ground
+*3=hunting
 
+**OV12 X velocity
+**OV13 Y velocity
+**OV14 is max X velocity
+**OV15 is max Y velocity
+
+**OV90 indecision counter
+**OV91 is change activity counter
+
+*increase age
 	addv ov01 1
-
+*if old enough
 	doif ov01 ge 100
 		doif totl 2 13 9 lt 20
 			rnge 1000
@@ -59,12 +73,12 @@ scrp 2 13 9 9
 			esee 2 13 9
 				addv va99 1
 			next
-
+*if less than 4 balloon bugs in sight
 			doif va99 le 10
 				setv va98 totl 2 18 24
-
+*	and less than 3 balloon bug eggs in world
 				doif va98 lt 3
-
+*		create some eggs
 					inst
 					setv va90 posl
 					setv va91 post
@@ -90,13 +104,13 @@ scrp 2 13 9 9
 
 	subv ov02 1
 
-
+*if need food then track down flower
 	doif ov02 le rand 100 200 and ov00 ne 3 and ov00 ne 1
-
+*	if on the floor get off it
 		doif ov00 eq 1
 			setv ov91 100
 		endi
-
+*	find the closest flower
 		setv va00 10000
 		seta va02 null
 		inst
@@ -126,13 +140,13 @@ scrp 2 13 9 9
 		endi
 	endi
 
-
+*hunting
 	doif ov00 eq 3
 		setv ov14 3
 		setv ov15 3
 		gsub home
 		gsub velo
-
+*	see if touching flower
 		inst
 		doif ov16 ne null
 			doif touc ov16 ownr gt 0
@@ -148,10 +162,10 @@ scrp 2 13 9 9
 
 
 
-
+**if on ground
 	doif ov00 eq 1
 		addv ov91 1
-
+*	go to in air mode
 		doif ov91 ge rand 30 50
 			doif ov10 lt 0
 				anim [8 9 10 11 12 13 14 15 16]
@@ -177,10 +191,10 @@ scrp 2 13 9 9
 	endi
 
 
-
+**if flying
 	doif ov00 eq 0
 		addv ov91 1
-
+*	go to on ground mode			
 		doif ov91 ge rand 30 50
 			setv ov91 0
 			setv ov00 1
@@ -194,29 +208,27 @@ scrp 2 13 9 9
 
 
 		endi
-
+*set max velocity
 		setv ov14 5
 		setv ov15 5
 
 		subv ov90 1
 
 		gsub wall
-
+**if not changing X direction because of walls..
 		doif ov90 le 0
 
 			doif va00 ne 1
 				doif rand 0 2 eq 0
-
+*change X direction
 					negv ov10
 				endi
 				addv ov90 rand 1 3
 			endi
-
+**if not changing Y direction because of walls..
 			doif va01 ne 1
-
-
+*change Y direction
 				negv ov11
-
 				addv ov90 rand 2 5
 			endi
 		endi
@@ -228,13 +240,13 @@ scrp 2 13 9 9
 	endi
 
 
-
+******WALK LEFT on ground
 	subr left
 		anim [0 1 2 3]
 		velo -3 -5
 	retn
 
-
+******WALK RIGHT on ground
 	subr rite
 		anim [4 5 6 7]
 		velo 3 -5
@@ -242,67 +254,68 @@ scrp 2 13 9 9
 
 
 
+********VELOCITY GIVER
 	subr velo
 		doif ov10 lt 0
-
+*trying to go left
 			negv ov14
 			doif ov12 gt ov14
 				subv ov12 2
 			endi
 			negv ov14
 		else
-
+*trying to go right
 			doif ov12 lt ov14
 				addv ov12 2
 			endi
 		endi
 
 		doif ov11 lt 0
-
+*trying to go up
 			negv ov15
 			doif ov13 gt ov15
 				subv ov13 2
 			endi
 			negv ov15
 		else
-
+*trying to go down
 			doif ov13 lt ov15
 				addv ov13 2
 			endi
 		endi
-
+**give velocity
 
 		setv velx ov12
 		setv vely ov13
 	retn
 
-
+********AVOID WALLS ROUTINE
 	subr wall
-
+*change direction to right
 		doif obst 0 lt 100 and ov10 lt 0
 			negv ov10
 			setv va00 1
 		endi
-
+*change direction to left
 		doif obst 1 lt 100 and ov10 gt 0
 			negv ov10
 			setv va00 1
 		endi
-
+*change direction to up
 		doif obst 2 lt 50 and ov11 lt 0
 			negv ov11
 			setv va01 1
 		endi
-
+*change direction to down
 		doif obst 3 lt 100 and ov11 gt 0
 			negv ov11
 			setv va01 1
 		endi
 	retn
 
-
+********ANIMATION ROUTINE - flying only
 	subr anim
-
+**flying movement animation
 		doif ov12 gt 0
 			anim [31 32 33 34 35 255]
 		elif ov12 lt 0
@@ -310,7 +323,7 @@ scrp 2 13 9 9
 		endi
 	retn
 
-
+***Homing in on target - alters ov10 and ov11 to aim at target (ov16)
 	subr home
 		inst
 		targ ov16
@@ -383,7 +396,7 @@ subr die
 retn
 endm
 
-
+**balloon bug egg timer
 scrp 2 18 24 9
 	setv va00 posl
 	setv va01 post
@@ -391,9 +404,9 @@ scrp 2 18 24 9
 	new: simp 2 13 9 "balloonbug" 42 0 3000
 	attr 198
 	clac 0
-bhvr 59
+*	bhvr 59
 	elas 0
-
+*bioenergy
 	setv ov61 40
 	mvto va00 va01
 
@@ -445,9 +458,17 @@ scrp 2 13 9 2
 	targ ownr
 endm
 
-
+******REMOVAL
 rscr
 enum 2 13 9
 	kill targ
 next
-*scrx 2 13 9 9
+enum 2 18 24
+	kill targ
+next
+scrx 2 13 9 9
+scrx 2 13 9 1
+scrx 2 13 9 2
+scrx 2 13 9 3
+scrx 2 13 9 12
+scrx 2 18 24 9
