@@ -93,13 +93,13 @@ scrp 2 17 3 5
 	targ ov19
 	seta ov19 va19
 endm
-
+***Kingfisher eat
 scrp 2 15 10 12
 	stim writ from 80 4
 	kill ownr
 
 endm
-
+***Kingfisher Timer
 scrp 2 15 10 9
 	inst
 	addv ov01 1
@@ -109,10 +109,10 @@ scrp 2 15 10 9
 		setv ov00 99
 	endi
 
-
-
-
-
+*	doif ov00 < 98 and ov00 <> 2
+*		accg 3
+*	endi
+* set target of branch in ov17	
 	doif ov17 = null
 		rtar 1 1 5
 		seta va88 targ
@@ -140,15 +140,15 @@ scrp 2 15 10 9
 		gsub die_
 	endi
 
-
-	doif prop room ownr 1 <= 0.1 and ov00 = 0
+*If dusk or night and awake
+	doif time ge 3 and ov00 = 0
 		doif ov19 <> null
 			setv ov00 4
 		endi
 	endi
-
-	doif prop room ownr 1 > 0.1 and ov00 = 98
-
+*if dawn or morning and asleep
+	doif time le 1 and ov00 = 98
+*		doif ov00 eq 5
 		doif ov05 eq 2
 			setv ov00 0
 			accg 3
@@ -156,26 +156,26 @@ scrp 2 15 10 9
 		doif ov05 eq 1
 			setv ov00 4
 		endi
-
+*		endi
 	endi
-
+*if hungry and roaming
 	doif ov02 lt ov73 and ov00 = 0
 		doif ov05 eq 2
 			setv ov00 1
 		endi
 		doif ov05 eq 1
 			doif ov00 ne 5
-
-
+*				setv ov00 5
+*			else
 				setv ov00 4
 			endi
 		endi
 	endi
 
-
+*if not carrying anything and out of water
 	doif carr = null
 		doif rtyp room ownr <> 8
-
+*		doif posy < 1015
 			doif ov00 <> 2 and ov00 < 98
 				accg 3
 			endi
@@ -187,7 +187,7 @@ scrp 2 15 10 9
 			accg -1
 		endi
 	endi
-
+*endi
 
 	doif ov00 eq 5
 		doif ov75 eq 1
@@ -205,7 +205,7 @@ scrp 2 15 10 9
 	doif ov00 eq 99
 		gsub die_
 	endi
-
+*if full up
 	doif ov02 gt ov73
 		doif ov05 eq 1
 			setv ov00 0
@@ -243,7 +243,7 @@ scrp 2 15 10 9
 	endi
 
 
-
+*	SUBROUTINES
 
 
 	subr die_
@@ -284,7 +284,7 @@ scrp 2 15 10 9
 
 		doif targ ne null
 			targ ownr
-
+* use special near (ner2) for kingfisher
 			gsub ner2
 			doif va40 eq 1
 				setv velx 1
@@ -328,9 +328,9 @@ scrp 2 15 10 9
 			endi
 			doif vely lt 0
 				doif carr = null
-
+*					doif rtyp room ownr <> 8
 					setv ov00 1
-
+*					endi
 				endi
 			endi
 		else
@@ -524,11 +524,11 @@ scrp 2 15 10 9
 			setv ov11 1
 			setv vely 10
 		endi
-
-
-
-
-
+*		doif va62 > va63
+*			setv ov11 1
+*		elif va62 < va63
+*			setv ov11 -1
+*		endi
 
 
 		gsub vect
@@ -597,18 +597,18 @@ scrp 2 15 10 9
 		setv vely va11
 	retn
 
-
-
+* uses va47,48,49 as passed in family, genus, species variables
+* returns ov16 as target 
 	subr find
 		setv va99 99999999
 		seta va58 null
-
+*		enum va47 va48 va49
 		inst
-
-
-
-
-
+*		doif va48 eq 13
+*			doif va49 eq 5
+*				setv va88 1
+*			endi
+*		endi
 
 		esee va47 va48 va49
 			doif targ <> null
@@ -642,10 +642,10 @@ scrp 2 15 10 9
 			seta ov16 null
 		endi
 		targ ownr
-
+*		slow
 	retn
 
-
+* change ov10 and ov11 multipliers to head towards current target (ov16)
 	subr hunt
 		inst
 		targ ov16
@@ -731,12 +731,12 @@ scrp 2 15 10 9
 
 
 endm
-
+***Kingfisher Dropped
 scrp 2 15 10 5
 	setv ov00 0
 	accg 3
 endm
-
+***Rotting Kingfisher
 scrp 2 10 8 9
 	addv ov01 1
 	doif ov01 gt 10
@@ -777,6 +777,18 @@ scrp 2 17 3 9
 		tick 6
 		attr 195
 		aero 10
+* ov00 = state (0=roam,1=to branch,2=look 4 fish,3=fish,4=gbed,5=slep,99=dead)
+* ov01 = age
+* ov06 = gender
+* ov16 = target of hunt
+* ov17 = target of branch
+* ov18 = carried fish target
+* ov72 = energy gained from eating food
+* ov73 = energy threshold before hunting begins
+* ov74 = energy threshold before before hunting stopped
+* ov75 = got fish flag
+* ov77 = experimental 'wetness' variable
+* ov02 = energy
 		setv ov00 0
 		setv ov01 2000
 		setv ov05 2
