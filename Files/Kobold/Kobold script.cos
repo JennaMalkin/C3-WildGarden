@@ -20,25 +20,25 @@ aero 5
 elas 5
 fric 10
 
-
+*jleft
 setv ov30 0
-
+*jright
 setv ov31 12
-
+*eatleft
 setv ov32 42
-
+*eatright
 setv ov33 52
-
+*walkleft
 setv ov34 24
-
+*walkright
 setv ov35 33
-
+*hit left
 setv ov36 62
-
+*hit right
 setv ov37 74
-
+*die left
 setv ov38 86
-
+*die right
 setv ov39 99
 
 
@@ -59,28 +59,31 @@ setv ov75 1
 
 mvsf game "ch_x" game "ch_y"
 setv vely 0
-
+***Kobold Timer
 scrp 2 16 7 9
 	addv ov01 1
 	subv ov02 1
 	doif carr = null
+**Not carried and in water?
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
+		**Flag for soon-to-be death
 			setv ov02 -10
 		endi
 	endi
-
+**Flaged for soon-to-be death?
 	doif ov02 <= 0
+*Flag for death
 		setv ov00 99
 	endi
-
+**Flagged for death? Die!
 	doif ov00 eq 99
 		gsub die_
 	endi
 
 
-
-
-
+*	doif pose < 39 or pose > 57
+*		fric 100
+*	endi
 	doif ov01 gt 2010
 		setv va66 ov01
 		modv va66 10
@@ -98,31 +101,30 @@ scrp 2 16 7 9
 	doif ov02 < ov73
 		setv ov00 1
 	endi
+	
+*	doif obst 0 lt 30
+*		setv ov10 1
+*		setv ov11 -1
+*	endi
+*	doif obst 1 lt 30
+*		setv ov10 -1
+*		setv ov11 -1
+*	endi
+*
+*	doif obst 2 lt 30
+*		setv ov11 1
+*	endi
+*	doif obst 3 lt 30
+*		setv ov11 -1
+*	endi
 
+*	doif ov00 eq 99
+*		gsub die_
+*	endi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*	doif ov00 eq 99
+*		gsub die_
+*	endi
 
 	doif ov00 = 2
 		gsub gmad
@@ -172,7 +174,7 @@ scrp 2 16 7 9
 
 	subr roam
 		setv va66 rand 0 10
-
+*doif ov75 = 0
 		fric 10
 		elas 0
 		setv ov11 1
@@ -192,20 +194,20 @@ scrp 2 16 7 9
 		gsub vect
 		gsub anim
 		gsub move
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*		else
+*			doif vely > 0
+*				doif ov10 <= 0
+*					base ov30
+*					anim [6]
+*				endi
+*
+*				doif ov10 > 0
+*					base ov31
+*					anim [6]
+*				endi
+*
+*			endi
+*		endi
 		stop
 	retn
 
@@ -489,15 +491,15 @@ scrp 2 16 7 9
 
 
 endm
-
+***Kolbold Collision
 scrp 2 16 7 6
 	inst
 	fric 50
-
-
-
-
-	doif wall = left
+*	doif rand 0 10 = 0
+*		setv ov00 2
+*		setv ov75 0
+*	else
+		doif wall = left
 		setv ov75 0
 		setv ov10 1
 		anim []
@@ -524,9 +526,9 @@ scrp 2 16 7 6
 			anim [3 4]
 		endi
 	endi
-
+*endi
 endm
-
+***Dead Kobold Rotting
 scrp 2 10 43 9
 	doif carr = null
 		doif room targ <> -1 and carr = null
@@ -550,7 +552,7 @@ endm
 
 
 
-
+***REMOVER
 rscr
 
 enum 2 16 7
