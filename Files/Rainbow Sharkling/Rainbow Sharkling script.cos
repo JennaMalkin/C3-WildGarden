@@ -11,6 +11,11 @@
 *# GB_Category = 5
 *# Agent Author = "Creature Labs"
 
+** RAINBOW SHARKLING
+*
+* Should now predate clownfish, handlefish, neonfish and angelfish :-)
+*
+*
 setv va60 rand 60 255
 setv va61 rand 60 255
 setv va62 rand 60 255
@@ -26,13 +31,13 @@ accg 0
 perm 64
 tint va60 va61 va62 128 128
 mvsf game "ch_x" game "ch_y"
-
+** ov01 is life (rises each timer script).
 setv ov01 0
-
+** ov02 is energy (lowers each timer script).
 setv ov02 550
-
+** ov05 is the life stage. Not set in the install.
 seta ov16 null
-
+**    Initial Poses.
 setv va50 rand 0 1
 setv ov61 40
 setv ov73 1
@@ -45,7 +50,7 @@ elif va50 = 1
 	pose 8
 endi
 velo 0 0
-
+** ov71 is the prey: 15 for clownfish, 16 for handlefish, 19 for neonfish and 14 for angelfish.
 setv va51 rand 1 4
 doif va51 = 1
 	setv ov71 14
@@ -56,7 +61,7 @@ elif va51 = 3
 elif va51 = 4
 	setv ov71 19
 endi
-
+** Save Colours to object variable
 setv ov20 va60
 setv ov21 va61
 setv ov22 va62
@@ -64,48 +69,48 @@ tick 1
 
 endm
 
-
-
-
-
-
-
+*There was a fish eat script in here.
+*scrp 2 16 4 12
+*	targ from
+*	stim writ from 80 1
+*	kill ownr
+*endm
 
 scrp 2 16 4 9
-
+** Check current room.
 	gsub room
 
-
+** If marked for death, die dammit!
 	doif ov99 = 5
 		gsub deth
 	endi
 
-
+** If too old, die!
 	doif ov01 >= 3000
 		gsub deth
 	endi
 
-
+** Age slightly.
 	addv ov01 1
 
-
+** Mark as being fertile
 	doif ov01 > 1200 and ov19 = 0
 		setv ov05 2
 		setv ov72 0
 		setv ov19 1
 	endi
 
-
+** Use up energy.
 	subv ov02 1
 
-
+** give birth if pregnant
 	doif ov70 = 1
 		gsub repr
 		setv ov70 0
 		gsub mark
 	endi
 
-
+** If marked for death, increase likelihood of dying.
 	doif ov80 = 1
 		addv ov81 1
 		doif ov81 = 15
@@ -114,7 +119,7 @@ scrp 2 16 4 9
 	endi
 
 
-
+** Mating / Breeding.
 	doif ov05 = 2 and ov72 = 0 and ov80 <> 1
 
 
@@ -122,10 +127,10 @@ scrp 2 16 4 9
 
 	endi
 
-
+** Hunger monitor - this determines behaviour.
 	doif ov02 >= 500
 
-
+** Initial movement or flocking?
 		doif ov92 = 0
 			gsub inim
 			gsub obst
@@ -145,7 +150,7 @@ scrp 2 16 4 9
 		endi
 	elif ov02 < 500 and ov02 > 0
 
-
+** Track down and eat food.
 		gsub hunt
 		gsub obst
 		gsub swim
@@ -153,7 +158,7 @@ scrp 2 16 4 9
 		gsub eat_
 
 	elif ov02 <= 0
-
+** Die due to starvation.
 		gsub deth
 	endi
 
@@ -161,7 +166,7 @@ scrp 2 16 4 9
 
 
 
-
+** If not carried, die or be marked for death.
 	subr deth
 		inst
 		doif carr = null or carr <> pntr
@@ -173,7 +178,7 @@ scrp 2 16 4 9
 		slow
 	retn
 
-
+** Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -196,7 +201,7 @@ scrp 2 16 4 9
 		accg ov87
 	retn
 
-
+** Obstacle checker, stops the little darlings from getting bruises!
 	subr obst
 		doif obst rght < 100 and ov10 > 0
 			velo 0 0
@@ -245,15 +250,15 @@ scrp 2 16 4 9
 
 
 	subr repr
-
+** Depending on how many sharks are around, make more.
 		setv ov08 0
-
+** Check how many adults are around, don't want to overcrowd!
 		setv va34 0
 		rnge 1000
 		esee 2 16 4
 			addv va34 1
 		next
-
+** Depending on how many of each are around, make more (or don't!)
 		doif va34 <= 5
 			setv ov08 rand 1 20
 			doif ov08 = 5
@@ -264,13 +269,13 @@ scrp 2 16 4 9
 		else
 			setv ov08 0
 		endi
-
+** If you are going to make some new sharklings, make them.
 		doif ov08 <> 0
 			reps ov08
 
 
 
-
+*** Random Colour Mutations (or possibly not)
 				setv va00 rand 1 5
 				doif va00 = 5
 					setv va20 rand 06 255
@@ -304,19 +309,19 @@ scrp 2 16 4 9
 				else
 					setv va22 ov22
 				endi
-
+** Add up all Red Values (both parents and random mutations)
 				addv va26 ov20
 				addv va26 ov23
 				addv va26 va20
-
+** Add up all Green Values (both parents and random mutations)
 				addv va27 ov21
 				addv va27 ov24
 				addv va27 va21
-
+** Add up all Blue Values (both parents and random mutations)		
 				addv va28 ov22
 				addv va28 ov25
 				addv va28 va22
-
+** Divide all three tints by 3
 				divv va26 3
 				divv va27 3
 				divv va28 3
@@ -331,15 +336,15 @@ scrp 2 16 4 9
 				perm 64
 				tint va26 va27 va28 128 128
 				mvto va80 va81
-
+** ov01 is life (rises each timer script).
 				setv ov01 0
-
+** ov02 is energy (lowers each timer script).
 				setv ov02 550
-
+** ov05 is the life stage. Not set in the install.
 				seta ov16 null
 				setv va50 rand 0 1
 				setv ov61 40
-
+** ov70 is the prey: 15 for clownfish, 16 for handlefish, 19 for neonfish and 14 for angelfish.
 				setv va51 rand 1 4
 				doif va51 = 1
 					setv ov71 14
@@ -359,7 +364,7 @@ scrp 2 16 4 9
 					setv ov10 1
 					pose 8
 				endi
-
+** Set shark's colours
 				setv ov20 va26
 				setv ov21 va27
 				setv ov22 va28
@@ -374,7 +379,7 @@ scrp 2 16 4 9
 	subr mark
 		setv ov80 1
 	retn
-
+** Initial movement, gives the ones born first something to do.
 	subr inim
 		doif ov10 = 1
 			setv ov12 rand 3 6
@@ -419,7 +424,7 @@ scrp 2 16 4 9
 
 
 
-
+** Finding clownfish, or in this case, moving generally towards some.
 	subr hunt
 		setv va60 0
 		loop
@@ -488,8 +493,8 @@ scrp 2 16 4 9
 			endi
 		endi
 	retn
-
-
+** Finding neonfish, or in this case, moving generally towards it.
+** Flock swimming, or if nobody is nearby - swim randomly!
 	subr flok
 		setv va50 0
 		setv va51 0
@@ -535,12 +540,12 @@ scrp 2 16 4 9
 		endi
 	retn
 
-
+** Movement - simply that.
 	subr move
 		velo ov12 ov13
 	retn
 
-
+** Random swimming, if you can't find food or other sharks to follow.
 	subr rndm
 		setv va64 rand 1 10
 		doif va64 = 6 and ov10 = 1
@@ -563,7 +568,7 @@ scrp 2 16 4 9
 			setv ov11 1
 		endi
 	retn
-
+** Eating nearby food.
 	subr eat_
 		setv va44 0
 		setv va55 0
@@ -596,19 +601,19 @@ scrp 2 16 4 9
 
 		endi
 	retn
-
+* Turn from Left to Right (go right)
 	subr gort
 		velo 2 0
 		anim [16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 8 9 10 11 12 13 14 15]
 		over
 	retn
-
+* Turn from Right to Left (go left)
 	subr golt
 		velo -2 0
 		anim [31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 0 1 2 3 4 5 6 7]
 		over
 	retn
-
+** Left or Right facing swimming.
 	subr swim
 		wait rand 1 7
 		doif ov10 < 0
