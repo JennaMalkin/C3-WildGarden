@@ -11,10 +11,10 @@
 *# GB_Category = 2
 *# Agent Author = "Creature Labs"
 
-
+***********PALMPLANT
 new: simp 2 4 4 "palmplant" 15 0 140
 attr 192
-
+*act 1
 bhvr 1
 elas 0
 tick rand 200 1000
@@ -22,30 +22,38 @@ tick rand 200 1000
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 0
 
+*push script
 scrp 2 4 4 1
 	targ from
+*reached peak of starch smell	
 	stim writ from 62 1
 endm
 
+*timer script
 scrp 2 4 4 9
+*Grow UP
 	doif ov00 eq 0
 		doif pose lt 14
 			setv va00 pose
 			addv va00 1
 			pose va00
 		else
+*remain in a mature pose, add to age counter.		
 			addv ov99 1
 		endi
+*you've been mature for too long now, prepare to become immature.	
 		doif ov99 eq 50
 			setv ov00 1
 		endi
 	endi
+*grow DOWN		
 	doif ov00 eq 1
 		doif pose gt 0
 			setv va00 pose
 			subv va00 1
 			pose va00
 		else
+*Reset plant				
 			setv ov99 0
 			setv ov00 0
 		endi
@@ -53,7 +61,7 @@ scrp 2 4 4 9
 endm
 
 
-
+*******REMOVAL
 rscr
 enum 2 4 4
 	kill targ
