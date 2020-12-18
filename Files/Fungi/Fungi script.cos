@@ -10,9 +10,9 @@
 *# Agent Sprite First Image = 7
 *# GB_Category = 2
 *# Agent Author = "Creature Labs"
-
+*create spores
 new: simp 2 3 10 "fungi" 7 110 600
-
+*picked up creature and hand, gravity and boundaries
 attr 195
 bhvr 16
 elas 0
@@ -23,73 +23,77 @@ mvsf game "ch_x" game "ch_y"
 velo rand -10 10 rand -10 0
 tick 10
 
+*	dormancy counter - reaches 0 and dies
 setv ov72 rand 10 40
+*	max light to sprout
 setv ov80 1
+*	max heat to sprout
 setv ov82 1
+*	min nutrients to sprout
 setv ov87 0
 
-
+***SEED pickup
 scrp 2 3 10 4
 	anim []
 endm
-
+***SEED drop
 scrp 2 3 10 5
 	anim [0 1 2 3 255]
 endm
-
+***SEED Collision
 scrp 2 3 10 6
 	doif wall eq down
 		anim []
 	endi
 endm
-
+***SEED eat
 scrp 2 3 10 12
 	stim writ from 77 1
 	kill ownr
 endm
 
-
+***SEED timer
 scrp 2 3 10 9
 	inst
 
-
+*nasty top down population check
 	doif totl 2 8 5 gt 70
 		kill ownr
 	endi
 
-
+*	if not being carried or falling
 	doif fall eq 0 and carr eq null
 		doif rtyp room targ eq 8 or rtyp room targ eq 9
 			kill ownr
 		endi
-
+*	check environment to test whether can sprout
 		gsub envi
-
+*	if don't survive envi test, go dormant
 		gsub dorm
 	endi
 
-
+**environment test - grow if successful
 	subr envi
-
+*	light check
 		doif prop room targ 1 le ov80
 			setv va00 1
 		endi
-
+*	heat check
 		doif prop room targ 2 le ov82
 			setv va01 1
 		endi
-
+*	nutrient check
 		doif prop room targ 4 ge ov87
 			setv va02 1
 		endi
 
-
+*	can I grow?	
 		doif va00 eq 1 and va01 eq 1 and va02 eq 1
 			gsub grow
 		endi
 	retn
 
-
+**growing into plant routine
 	subr grow
 		setv va00 posl
 		setv va01 post
@@ -114,17 +118,17 @@ scrp 2 3 10 9
 		tick rand 600 1200
 		kill ownr
 	retn
-
+**dormancy routine
 	subr dorm
 		doif pose lt 4
-
+*	make it invisible
 			attr 16
 			anim [4 5 6]
 			over
 		endi
-
+*	reduce dormancy counter
 		subv ov72 1
-
+*	if been dormant too long, die
 		doif ov72 le 0
 			doif room targ ne -1
 				altr room targ 3 0.1
@@ -137,25 +141,25 @@ scrp 2 3 10 9
 	retn
 endm
 
-
+****FUNGI plant timer
 scrp 2 8 5 9
+**OV00 is state
+*0=growing
+*1=sporeing
+*2=dying
+*3=picked
 
-
-
-
-
-
-
+*increase age
 	addv ov01 1
 
-
+**growing
 	doif ov00 eq 0
 		doif pose lt 3
 			setv va00 pose
 			addv va00 1
 			pose va00
 		else
-
+*	if in right pose and old enough, spore
 			doif ov01 ge 20
 				setv ov00 1
 				stop
@@ -163,19 +167,19 @@ scrp 2 8 5 9
 		endi
 	endi
 
-
+**sporeing
 	doif ov00 eq 1
 		doif pose lt 7
 			setv va00 pose
 			addv va00 1
 			pose va00
 		else
-
+*	create a spore
 			inst
 			setv va00 posl
 			setv va01 post
 			new: simp 2 3 10 "fungi" 7 110 600
-
+*picked up creature and hand, gravity and boundaries
 			attr 195
 			bhvr 16
 			elas 0
@@ -192,13 +196,13 @@ scrp 2 8 5 9
 			velo rand -10 10 rand -10 0
 			tick rand 300 600
 
-
+*	dormancy counter - reaches 0 and dies
 			setv ov72 rand 10 40
-
+*	max light to sprout
 			setv ov80 1
-
+*	max heat to sprout
 			setv ov82 1
-
+*	min nutrients to sprout
 			setv ov87 0
 
 			targ ownr
@@ -206,7 +210,7 @@ scrp 2 8 5 9
 		endi
 	endi
 
-
+**dying
 	doif ov00 eq 2
 		doif pose lt 11
 			setv va00 pose
@@ -220,9 +224,9 @@ scrp 2 8 5 9
 	endi
 
 
-
+**if you've been picked
 	doif ov00 eq 3
-
+*	if not carried or falling
 		doif carr eq null and fall eq 0
 			doif ov99 eq -1
 				doif pose lt 21
@@ -249,11 +253,11 @@ scrp 2 8 5 9
 	endi
 endm
 
-
+**FUNGI picked
 scrp 2 8 5 4
-
-
-
+**OV99 is facing of picked fruit
+*1=right tilt (images 12-16)
+*-1=left tilt (17-21)
 	setv ov00 3
 	doif ov99 eq 0
 		setv ov99 rand 0 1
@@ -261,7 +265,7 @@ scrp 2 8 5 4
 			setv ov99 -1
 		endi
 	endi
-
+*	sort out pose
 	doif ov99 eq -1
 		doif pose lt 17
 			pose 17
@@ -274,15 +278,15 @@ scrp 2 8 5 4
 	endi
 endm
 
-
+***FUNGI eat
 scrp 2 8 5 12
 	inst
-
+*produce new spore when fungi is eaten
 	setv va00 posl
 	setv va01 post
 	stim writ from 78 1
 	new: simp 2 3 10 "fungi" 7 110 600
-
+*picked up creature and hand, gravity and boundaries
 	attr 195
 	bhvr 16
 	elas 0
@@ -294,13 +298,13 @@ scrp 2 8 5 12
 		velo rand -10 10 rand -10 0
 		tick rand 300 600
 
-
+*	dormancy counter - reaches 0 and dies
 		setv ov72 rand 10 40
-
+*	max light to sprout
 		setv ov80 1
-
+*	max heat to sprout
 		setv ov82 1
-
+*	min nutrients to sprout
 		setv ov87 0
 	else
 		kill targ
@@ -309,7 +313,7 @@ scrp 2 8 5 12
 endm
 
 
-
+******REMOVAL
 rscr
 enum 2 3 10
 	kill targ
