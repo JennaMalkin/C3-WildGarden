@@ -11,6 +11,17 @@
 *# GB_Category = 5
 *# Agent Author = "Creature Labs"
 
+**********PIRHANA
+***2 16 3
+**Swim left 	0 - 7
+**swim right	8 - 15
+**turn L-to-R	16 - 23
+**turn R-to-L	24 - 31
+**eat left		32 - 39
+**eat right		40 - 47
+**Die			48 - 52
+***spawn		53 - 56
+
 new: simp 2 16 3 "jaws" 53 0 1000
 attr 195
 mvsf game "ch_x" game "ch_y"
@@ -25,10 +36,10 @@ perm 60
 
 tick rand 8 15
 setv ov02 100
-
+*bioenergy
 setv ov61 50
 
-
+**********pirhana timer
 scrp 2 16 3 9
 
 	doif rtyp room targ ne 8 and rtyp room targ ne 9
@@ -62,16 +73,16 @@ scrp 2 16 3 9
 		aero 0
 	endi
 
-
+***count your mates who are nearby .. if not enough then lay some backup
 	doif rand 0 19 eq 0
 		doif carr eq null
 			inst
 			setv va20 0
-
+*count the fish
 			esee 2 16 3
 				addv va20 1
 			next
-
+*count the eggs
 			esee 2 18 22
 				addv va20 1
 			next
@@ -116,7 +127,7 @@ scrp 2 16 3 9
 
 	setv vely rand -1 1
 
-
+*die if no energy
 	subv ov02 1
 	doif ov02 le 0
 		velo 0 0
@@ -129,7 +140,7 @@ scrp 2 16 3 9
 		endi
 		kill ownr
 	endi
-
+***Eat something I'm touching?
 	doif carr eq null
 		doif ov02 lt 100 or rand 0 5 eq 0
 			inst
@@ -147,7 +158,7 @@ scrp 2 16 3 9
 				seta va99 targ
 				gsub feed
 			next
-
+*good bug
 			etch 2 13 0
 				doif carr ne null
 					stop
@@ -164,7 +175,7 @@ scrp 2 16 3 9
 					gsub feed
 				endi
 			next
-
+*bad bug
 			etch 2 14 0
 				doif carr ne null
 					stop
@@ -179,7 +190,7 @@ scrp 2 16 3 9
 				seta va99 targ
 				gsub feed
 			next
-
+*good critter
 			etch 2 15 0
 				doif carr ne null
 					stop
@@ -196,7 +207,7 @@ scrp 2 16 3 9
 					gsub feed
 				endi
 			next
-
+*bad critter
 			etch 2 16 0
 				doif carr ne null
 					stop
@@ -224,7 +235,7 @@ scrp 2 16 3 9
 	endi
 endm
 
-
+*****piranha 1000 - start fracas
 scrp 2 16 3 1000
 
 	inst
@@ -235,7 +246,7 @@ scrp 2 16 3 1000
 	subv va00 130
 
 	doif gmap posx posy eq 3
-
+*if in grendel area then limit top position of bubbles
 		setv va79 2135
 	else
 		setv va79 post
@@ -261,14 +272,14 @@ scrp 2 16 3 1000
 	mesg wrt+ ownr 1001 posx posy 0
 endm
 
-
+*****piranha 1001 - head towards fracas
 scrp 2 16 3 1001
 
 	doif ov99 eq 0
 		setv va99 50
 		setv va00 _p1_
 		setv va01 _p2_
-
+*add energy
 		addv ov02 50
 		loop
 
@@ -309,7 +320,7 @@ scrp 2 16 3 1001
 	unlk
 endm
 
-
+*****bubbles activate
 scrp 1 1 24 1
 	sndl "pir2"
 	inst
@@ -327,12 +338,12 @@ scrp 1 1 24 1
 
 	wait 50
 	inst
-
+*	produce bones
 	setv va80 2
 	targ _p1_
 	doif targ ne null
 		doif fmly eq 4
-
+*if a creature then 10 bones
 			setv va80 10
 		elif gnus eq 15 or gnus eq 16
 			setv va80 5
@@ -354,19 +365,19 @@ scrp 1 1 24 1
 		endi
 	repe
 	targ ownr
-
+*this bit moved to here
 	targ _p1_
 	doif targ ne null
 		doif fmly eq 4
 			dead
-
-
+* wait for life event to be processed
+* so it knows the location
 			lock
 			slow
 			wait 1
 			inst
 		endi
-
+* now kill the agent
 		doif targ ne null
 			kill targ
 		endi
@@ -382,14 +393,14 @@ scrp 1 1 24 1
 	kill ownr
 endm
 
-
+***bones collision
 scrp 2 10 30 6
 	doif wall eq down
 		pose rand 0 2
 	endi
 	tick rand 300 600
 endm
-
+***bones timer
 scrp 2 10 30 9
 	doif ov00 eq 1
 		doif room targ <> -1 and carr = null
@@ -408,7 +419,7 @@ scrp 2 10 30 9
 	endi
 endm
 
-
+**egg timer
 scrp 2 18 22 9
 	doif pose gt 0
 		setv va00 pose
@@ -448,7 +459,7 @@ scrp 2 18 22 9
 
 			tick rand 8 15
 			setv ov02 100
-
+*bioenergy
 			setv ov61 50
 			mvto va00 va01
 		endi
@@ -465,7 +476,7 @@ scrp 2 16 3 5
 endm
 
 
-
+*********REMOVAL
 rscr
 enum 2 16 3
 	kill targ
