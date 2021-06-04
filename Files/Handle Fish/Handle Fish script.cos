@@ -33,16 +33,18 @@ setv ov67 1
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 0
 
-
+** Initial Age (zero)
 setv ov01 0
-
+** Initial Energy
 setv ov02 550
-
+** Fertility / Pregnancy Indicator (1 fertile, 2 pregnant)
 setv ov04 0
-
+** Life Stage (1 baby, 2 child, 3 youth, 4 adult, 5 elderly)
 setv ov05 1
-
-
+** ov71 is the species, ov75 is the genus: 13 8 is Aquamites, 3 6 is Orange
+** Sponge Seed, 3 7 is Opal Sponge Seed and 3 8 is Gumin Grass seed.
+** ov76 is an indicator of which one is currently selected. 1 = aquamites, 2 = orange sponge,
+** 3 = opal sponge, 4 = gumin grass.
 setv va51 rand 1 4
 doif va51 = 1
 	setv ov75 13
@@ -61,54 +63,54 @@ elif va51 = 4
 	setv ov71 8
 	setv ov76 4
 endi
-
+** Relatively Fast Timer
 tick 1
 
 
 scrp 2 15 16 9
-
+** 	Check you are in fact in water..
 	gsub roomtype
 
-
+** 	Age Slightly
 	addv ov01 1
 
-
+** 	Lose Energy from Generally Existing
 	subv ov02 1
 
-
+**	Die if too old or if marked for death
 	doif ov99 = 5 or ov01 > 2000
 		gsub death
 	endi
 
-
+** 	Life Stage Changes if the conditions are right..
 	doif ov01 >= 200 and ov01 <= 400 and ov05 = 1 and rtyp room ownr = 9 and carr = null and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40
-
+** 		Become a Child
 		setv ov05 2
-
+** 		Storing State for new Fish
 		setv va00 ov00
-
+** 		Storing Position for new Fish
 		setv va50 posl
 		setv va51 post
-
+** 		Storing Age for new Fish
 		setv va01 ov01
-
+** 		Storing Energy for new Fish
 		setv va02 ov02
-
+**		Storing Fertilty / Pregnancy Indicator for new fish
 		setv va04 ov04
-
+** 		Storing Lifestage for new Fish
 		setv va05 ov05
-
+** 		Storing Current Food Type Genus for new Fish
 		setv va75 ov75
-
+** 		Storing Current Food Type Species for new Fish
 		setv va71 ov71
-
+** 		Storing Current Food Type Indicator for new Fish
 		setv va76 ov76
-
+** 		Storing Velocity and Direction Variables
 		setv va10 ov10
 		setv va11 ov11
 		setv va12 ov12
 		setv va13 ov13
-
+** 		Creating New Fish
 		inst
 		new: simp 2 15 16 "graspit" 50 50 5000
 		attr 199
@@ -120,14 +122,14 @@ scrp 2 15 16 9
 		clac -1
 
 
-
+**		Moving to old fish's position
 		doif tmvt va50 va51 = 1
 			mvto va50 va51
 		else
 			mvsf va50 va51
 		endi
 		emit 6 .15
-
+** 		Transferring stored conditions to new fish
 		setv ov00 va00
 		setv ov01 va01
 		setv ov02 va02
@@ -136,7 +138,7 @@ scrp 2 15 16 9
 		setv ov75 va75
 		setv ov71 va71
 		setv ov76 va76
-
+**		Transferring Direction and Velocity variables to new fish
 		setv ov10 va10
 		setv ov11 va11
 		setv ov12 va12
@@ -145,38 +147,38 @@ scrp 2 15 16 9
 		slow
 		kill ownr
 	elif ov01 >= 401 and ov01 <= 1000 and ov05 = 2 and rtyp room ownr = 9 and carr = null and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40
-
+** 		Become a Youth
 		setv ov05 3
-
+** 		Storing State for new Fish
 		setv va00 ov00
-
+** 		Storing Position for new Fish
 		setv va50 posl
 		setv va51 post
-
+** 		Storing Age for new Fish
 		setv va01 ov01
-
+** 		Storing Energy for new Fish
 		setv va02 ov02
-
+**		Storing Fertility / Pregnancy Indicator for new fish
 		setv va04 ov04
-
+** 		Storing Lifestage for new Fish
 		setv va05 ov05
-
+** 		Storing Current Food Type Genus for new Fish
 		setv va75 ov75
-
+** 		Storing Current Food Type Species for new Fish
 		setv va71 ov71
-
+** 		Storing Current Food Type Indicator for new Fish
 		setv va76 ov76
-
+** 		Storing Velocity and Direction Variables
 		setv va10 ov10
 		setv va11 ov11
 		setv va12 ov12
 		setv va13 ov13
-
+**		Transferring Direction and Velocity variables to new fish
 		setv ov10 va10
 		setv ov11 va11
 		setv ov12 va12
 		setv ov13 va13
-
+** 		Creating New Fish
 		inst
 		new: simp 2 15 16 "graspit" 50 100 5000
 		attr 199
@@ -188,14 +190,14 @@ scrp 2 15 16 9
 		clac -1
 
 
-
+**		Moving to old fish's position
 		doif tmvt va50 va51 = 1
 			mvto va50 va51
 		else
 			mvsf va50 va51
 		endi
 		emit 6 .15
-
+** 		Transferring stored conditions to new fish
 		setv ov00 va00
 		setv ov01 va01
 		setv ov02 va02
@@ -204,7 +206,7 @@ scrp 2 15 16 9
 		setv ov75 va75
 		setv ov71 va71
 		setv ov76 va76
-
+**		Transferring Direction and Velocity variables to new fish
 		setv ov10 va10
 		setv ov11 va11
 		setv ov12 va12
@@ -213,33 +215,33 @@ scrp 2 15 16 9
 		slow
 		kill ownr
 	elif ov01 >= 1001 and ov01 <= 1800 and ov05 = 3 and rtyp room ownr = 9 and carr = null and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40
-
+** 	Become an Adult
 		setv ov05 4
-
+** 		Storing State for new Fish
 		setv va00 ov00
-
+** 		Storing Position for new Fish
 		setv va50 posl
 		setv va51 post
-
+** 		Storing Age for new Fish
 		setv va01 ov01
-
+** 		Storing Energy for new Fish
 		setv va02 ov02
-
+**		Storing Fertilty / Pregnancy Indicator for new fish
 		setv va04 ov04
-
+** 		Storing Lifestage for new Fish
 		setv va05 ov05
-
+** 		Storing Current Food Type Genus for new Fish
 		setv va75 ov75
-
+** 		Storing Current Food Type Species for new Fish
 		setv va71 ov71
-
+** 		Storing Current Food Type Indicator for new Fish
 		setv va76 ov76
-
+** 		Storing Velocity and Direction Variables
 		setv va10 ov10
 		setv va11 ov11
 		setv va12 ov12
 		setv va13 ov13
-
+** 		Creating New Fish
 		inst
 		new: simp 2 15 16 "graspit" 50 150 5000
 		attr 199
@@ -251,14 +253,14 @@ scrp 2 15 16 9
 		clac -1
 
 
-
+**		Moving to old fish's position
 		doif tmvt va50 va51 = 1
 			mvto va50 va51
 		else
 			mvsf va50 va51
 		endi
 		emit 6 .15
-
+** 		Transferring stored conditions to new fish
 		setv ov00 va00
 		setv ov01 va01
 		setv ov02 va02
@@ -267,7 +269,7 @@ scrp 2 15 16 9
 		setv ov75 va75
 		setv ov71 va71
 		setv ov76 va76
-
+**		Transferring Direction and Velocity variables to new fish
 		setv ov10 va10
 		setv ov11 va11
 		setv ov12 va12
@@ -276,12 +278,12 @@ scrp 2 15 16 9
 		slow
 		kill ownr
 	elif ov01 >= 1801 and ov05 = 4
-
+** 	Become Elderly
 		setv ov05 5
 	endi
 
-
-
+**	Change State depending on conditions!
+** 	States Include: 1 flocking, 2 random swimming, 3 hungry & hunting food, 4 full and front swimming
 	doif ov02 < 500
 		setv ov00 3
 
@@ -290,7 +292,7 @@ scrp 2 15 16 9
 		setv ov00 1
 	endi
 
-
+** Become Fertile when adult
 	doif ov05 = 4 and ov04 <> 1 and ov04 <> 2
 		addv ov70 1
 		doif ov70 >= 50
@@ -299,12 +301,12 @@ scrp 2 15 16 9
 		endi
 	endi
 
-
+** Try to mate if you (and another fish) are fertile.
 	doif ov04 = 1
 		gsub mate
 	endi
 
-
+** Give birth if pregnant
 	doif ov04 = 2
 		gsub eggs
 	endi
@@ -318,7 +320,7 @@ scrp 2 15 16 9
 
 
 
-
+**	Depending on State, do certain things!
 	doif ov00 = 1
 		doif ov05 = 4
 			gsub flocking
@@ -352,7 +354,7 @@ scrp 2 15 16 9
 		gsub eating
 	endi
 
-
+** Mating - if the partner is able!
 	subr mate
 		rnge 50
 		inst
@@ -370,13 +372,13 @@ scrp 2 15 16 9
 		endi
 	retn
 	subr eggs
-
+** Check how many adults are around, don't want to overcrowd!
 		setv va34 0
 		rnge 1000
 		esee 2 15 16
 			addv va34 1
 		next
-
+** Also check how many other eggs are around.
 		rnge 1000
 		esee 2 18 21
 			addv va34 1
@@ -388,7 +390,7 @@ scrp 2 15 16 9
 			gsub death
 			stop
 		endi
-
+** If you are going to make some eggs, make them.
 		doif ov08 <> 0
 			setv va80 posl
 			setv va81 post
@@ -425,7 +427,7 @@ scrp 2 15 16 9
 		targ ownr
 	retn
 
-
+** If not carried, die or be marked for death.
 	subr death
 		doif carr = null
 			setv va00 posl
@@ -442,7 +444,7 @@ scrp 2 15 16 9
 			endi
 
 
-
+** Create Fading Fish Detritus (fish has died rather than been consumed)
 			doif ov05 = 1
 				doif ov10 < 0
 					inst
@@ -489,7 +491,7 @@ scrp 2 15 16 9
 					endi
 					slow
 				endi
-
+** 					Or this if child
 			elif ov05 = 2
 				doif ov10 < 0
 					inst
@@ -538,7 +540,7 @@ scrp 2 15 16 9
 
 					slow
 				endi
-
+** 					Or this if adult
 			elif ov05 = 3
 				doif ov10 < 0
 					inst
@@ -647,7 +649,7 @@ scrp 2 15 16 9
 
 
 
-
+** Food hunting subroutine. 
 	subr hunting
 
 		setv va60 0
@@ -735,7 +737,7 @@ scrp 2 15 16 9
 		endi
 	retn
 
-
+** Eating nearby food.
 	subr eating
 
 		setv va44 0
@@ -768,7 +770,7 @@ scrp 2 15 16 9
 		endi
 	retn
 
-
+** Room Monitor, stops the little darlings from flying!
 	subr roomtype
 
 		doif rtyp room ownr <> 9
@@ -792,7 +794,7 @@ scrp 2 15 16 9
 		accg ov87
 	retn
 
-
+** Flock swimming, or if nobody is nearby - swim randomly!
 	subr flocking
 
 		setv va50 0
@@ -841,7 +843,7 @@ scrp 2 15 16 9
 		endi
 	retn
 
-
+** Movement - simply that.
 	subr movement
 
 
@@ -849,7 +851,7 @@ scrp 2 15 16 9
 		velo ov12 ov13
 	retn
 
-
+** Random Swimming!
 	subr random
 
 		setv va64 rand 1 10
@@ -876,7 +878,7 @@ scrp 2 15 16 9
 		endi
 	retn
 
-
+** Obstacle checker, stops the little darlings from getting bruises!
 	subr avoidance
 
 		doif obst rght < 45 and ov10 <> -1
@@ -903,7 +905,7 @@ scrp 2 15 16 9
 		endi
 	retn
 
-
+** Left start turn.
 	subr leftstartturn
 
 		base 30
@@ -911,7 +913,7 @@ scrp 2 15 16 9
 		over
 	retn
 
-
+** Right start turn.
 	subr rightstartturn
 
 		base 10
@@ -919,7 +921,7 @@ scrp 2 15 16 9
 		over
 	retn
 
-
+** Left start turn reversed.
 	subr leftstartturnreversed
 
 		base 30
@@ -927,7 +929,7 @@ scrp 2 15 16 9
 		over
 	retn
 
-
+** Right start turn reversed.
 	subr rightstartturnreversed
 
 		base 10
@@ -935,7 +937,7 @@ scrp 2 15 16 9
 		over
 	retn
 
-
+** Front swimming.
 	subr frontswim
 
 		base 20
@@ -950,7 +952,7 @@ scrp 2 15 16 9
 		velo 0 0
 	retn
 
-
+** Left or Right facing swimming.
 	subr swimanim
 
 		doif ov10 = 1
@@ -964,29 +966,29 @@ scrp 2 15 16 9
 	retn
 endm
 
-
+** Handle Fish Egg's Timer
 scrp 2 18 21 9
-
+** Room Monitor.
 	gsub room
 
 	doif ov66 = 66
 		gsub htch
 	endi
 
-
-
+** ov80 = 0: Drift till you have an obstacle below you
+** ov80 = 1: You've hit the ground, so hatch.
 	doif ov80 = 0
 		gsub drft
 	elif ov80 = 1
 		gsub htch
 	endi
 
-
+** Die if you are marked for death.	
 	doif ov99 = 5
 		gsub deth
 	endi
 
-
+** Change drifting direction randomly.
 	subr drft
 		setv va70 rand 0 10
 		doif va70 = 1
@@ -1002,8 +1004,8 @@ scrp 2 18 21 9
 		gsub anim
 		gsub move
 	retn
-
-
+** Check if there are any obstacles around, if there is
+** one below you then drop.
 	subr obst
 		doif obst 0 < 50
 			setv ov10 1
@@ -1020,7 +1022,7 @@ scrp 2 18 21 9
 		endi
 	retn
 
-
+** Animation of turning randomly.
 	subr anim
 		setv va44 rand 1 3
 		doif va44 = 1
@@ -1035,7 +1037,7 @@ scrp 2 18 21 9
 		velo ov10 ov11
 	retn
 
-
+** Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			elas 50
@@ -1061,7 +1063,8 @@ scrp 2 18 21 9
 	retn
 
 
-
+** If not carried, die or be marked for death.
+** Don't think this is being called at the moment.
 	subr deth
 		inst
 		doif carr = null
@@ -1110,18 +1113,18 @@ scrp 2 18 21 9
 				mvsf va90 va91
 			endi
 			emit 6 .15
-
+** Initial Age (zero)
 			setv ov01 0
-
+** Initial Energy
 			setv ov02 550
-
+** Fertility / Pregnancy Indicator (1 fertile, 2 pregnant)
 			setv ov04 0
-
+** Life Stage (1 baby, 2 child, 3 youth, 4 adult, 5 elderly)
 			setv ov05 1
-
-
-
-
+** ov71 is the species, ov75 is the genus: 13 8 is Aquamites, 3 6 is Orange
+** Sponge Seed, 3 7 is Opal Sponge Seed and 3 8 is Gumin Grass seed.
+** ov76 is an indicator of which one is currently selected. 1 = aquamites, 2 = orange sponge,
+** 3 = opal sponge, 4 = gumin grass.
 			setv va51 rand 1 4
 			doif va51 = 1
 				setv ov75 13
@@ -1140,7 +1143,7 @@ scrp 2 18 21 9
 				setv ov71 8
 				setv ov76 4
 			endi
-
+** Relatively Fast Timer
 			tick 1
 			kill ownr
 			stop
@@ -1150,7 +1153,7 @@ scrp 2 18 21 9
 		slow
 	retn
 endm
-
+** Fish Eat Script
 scrp 2 15 16 12
 	stim writ from 80 1
 	targ ownr
@@ -1163,7 +1166,7 @@ scrp 2 15 16 12
 		setv va60 1
 		setv va70 209
 	endi
-
+** 					Do this if baby
 	doif ov05 = 1
 		doif ov10 < 0
 			inst
@@ -1208,7 +1211,7 @@ scrp 2 15 16 12
 			endi
 			slow
 		endi
-
+** 					Or this if child
 	elif ov05 = 2
 		doif ov10 < 0
 			inst
@@ -1253,7 +1256,7 @@ scrp 2 15 16 12
 			endi
 			slow
 		endi
-
+** 					Or this if adult
 	elif ov05 = 3
 		doif ov10 < 0
 			inst
@@ -1345,7 +1348,7 @@ scrp 2 15 16 12
 	endi
 
 endm
-
+** Fish Detritus Timer
 scrp 2 10 41 9
 	doif ov77 = 5
 		wait 100
@@ -1365,7 +1368,7 @@ scrp 2 10 41 9
 		kill ownr
 	endi
 endm
-
+** Egg Eat Script
 scrp 2 18 21 12
 	stim writ from 80 1
 	kill ownr
