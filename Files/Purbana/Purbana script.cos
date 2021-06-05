@@ -15,7 +15,7 @@
 new: simp 2 4 4 "palmplant" 15 0 140
 attr 192
 *act 1
-bhvr 1
+bhvr 11
 elas 0
 tick rand 200 1000
 
@@ -25,8 +25,8 @@ velo rand -10 10 0
 *push script
 scrp 2 4 4 1
 	targ from
-*reached peak of starch smell	
-	stim writ from 62 1
+*played with a plant	
+	stim writ from 84 1
 endm
 
 *timer script
@@ -60,6 +60,20 @@ scrp 2 4 4 9
 	endi
 endm
 
+scrp 2 4 4 2
+	targ from
+	stim writ from 84 1
+endm
+
+scrp 2 4 4 3
+ 	stim writ from 84 1 
+ 	targ ownr
+ 	doif pose gt 0 
+ 	setv va00 pose
+ 		 subv va00 1
+ 	pose va00
+ 	endi
+endm 
 
 *******REMOVAL
 rscr
@@ -67,3 +81,6 @@ enum 2 4 4
 	kill targ
 next
 scrx 2 4 4 9
+scrx 2 4 4 1
+scrx 2 4 4 2
+scrx 2 4 4 3
