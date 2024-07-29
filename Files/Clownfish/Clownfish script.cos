@@ -20,26 +20,22 @@ elas 20
 aero 1
 accg 0
 perm 100
-emit 6 .15
-
-setv ov01 0
-
-setv ov02 550
-
-seta ov16 null
-
-setv ov30 0
-setv ov31 30
-setv ov32 10
-setv ov33 20
-setv ov34 40
-
-setv va50 rand 0 1
-setv ov61 50
-
-
-
-
+*emit 6 .15
+** ov01 is life (rises each timer script).
+		setv ov01 0
+** ov02 is energy (lowers each timer script).
+		setv ov02 550
+** ov05 is the life stage. Not set in the install.
+		seta ov16 null
+**	Pose Bases.
+		setv ov30 0
+		setv ov31 30
+		setv ov32 10
+		setv ov33 20
+		setv ov34 40
+** Initial Poses.
+		setv va50 rand 0 1
+		setv ov61 50
 setv va51 rand 1 2
 ***Seems the same as angelfish, so same changes here
 **Bugs
@@ -61,7 +57,7 @@ elif va51 = 4
 	setv ov71 0
 	setv ov76 4
 endi
-
+**End.
 setv ov73 1
 setv ov74 0
 doif va50 = 0
@@ -77,33 +73,33 @@ mvsf game "ch_x" game "ch_y"
 endm
 
 scrp 2 18 15 12
-
+** egg eat script
 	stim writ from 80 1
 	kill ownr
 endm
 
 scrp 2 18 15 9
-
+** Room Monitor.
 	gsub room
 
 	doif ov66 = 66
 		gsub htch
 	endi
 
-
-
+** ov80 = 0: Drift till you have an obstacle below you
+** ov80 = 1: You've hit the ground, so hatch.
 	doif ov80 = 0
 		gsub drft
 	elif ov80 = 1
 		gsub htch
 	endi
 
-
+** Die if you are marked for death.	
 	doif ov99 = 5
 		gsub deth
 	endi
 
-
+** Change drifting direction randomly.
 	subr drft
 		setv va70 rand 0 10
 		doif va70 = 1
@@ -120,8 +116,8 @@ scrp 2 18 15 9
 		gsub move
 	retn
 
-
-
+** Check if there are any obstacles around, if there is
+** one below you then drop.
 	subr obst
 		doif obst 0 < 50
 			setv ov10 1
@@ -138,7 +134,7 @@ scrp 2 18 15 9
 		endi
 	retn
 
-
+** Animation of turning randomly.
 	subr anim
 		setv va44 rand 1 3
 		doif va44 = 1
@@ -153,7 +149,7 @@ scrp 2 18 15 9
 		velo ov10 ov11
 	retn
 
-
+** Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			elas 50
@@ -178,12 +174,12 @@ scrp 2 18 15 9
 		accg ov87
 	retn
 
-
-
+** If not carried, die or be marked for death.
+** Don't think this is being called at the moment.
 	subr deth
 		inst
 		doif carr = null
-
+*			dbg: outs "Dead Fish!"
 			targ ownr
 			kill targ
 		elif carr <> null
@@ -194,10 +190,10 @@ scrp 2 18 15 9
 
 
 	subr htch
-		doif ov66 = 66
-			wait 200
-			setv ov66 0
-		endi
+	doif ov66 = 66
+	wait 200
+	setv ov66 0
+	endi
 		doif ov67 = 0
 			setv va90 0
 			doif ov60 = 0
@@ -230,27 +226,22 @@ scrp 2 18 15 9
 				mvsf va90 va91
 			endi
 			emit 6 .15
-
+** ov01 is life (rises each timer script).
 			setv ov01 0
-
+** ov02 is energy (lowers each timer script).
 			setv ov02 550
 			setv ov05 0
 			seta ov16 null
-
-
+** ov05 is the life stage. Not set in the install.
+**	Pose Bases.
 			setv ov30 0
 			setv ov31 30
 			setv ov32 10
 			setv ov33 20
 			setv ov34 40
-
+**    Initial Poses.
 			setv ov61 50
 			setv ov73 1
-
-
-
-
-			setv va51 rand 1 2
 ***Picks between bugs and seeds
 **Bugs
 			doif va51 = 1
@@ -271,9 +262,9 @@ scrp 2 18 15 9
 				setv ov71 0
 				setv ov76 4
 			endi
-
-
-
+** End.
+** ov74 is basically a timer to stop them breeding too quickly
+** when they become adults
 			setv ov74 0
 			setv va50 rand 0 1
 			doif va50 = 0
@@ -292,41 +283,41 @@ scrp 2 18 15 9
 		endi
 	retn
 endm
-
+**
 scrp 2 15 15 9
-
+** Check current room.
 	gsub room
 
-
+** If marked for death, die dammit!
 	doif ov99 = 5
 		gsub deth
 	endi
 
 
-
+** If too old, die!
 	doif ov01 >= 1500
 		gsub deth
 	endi
 
-
+** Age slightly.
 	addv ov01 1
 
-
+** Use up energy.
 	subv ov02 1
 
-
+** give birth if pregnant
 	doif ov70 = 1
 		gsub eggs
 		setv ov70 0
 		gsub deth
 	endi
 
-
+** If not full, eat any nearby food. 
 	doif ov02 < 500
 		gsub eat_
 	endi
 
-
+** Mating / Breeding.
 	doif ov05 = 2 and ov72 = 0
 		addv ov74 1
 		doif ov74 >= 20
@@ -334,7 +325,7 @@ scrp 2 15 15 9
 		endi
 	endi
 
-
+** Age and change pose bases, put in an inst to stop invalid map positions.
 	doif ov73 = 1 and ov01 >= 200 and ov01 <= 400 and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40 and rtyp room ownr = 9
 		setv ov05 1
 		setv ov73 2
@@ -375,10 +366,10 @@ scrp 2 15 15 9
 		gsub swim
 	endi
 
-
+** Hunger monitor - this determines behaviour.
 	doif ov02 >= 500 and ov02 <= 1499
 
-
+** Initial movement or flocking?
 		doif ov92 = 0
 			gsub inim
 			gsub obst
@@ -404,7 +395,7 @@ scrp 2 15 15 9
 			elif ov10 = -1
 				gsub lstn
 			endi
-
+** Swim facing forward when full.
 			setv va44 0
 			setv va45 rand 1 4
 			loop
@@ -431,7 +422,7 @@ scrp 2 15 15 9
 		endi
 	elif ov02 < 500 and ov02 > 0
 
-
+** Track down and eat food.
 		gsub hunt
 		gsub obst
 		gsub swim
@@ -439,11 +430,11 @@ scrp 2 15 15 9
 		gsub eat_
 
 	elif ov02 <= 0
-
+** Die due to starvation.
 		gsub deth
 	endi
 
-
+** If not carried, die or be marked for death.
 	subr deth
 		doif carr = null
 			setv va00 posl
@@ -455,9 +446,9 @@ scrp 2 15 15 9
 				setv va60 1
 				setv va70 209
 			endi
-
-
-
+** Create Fading Fish Detritus (fish has died rather than been consumed)
+*				doif ov77 = 5
+** 					Do this if baby
 			doif ov05 = 0
 				doif ov10 < 0
 					inst
@@ -504,7 +495,7 @@ scrp 2 15 15 9
 					endi
 					slow
 				endi
-
+** 					Or this if child
 			elif ov05 = 1
 				doif ov10 < 0
 					inst
@@ -552,7 +543,7 @@ scrp 2 15 15 9
 
 					slow
 				endi
-
+** 					Or this if adult
 			elif ov05 = 2
 				doif ov10 < 0
 					inst
@@ -610,7 +601,7 @@ scrp 2 15 15 9
 		endi
 	retn
 
-
+** Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -633,7 +624,7 @@ scrp 2 15 15 9
 		accg ov87
 	retn
 
-
+** Obstacle checker, stops the little darlings from getting bruises!
 	subr obst
 		doif obst rght < 45 and ov10 <> -1
 			velo 0 0
@@ -679,13 +670,13 @@ scrp 2 15 15 9
 
 
 	subr eggs
-
+** Check how many adults are around, don't want to overcrowd!
 		setv va34 0
 		rnge 500
 		esee 2 15 15
 			addv va34 1
 		next
-
+** Also check how many other eggs are around.
 		rnge 500
 		esee 2 18 15
 			addv va34 1
@@ -702,7 +693,7 @@ scrp 2 15 15 9
 
 
 
-
+** If you are going to make some eggs, make them.
 		doif ov08 <> 0
 			setv va80 posl
 			setv va81 post
@@ -733,7 +724,7 @@ scrp 2 15 15 9
 			gsub deth
 		endi
 	retn
-
+** Initial movement, gives the ones born first something to do.
 	subr inim
 		doif ov10 = 1
 			setv ov12 rand 1 2
@@ -753,55 +744,55 @@ scrp 2 15 15 9
 		endi
 	retn
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*** Finding food, or in this case, moving generally towards it.
+*		subr find
+*			setv va50 0
+*			setv va51 0
+*			setv va52 0
+*			setv va53 1
+*			rnge 500
+*			inst
+*			esee 2 13 8
+*				doif targ <> null
+*					addv va53 1
+*					setv va50 relx ownr targ
+*					addv va51 va50
+*					setv va50 0
+*					setv va50 rely ownr targ
+*					addv va52 va50
+*					setv va50 0
+*				endi
+*			next
+*			slow
+*			doif va53 > 1
+*				divv va51 va53
+*				divv va52 va53
+*				doif va51 < 0 and ov10 = -1
+*					setv ov12 rand -2 -1
+*				elif va51 < 0 and ov10 = 1
+*					velo 0 0
+*					gsub rstn
+*					gsub lstr
+*					setv ov10 -1
+*					setv ov12 rand -2 -1
+*				elif va51 > 0 and ov10 = -1
+*					velo 0 0
+*					gsub lstn
+*					gsub rstr
+*					setv ov10 1
+*					setv ov12 rand 1 2
+*				elif va51 > 0 and ov10 = 1
+*					setv ov12 rand 1 2
+*				endi
+*				doif va52 < 0
+*					setv ov13 rand -2 -1
+*				elif va52 > 0
+*					setv ov13 rand 1 2
+*				endi
+*			else
+*				gsub rndm
+*			endi
+*		retn
 	subr hunt
 		setv va60 0
 		loop
@@ -810,7 +801,7 @@ scrp 2 15 15 9
 			setv va51 0
 			setv va52 0
 			setv va53 0
-
+*				dbg: outv ov71
 			inst
 			rnge 500
 			esee 2 ov75 ov71
@@ -827,7 +818,7 @@ scrp 2 15 15 9
 			next
 			slow
 			doif va53 = 0
-
+*					dbg: outs "Cannot find prey of this type, changing prey type.."
 *				setv va76 ov76
 *				loop
 					setv va00 rand 1 2
@@ -888,12 +879,9 @@ scrp 2 15 15 9
 				setv ov13 rand 1 2
 			endi
 		else
+*				dbg: outs "Cannot find prey to hunt!"
 
-			gsub rndm
-		endi
-	retn
-
-
+** Eating nearby food.
 	subr eat_
 		setv va44 0
 		setv va55 0
@@ -911,21 +899,20 @@ scrp 2 15 15 9
 		slow
 		doif va55 = 1
 			addv ov02 5000
-
-
-
-
-
-
-
-
-
-
-
+*				doif ov76 = 1
+*					dbg: outs "Clown: Aquamites Eaten"
+*				elif ov76 = 2
+*					dbg: outs "Clown: Orange Sponge Spore Eaten"
+*				elif ov76 = 3
+*					dbg: outs "Clown: Opal Sponge Spore Eaten"
+*				elif ov76 = 4
+*					dbg: outs "Clown: Gumin Grass Seed Eaten"
+*				else
+*					sets va00 "What was eaten was undescribable!"
+*				endi
 		endi
 	retn
-
-
+** Flock swimming, or if nobody is nearby - swim randomly!
 	subr flok
 		setv va50 0
 		setv va51 0
@@ -973,12 +960,12 @@ scrp 2 15 15 9
 		endi
 	retn
 
-
+** Movement - simply that.
 	subr move
 		velo ov12 ov13
 	retn
 
-
+** Random swimming, if you can't find food or a nearby fish to follow.
 	subr rndm
 		setv va64 rand 1 10
 		doif va64 = 6 and ov10 = 1
@@ -1004,35 +991,35 @@ scrp 2 15 15 9
 		endi
 	retn
 
-
+** Left start turn.
 	subr lstn
 		base ov32
 		anim [0 1 2 3 4 5 6 7 8 9]
 		over
 	retn
 
-
+** Right start turn.
 	subr rstr
 		base ov33
 		anim [9 8 7 6 5 4 3 2 1 0]
 		over
 	retn
 
-
+** Left start turn reversed.
 	subr lstr
 		base ov32
 		anim [9 8 7 6 5 4 3 2 1 0]
 		over
 	retn
 
-
+** Right start turn reversed.
 	subr rstn
 		base ov33
 		anim [0 1 2 3 4 5 6 7 8 9]
 		over
 	retn
 
-
+** Front swimming.
 	subr ftsw
 		velo 0 0
 		velo -1 1
@@ -1046,7 +1033,7 @@ scrp 2 15 15 9
 		anim [0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9]
 	retn
 
-
+** Left or Right facing swimming.
 	subr swim
 		doif ov10 = 1
 			base ov31
@@ -1058,7 +1045,7 @@ scrp 2 15 15 9
 
 	retn
 endm
-
+** Fish Detritus Timer
 scrp 2 10 39 9
 	doif ov77 = 5
 		wait 100
@@ -1078,7 +1065,7 @@ scrp 2 10 39 9
 		kill ownr
 	endi
 endm
-
+** Fish Eat Script
 scrp 2 15 15 12
 	stim writ from 80 1
 	targ ownr
@@ -1092,7 +1079,7 @@ scrp 2 15 15 12
 		setv va70 209
 	endi
 
-
+** 					Do this if baby
 	doif ov05 = 0
 		doif ov10 < 0
 			inst
@@ -1137,7 +1124,7 @@ scrp 2 15 15 12
 			endi
 			slow
 		endi
-
+** 					Or this if child
 	elif ov05 = 1
 		doif ov10 < 0
 			inst
@@ -1182,7 +1169,7 @@ scrp 2 15 15 12
 			endi
 			slow
 		endi
-
+** 					Or this if adult
 	elif ov05 = 2
 		doif ov10 < 0
 			inst
@@ -1231,7 +1218,7 @@ scrp 2 15 15 12
 	endi
 endm
 
-
+**
 rscr
 enum 2 18 15
 	kill targ
