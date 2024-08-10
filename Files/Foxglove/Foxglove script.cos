@@ -19,24 +19,24 @@ elas 50
 fric 100
 accg 1
 
-
+*set up variables
 setv ov00 1
-
+*set up tick rates
 setv ov70 100
 setv ov71 1000
-
+*set up dormancy counter
 setv ov72 50
-
+*energy in seed
 setv ov02 100
 
-
+*set up light levels
 setv ov80 1
 setv ov81 0.1
-
+*set up min/max/dormancy heat levels
 setv ov82 1
 setv ov83 0.01
 setv ov84 0.001
-
+*set up min/max water levels
 setv ov85 1
 setv ov86 0.1
 mvsf game "ch_x" game "ch_y"
@@ -44,40 +44,45 @@ velo rand -10 10 rand -10 0
 tick ov70
 
 
-
+********SEED TIMER
 scrp 2 3 1 9
 
+**OV00 is state
+*0=on plant
+*1=loose, on ground
+
+*if loose, not carried or falling
 	doif ov00 eq 1 and carr eq null and fall eq 0
 
-
+*check room type - SPECIFIC for each plant
 		doif rtyp room targ lt 5 or rtyp room targ eq 8 or rtyp room targ eq 9
-
+*not in right room
 			gsub nope
 		elif prop room targ 1 gt ov80 or prop room targ 1 lt ov81
-
+*not right light
 			gsub nope
 		elif prop room targ 3 gt ov85 or prop room targ 3 lt ov86
-
+*not right water
 			gsub nope
 		elif prop room targ 2 gt ov84 and prop room targ 2 lt ov83
-
+*not right heat but, but can go dormant
 			gsub nope
 			gsub dorm
 		elif prop room targ 2 gt ov82 or prop room targ 2 lt ov83
-
+*not right heat
 			gsub nope
 		else
 			rnge 300
-
+*			look for other foxgloves around
 			setv va00 0
 			esee 2 4 1
 				addv va00 1
 			next
 			doif va00 ge 4
-
+*			if overcrowded then do dormancy thing
 				gsub dorm
 			else
-
+*ELSE you've got here, conditions must be perfect
 				gsub grow
 			endi
 		endi
@@ -85,9 +90,9 @@ scrp 2 3 1 9
 
 
 	subr grow
-
+**SPECIFIC - MAKE PLANT
 		inst
-
+*get seed size data
 		setv va00 posl
 		setv va01 post
 		setv va02 wdth
@@ -95,67 +100,67 @@ scrp 2 3 1 9
 
 		new: simp 2 4 1 "fxgl" 12 0 rand 200 500
 
-
-
+*set up some values
+*	IDs of flower and leaf
 		seta ov17 null
 		seta ov18 null
-
+*	adult pose
 		setv ov30 5
-
+*	First dying pose
 		setv ov31 11
-
+*	last dying pose
 		setv ov32 6
-
+*	Water level
 		setv ov50 0.1
-
+*	water uptake
 		setv ov51 0.005
-
+*	max water
 		setv ov52 0.5
-
+*	soil saturation
 		setv ov53 1
-
+*	wilting level
 		setv ov54 10
-
+*	Food level
 		setv ov55 0.1
-
+*	Food uptake
 		setv ov56 0.0001
-
+*	Max food
 		setv ov57 0.5
-
+*	light needed
 		setv ov58 0.001
-
+*	current number of leaves
 		setv ov60 0
-
+*	max # of leaves
 		setv ov61 10
-
+*	contribution of each leaf to photosynth
 		setv ov62 0.0002
-
+*	transpiration constant
 		setv ov63 500
 
 		setv ov65 1
 
-
+*	time until maturity
 		setv ov66 30
-
+*	flower lifetime
 		setv ov67 30
-
+*	# of Stages in flower growth
 		setv ov68 3
-
+*	current flower growth stage
 		setv ov69 0
 
 
-
+*growth, flower and leaf costs
 		setv ov70 0.0001
 		setv ov71 0.001
 		setv ov72 0.001
-
+*maturity and flower life counters - refresh ov66 and ov67
 		setv ov73 30
 		setv ov74 30
-
+*tick rates
 		setv ov80 300
 		setv ov82 100
 
-
+*Get plant size data
 		setv va04 wdth
 		subv va04 va02
 		divv va04 2
@@ -164,7 +169,7 @@ scrp 2 3 1 9
 		subv va05 va03
 		subv va00 va04
 		subv va01 va05
-
+*move plant to correct position
 		mvto va00 va01
 
 		tick ov80
@@ -189,7 +194,7 @@ scrp 2 3 1 9
 	retn
 
 	subr dead
-
+*kill seed if in wrong rooms - SPECIFIC
 		altr room targ 3 0.0001
 		altr room targ 4 0.0001
 		kill targ
@@ -198,7 +203,7 @@ endm
 
 
 
-
+***seed eat
 scrp 2 3 1 12
 	lock
 	stim writ from 77 1
@@ -211,9 +216,9 @@ endm
 
 
 
-
-
-
+***leaves increase in size
+*SPECIFIC to each plant - coordinate increase
+*in bite size with graphical change if needed
 scrp 2 6 2 300
 	inst
 	addv ov51 1
@@ -233,12 +238,12 @@ scrp 2 6 2 300
 	addv ov60 1
 endm
 
-
+***Wilting leaves event
 scrp 2 6 2 301
-
+*if message was 'no wilt'
 	inst
 	doif _p1_ eq 0
-
+*	if leaves are normal, or wilting
 		doif ov00 eq 0 or ov00 eq 2
 			base ov30
 			pose 0
@@ -246,7 +251,7 @@ scrp 2 6 2 301
 				setv ov00 0
 			endi
 		elif ov00 eq 1 or ov00 eq 3
-
+*	if leaves are eaten, or eaten wilt
 			base ov37
 			pose 0
 			doif ov00 eq 3
@@ -254,8 +259,8 @@ scrp 2 6 2 301
 			endi
 		endi
 	else
-
-
+*otherwise wilt message
+*	if leaves are normal
 		doif ov00 eq 0
 			base ov38
 			pose 0
@@ -266,7 +271,7 @@ scrp 2 6 2 301
 	endi
 endm
 
-
+***dying leaves
 scrp 2 6 2 302
 	inst
 	subv ov51 1
@@ -275,7 +280,7 @@ scrp 2 6 2 302
 	subv ov60 1
 endm
 
-
+***Leaves eat message
 scrp 2 6 2 12
 	inst
 	doif ov99 eq 0
@@ -304,7 +309,7 @@ endm
 
 
 
-
+**flower grow
 scrp 2 7 1 300
 	inst
 	setv va00 pose
@@ -314,11 +319,11 @@ scrp 2 7 1 300
 	addv ov69 1
 endm
 
-
+**flower reduce - die
 scrp 2 7 1 301
 	inst
-
-
+*if this is the first time run this
+*then need to get pose right
 	doif pose le ov31
 		setv va00 ov31
 		setv va01 ov32
@@ -327,7 +332,7 @@ scrp 2 7 1 301
 		targ ov17
 		subv ov69 1
 	else
-
+*	otherwise been here before
 		setv va00 pose
 		subv va00 1
 		pose va00
