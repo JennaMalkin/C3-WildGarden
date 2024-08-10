@@ -15,58 +15,80 @@ setv va00 rand 0 2
 mulv va00 11
 new: simp 2 4 6 "bluebell" 11 va00 200
 attr 192
-
+*push, pull, hit
 bhvr 11
 elas 0
 tick rand 20 100
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 0
 
+*Push script
 scrp 2 4 6 1
 	targ from
 	stim writ from 84 1
 endm
 
+*Timer script
 scrp 2 4 6 9
+*Check if the state of the plant (OV00) is 0 - OV00 is the plant state (growing up - 0 or regressing/growing down/ungrow - 1)
 	doif ov00 eq 0
+*If pose less than 10
 		doif pose lt 10
+*This uses a temporary variable (va00) to step up through the poses if it is less than 10, the mature flower. 
 			setv va00 pose
 			addv va00 1
 			pose va00
 		else
+*Because the plant is growing UP, but the pose is no longer less than 10 (that is, it is the mature bluebell), add 1 to OV99 (age counter).
+*This allows the plant to remain in a mature state and remember this even if the growth script is interrupted by creatures.
 			addv ov99 1
+*End the 'is my pose less than 10' check.
 		endi
+*If the plant has been mature for a long time (OV99 age counter), set the plant's state (OV00) to 1 to allow it to ungrow.
 		doif ov99 ge 100
 			setv ov00 1
 		endi
+*End the 'is the state of the plant 0' check.
 	endi
+*Check if the state of the plant (OV00) is 1 - OV00 is the plant state (growing up - 0 or regressing/growing down/ungrow - 1)
 	doif ov00 eq 1
+*If the pose is greater than 0
 		doif pose gt 0
+*This uses a temporary variable (va00) to subtract the poses if it is greater than 0, the immature state. 
 			setv va00 pose
 			subv va00 1
 			pose va00
+*If the pose is not greater than 0 (then it must be 0) 
 		else
+*Reset the age counter and the plant state, ready for the next growth cycle. 
 			setv ov99 0
 			setv ov00 0
+*Close the 'pose greater than 0?' check.
 		endi
+*Close the 'state of the plant is 1?' check.
 	endi
+*End timer script.
 endm
 
+*Pull script
 scrp 2 4 6 2
 	targ from
 	stim writ from 84 1
 endm
 
+*Hit script
 scrp 2 4 6 3
  	stim writ from 84 1 
  	targ ownr
+*If the plant is hit and the pose is not at its most immature phase, regress one stage.
  	doif pose gt 0 
  	setv va00 pose
  		 subv va00 1
  	pose va00
  	endi
- 	endm  
+ 	endm
 
+*Remove scripts
 rscr
 enum 2 4 6
 	kill targ

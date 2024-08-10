@@ -37,19 +37,19 @@ mvsf game "ch_x" game "ch_y"
 
 scrp 2 15 3 9
 	inst
-
+*add to age counter
 	addv ov01 1
-*ov02.. lifespan?
+*ov02: energy level (hunger)
 	subv ov02 1
 	doif ov01 gt 3000
 		setv va66 ov01
 		modv va66 10
 		doif va66 eq 0
-*if ov01 is gt 3000 and evenly divisible by 10, add 1 to ov20
+*if age counter ov01 is gt 3000 and evenly divisible by 10, add 1 to ov20 (a drive)
 			addv ov20 1
 		endi
 	endi
-*doif the left? wall is close
+*doif the left wall is close, let the X-heading be 1, Y-heading be -1,
 	doif obst 0 lt 100
 		setv ov10 1
 		setv ov11 -1
@@ -77,10 +77,14 @@ scrp 2 15 3 9
 *freak out if you're underwater probably
 	doif carr = null
 		doif rtyp room ownr = 8
+*If you're not dead yet
 			doif ov00 ne 99
+*Reduce your energy stores
 				subv ov02 10
+*Swim up
 				setv ov11 -1
 				setv vely rand -25 -30
+*Try for your vect, anim and move subroutines
 				gsub vect
 				gsub anim
 				gsub move
@@ -98,15 +102,17 @@ scrp 2 15 3 9
 		setv ov15 0
 	endi
 
-*I was right, ov02 is lifespan-- this kills it when it's too low
+*When energy stores are too low -- this kills it when it's too low
 	doif ov02 le 0
 		setv ov00 99
 	endi
-
+*If your state is 'should be dead'
 	doif ov00 eq 99
+*If you are old, use one die subroutine
 		doif ov01 gt 3000
 			gsub die_
 		endi
+*If you're due to die young, use the other die subroutine
 		doif ov01 le 3000
 			gsub die2
 		endi
@@ -591,9 +597,10 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*?? What is ov06?
+*
 	subr snst
 		seta va50 null
+*Doif you're male
 		doif ov06 eq 0
 			inst
 			targ ov19
@@ -603,6 +610,7 @@ scrp 2 15 3 9
 			endi
 			targ ownr
 		endi
+*doif you're female
 		doif ov06 eq 1
 			inst
 			targ ov17
@@ -638,6 +646,7 @@ scrp 2 15 3 9
 			gsub hunt
 			gsub near
 			doif va40 eq 1
+*If you're female and you've mated
 				doif ov06 eq 1
 					setv ov70 1
 *if sucess, go to nest?
@@ -733,7 +742,7 @@ scrp 2 15 3 9
 *message the nest with negative whatever ov75 was.
 					mesg wrt+ ov16 256 ov75 0 0
 					negv ov75
-*does this add to your lifespan?
+*Eat your nest
 					addv ov02 200
 					setv ov00 0
 				else
@@ -791,6 +800,7 @@ scrp 2 15 3 9
 				mesg wrt+ ov16 256 ov98 0 0
 *WHAT IS THE POINT OF THIS why not just set it to 0...
 				subv ov98 ov98
+*Doif you're female
 				doif ov06 eq 1
 					doif ov70 eq 1
 						mesg wrt+ ov16 260 1 0 0
@@ -819,7 +829,7 @@ scrp 2 15 3 9
 		setv va51 posy
 		subv va50 8
 		subv va51 0
-*2 1 10 doesn't even EXIST.
+*2 1 10 is robin droppings (reused code, see also NWFP)
 		doif totl 2 1 10 gt 0
 			rtar 2 1 10
 			doif targ <> null
@@ -1228,6 +1238,7 @@ scrp 2 18 3 6
 	kill targ
 endm
 
+*Broken hummingbird egg
 scrp 2 10 4 9
 	kill ownr
 endm
@@ -1235,7 +1246,7 @@ scrp 2 10 5 9
 	kill ownr
 endm
 
-*drop script
+*Nest drop script
 scrp 2 17 2 5
 	setv va00 228
 	tint va00 128 128 128 128
