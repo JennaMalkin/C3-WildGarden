@@ -20,12 +20,21 @@ attr 195
 aero 0
 elas 1
 fric 20
-
+*activate and eat behaviour
 bhvr 17
 
-
-
-
+* ov00 = state (0=roam,1=hunt insects,2=search 4 mate
+* 	   and change sex if needed,3=mate,4=layegg,99=dead)
+* ov01 = age
+* ov02 = energy
+* ov05 = state of life (0=baby,1=youth,2=adult)
+* ov06 = gender
+* ov16 = target of hunt
+* ov20 = sex drive (activate mating when threshold reached.
+* ov72 = energy gained from eating food
+* ov73 = energy threshold before hunting begins
+* ov74 = energy threshold before before hunting stopped
+* ov75 = jump flag (0= hit ground ready to jump. 2=Inflight/jump activated)
 
 setv ov30 0
 setv ov31 11
@@ -50,23 +59,24 @@ setv ov72 400
 setv ov73 400
 setv ov74 800
 setv ov75 1
-
+*	flight energy
 setv ov80 50
 
 mvsf game "ch_x" game "ch_y"
 setv vely 0
 
-
+*push script
 scrp 2 14 3 1
 	stim writ from 88 1
 endm
 
+*eat script
 scrp 2 14 3 12
 	stim writ from 80 1
 	kill ownr
 endm
 
-
+*timer script
 scrp 2 14 3 9
 	inst
 	addv ov01 1
@@ -78,7 +88,7 @@ scrp 2 14 3 9
 	endi
 
 
-
+*** update mature sex drive
 	doif ov01 gt 2010
 		setv va66 ov01
 		modv va66 10
@@ -88,12 +98,12 @@ scrp 2 14 3 9
 	endi
 
 
-
+*if state = dead, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
 
-
+*if energy is less than 'energy threshold before hunting begins', set state to hunting
 	doif ov02 lt ov73
 		setv ov00 1
 	endi
@@ -106,10 +116,11 @@ scrp 2 14 3 9
 
 
 
-
+*if state = dead, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
+*if state = hunt, go to gfod subroutine
 	doif ov00 eq 1
 		gsub gfod
 	endi
@@ -122,7 +133,7 @@ scrp 2 14 3 9
 
 
 
-
+*if state = roam and if down is greater than 10 and flight energy is above 0, go to the fly subroutine, if anything else is true, roam instead.
 	doif ov00 eq 0
 		doif obst down > 10 and ov80 > 0
 			gsub fly_
@@ -131,9 +142,9 @@ scrp 2 14 3 9
 		endi
 	endi
 
-
-
-
+*
+*	SUBROUTINES
+*
 
 	subr die_
 		setv va50 posx
@@ -195,6 +206,7 @@ scrp 2 14 3 9
 		stop
 	retn
 
+*Lay egg - never called
 	subr layg
 		setv va50 posx
 		setv va51 posy
@@ -236,6 +248,7 @@ scrp 2 14 3 9
 		stop
 	retn
 
+*mate routine - never called
 	subr matr
 		setv va50 ov00
 		setv va51 ov06
@@ -381,8 +394,8 @@ scrp 2 14 3 9
 		velo va10 va11
 	retn
 
-
-
+* uses va47,48,49 as passed in family, genus, species variables
+* returns ov16 as target 
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -421,7 +434,7 @@ scrp 2 14 3 9
 		slow
 	retn
 
-
+* change ov10 and ov11 multipliers to head towards current target (ov16)
 	subr hunt
 		inst
 		doif ov16 <> null
@@ -449,6 +462,7 @@ scrp 2 14 3 9
 	retn
 endm
 
+*Collision script
 scrp 2 14 3 6
 	doif _p1_ > 0 and _p2_ < -4
 		setv ov10 -1
