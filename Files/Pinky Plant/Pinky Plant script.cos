@@ -12,18 +12,23 @@
 *# Agent Author = "Creature Labs"
 
 new: simp 2 4 5 "starplant" 10 0 100
+*suffer collisions and physics
 attr 192
+*push, pull and hit
 bhvr 11
+*run the timer script at a random point (every 1-4 seconds).
 tick rand 20 80
 mvsf game "ch_x" game "ch_y"
 elas 0
 velo rand -10 10 0
 
+*plant push script - stim whatever pushed it with 'played with friendly plant'
 scrp 2 4 5 1
 	targ from
 	stim writ from 84 1
 endm
 
+*plant timer script - if pose is less than 9, add 1 to the pose.
 scrp 2 4 5 9
 	doif pose lt 9
 		setv va00 pose
@@ -32,15 +37,20 @@ scrp 2 4 5 9
 	endi
 endm
 
+*plant pull script - stim whatever pulled it with 'played with friendly plant'
 scrp 2 4 5 2
 	targ from
 	stim writ from 84 1
 endm
 
+*plant hit script - stim whatever hit it with 'played with friendly plant'
 scrp 2 4 5 3
  	stim writ from 84 1 
+*change the focus to the plant itself (instead of whatever hit the plant)
  	targ ownr
+*if the plant is not at its smallest size
  	doif pose gt 0 
+*regress to an earlier lifestage
  	setv va00 pose
  		 subv va00 1
  	pose va00
@@ -48,7 +58,7 @@ scrp 2 4 5 3
 endm  
 
 
-
+*removal
 rscr
 enum 2 4 5
 	kill targ
