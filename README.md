@@ -1,5 +1,5 @@
 # C3-WildGarden
-C3 WildGarden, formerly known as C3Wishes, is a project to convert all Creatures 3 plants and animals to the Garden Box format.
+C3 WildGarden, formerly known as C3Wishes, is a project to convert all [Creatures 3 plants and animals](https://creatures.wiki/Category:C3_Official_Ecology) to the [Garden Box](https://www.youtube.com/watch?v=H8GlvEesCyc) format.
 
 These are subject to discussion and change, but the guidelines initially laid out **eight years ago** were as follows:
 
@@ -12,7 +12,7 @@ These are subject to discussion and change, but the guidelines initially laid ou
 * While not exactly a hard standard, I would like to add some sort of special touch/personal flair to as many of these conversions as possible. For example, I think I would like to make the snail, when it dies, leave behind its shell as a toy for creatures, or give more animals and plants the ability to color mutate. I have a cute idea for allowing some critters, when pushed by creatures, to potentially get attached to them and follow them around, but I dunno how painful that would be to implement.
 
 ## Status
-Currently all the cosfiles have been given icons, GB install scripts, and CAOS2PRAY headers. If you drag and drop them into monk, they should flawlessly compile. Some of the files were modified to meet some of the standards already but I have no idea which ones or how much.
+Currently all the cosfiles have been given icons, GB install scripts, and [CAOS2PRAY](https://creatures.wiki/CAOS2PRAY) headers. If you drag and drop them into monk, they should flawlessly compile. Some of the files were modified to meet some of the standards already but I have no idea which ones or how much.
 
 (Once we know the status of each plant/critter, they will be listed here).
 
