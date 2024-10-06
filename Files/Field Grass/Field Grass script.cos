@@ -12,54 +12,55 @@
 *# Agent Author = "Creature Labs"
 
 new: simp 2 6 1 "grass" 22 0 rand 200 500
+*suffer collisions and physics
 attr 192
 pose 3
 elas 0
 
-
-
+*set up some values
+*	IDs of flower and leaf
 seta ov17 null
 seta ov18 null
-
+*	adult pose
 setv ov30 5
-
+*	First dying pose
 setv ov31 17
-
+*	last dying pose
 setv ov32 12
-
+*	Wilting base
 setv ov38 6
-
+*	Seeding frame
 setv ov34 18
-
+*	last seeding frame
 setv ov35 20
 
-
+*	Water level
 setv ov50 0.1
-
+*	water uptake
 setv ov51 0.005
-
+*	max water
 setv ov52 0.5
-
+*	soil saturation
 setv ov53 1
-
+*	wilting level
 setv ov54 10
-
+*	Food level
 setv ov55 0.1
-
+*	Food uptake
 setv ov56 0.0001
-
+*	Max food
 setv ov57 0.5
-
+*	light needed
 setv ov58 0.001
-
+*	current number of leaves
 setv ov60 0
-
+*	max # of leaves
 setv ov61 5
-
+*	contribution of each leaf to photosynthesis
 setv ov62 0.0002
-
+*	transpiration constant
 setv ov63 1000
-
+*	Asexual/sexual flag
 setv ov65 0
 
 
@@ -97,7 +98,7 @@ mvsf game "ch_x" game "ch_y"
 tick ov80
 
 
-
+*seed timer script
 scrp 2 3 4 9
 
 
@@ -275,7 +276,7 @@ scrp 2 3 4 9
 	retn
 endm
 
-
+*leaf timer script
 scrp 2 6 1 9
 
 
@@ -535,7 +536,7 @@ scrp 2 6 1 9
 endm
 
 
-
+*leaf eat script
 scrp 2 6 1 12
 	lock
 
@@ -583,7 +584,7 @@ scrp 2 6 1 12
 endm
 
 
-
+*seed eat script
 scrp 2 3 4 12
 	lock
 	stim writ from 77 3
@@ -594,7 +595,7 @@ endm
 
 
 
-
+*removal
 rscr
 enum 2 3 4
 	kill targ
