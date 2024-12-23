@@ -20,11 +20,13 @@ aero 1
 accg 0
 perm 100
 mvsf game "ch_x" game "ch_y"
+*smells like protein
 emit 6 .15
-
+*ov01 is life (rises each timer script)
 setv ov01 0
-
+*ov02 is energy (lowers each timer script)
 setv ov02 550
+*ov05 is life stage
 setv ov05 0
 seta ov16 null
 **Between bugs and seeds instead of bugs,seeds,seeds, and more seeds
@@ -51,7 +53,7 @@ elif va51 = 4
 	setv ov71 0
 	setv ov76 4
 endi
-
+*Pose bases
 setv ov30 0
 setv ov31 10
 setv ov32 20
@@ -61,8 +63,10 @@ setv ov34 41
 setv ov61 50
 setv ov73 1
 
-
+* ov74 is basically a timer to stop them breeding too quickly
+* when they become adults
 setv ov74 0
+*Initial poses
 setv va50 rand 0 1
 doif va50 = 0
 	setv ov10 -1
@@ -74,35 +78,35 @@ endi
 velo 0 0
 tick 2
 
-
+*egg eat script
 scrp 2 18 14 12
-
 	stim writ from 80 1
 	kill ownr
 endm
 
+*Egg timer script
 scrp 2 18 14 9
-
+*Room monitor
 	gsub room
 
 	doif ov66 = 66
 		gsub htch
 	endi
 
-
-
+* ov80 = 0: Drift till you have an obstacle below you
+* ov80 = 1: You've hit the ground, so hatch.
 	doif ov80 = 0
 		gsub drft
 	elif ov80 = 1
 		gsub htch
 	endi
 
-
+* Die if you are marked for death.	
 	doif ov99 = 5
 		gsub deth
 	endi
 
-
+* Change drifting direction randomly.
 	subr drft
 		setv va70 rand 0 10
 		doif va70 = 1
@@ -119,8 +123,8 @@ scrp 2 18 14 9
 		gsub move
 	retn
 
-
-
+* Check if there are any obstacles around, if there is
+* one below you then drop.
 	subr obst
 		doif obst 0 < 50
 			setv ov10 1
@@ -137,7 +141,7 @@ scrp 2 18 14 9
 		endi
 	retn
 
-
+* Animation of turning randomly.
 	subr anim
 		setv va44 rand 1 3
 		doif va44 = 1
@@ -152,7 +156,7 @@ scrp 2 18 14 9
 		velo ov10 ov11
 	retn
 
-
+* Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			elas 50
@@ -178,7 +182,8 @@ scrp 2 18 14 9
 	retn
 
 
-
+* If not carried, die or be marked for death.
+* Don't think this is being called at the moment.
 	subr deth
 		inst
 		doif carr = null
@@ -192,7 +197,7 @@ scrp 2 18 14 9
 	retn
 
 
-
+*egg hatch subroutine
 	subr htch
 		doif ov67 = 0
 			setv va90 0
@@ -208,9 +213,12 @@ scrp 2 18 14 9
 			untl va90 = 25
 			setv ov67 9
 		endi
+*if the egg isn't being carried or in a lift
 		doif carr = null
+*set position of fish
 			setv va90 posl
 			setv va91 post
+*fish install
 			inst
 			new: simp 2 15 14 "angel" 153 0 4100
 			attr 199
@@ -225,8 +233,9 @@ scrp 2 18 14 9
 			else
 				mvsf va90 va91
 			endi
+*smells like protein
 			emit 6 .15
-
+*ov01 is life (rises every timer script)
 			setv ov01 0
 
 			setv ov02 550
@@ -290,34 +299,35 @@ scrp 2 18 14 9
 	retn
 endm
 
+*angelfish timer script
 scrp 2 15 14 9
 
 
-
+*check current room
 	gsub room
 
-
+*if marked for death, die.
 	doif ov99 = 5
 		gsub deth
 	endi
 
 
-
+*if too old, die.
 	doif ov01 >= 1500
 		gsub deth
 	endi
 
 
-
+*age slightly
 	addv ov01 2
 
 
-
+*use up energy
 	subv ov02 3
 
 
-
-	doif ov70 = 1
+*give birth if pregnant
+	doif  = 1
 		gsub eggs
 		setv ov70 0
 		gsub deth
@@ -721,6 +731,7 @@ scrp 2 15 14 9
 				endi
 
 			repe
+*tell the mother she's not pregnant any more.
 			targ ownr
 			setv ov70 0
 			gsub deth
