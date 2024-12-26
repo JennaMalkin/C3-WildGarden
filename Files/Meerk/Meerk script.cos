@@ -24,17 +24,16 @@ endi
 
 mvsf game "ch_x" game "ch_y"
 tick 8
-
+*energy
 setv ov02 rand 100 500
+**OV00 is state
+*0=normal
+*5=below ground
+
+*OV17 is ID of their own dirt hole
 
 
-
-
-
-
-
-
-
+*Meerk timer
 scrp 2 15 23 9
 	tick 8
 	doif carr ne null
@@ -46,14 +45,14 @@ scrp 2 15 23 9
 
 	subv ov02 1
 
-
+*if dead
 	doif ov00 eq 9
 		tick 600
 		gsub dead
 		stop
 	endi
 
-
+*are you meant to die?
 	doif ov02 le 0 and ov90 eq 0
 		setv velx 0
 		anim []
@@ -76,10 +75,10 @@ scrp 2 15 23 9
 
 
 
-
+*if normal
 	doif ov00 eq 0
 
-
+*if hungry - see if touching a balloon bug
 		doif ov02 le 200
 			inst
 			setv va00 0
@@ -132,7 +131,7 @@ scrp 2 15 23 9
 
 
 
-
+*if underground
 	doif ov00 eq 5
 		targ ov17
 		doif targ eq null
@@ -162,8 +161,8 @@ scrp 2 15 23 9
 
 
 
-
-
+****ROUTINES
+*walking
 	subr walk
 		doif fall eq 1
 			stop
@@ -176,7 +175,7 @@ scrp 2 15 23 9
 			setv velx 5
 		endi
 	retn
-
+*running
 	subr run_
 		doif fall eq 1
 			stop
@@ -189,7 +188,7 @@ scrp 2 15 23 9
 			setv velx 9
 		endi
 	retn
-
+*sit
 	subr sit_
 		doif fall eq 1
 			stop
@@ -202,7 +201,7 @@ scrp 2 15 23 9
 		endi
 		over
 	retn
-
+*stand
 	subr stnd
 		doif fall eq 1
 			stop
@@ -215,7 +214,7 @@ scrp 2 15 23 9
 		endi
 		over
 	retn
-
+*die
 	subr dead
 		doif fall eq 1
 			stop
@@ -232,7 +231,7 @@ scrp 2 15 23 9
 			kill ownr
 		endi
 	retn
-
+*eat
 	subr eat_
 		doif fall eq 1
 			stop
@@ -247,7 +246,7 @@ scrp 2 15 23 9
 			anim [106 107 108 109 255]
 		endi
 	retn
-
+*rise up from eating
 	subr rise
 		doif fall eq 1
 			stop
@@ -259,7 +258,7 @@ scrp 2 15 23 9
 		endi
 		over
 	retn
-
+*burrow
 	subr dig_
 		doif fall eq 1
 			stop
@@ -289,7 +288,7 @@ scrp 2 15 23 9
 		tick rand 100 300
 		stop
 	retn
-
+*pushups
 	subr push
 		doif fall eq 1
 			stop
@@ -302,7 +301,7 @@ scrp 2 15 23 9
 	retn
 
 
-
+*burrow up
 	subr b_up
 		doif fall eq 1
 			stop
@@ -325,7 +324,7 @@ endm
 
 
 
-
+******REMOVAL
 rscr
 enum 2 15 23
 	kill targ
