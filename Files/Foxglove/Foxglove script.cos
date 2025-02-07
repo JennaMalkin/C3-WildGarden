@@ -341,16 +341,16 @@ scrp 2 7 1 301
 	endi
 endm
 
-
+*Flower seed
 scrp 2 7 1 302
 	inst
-
+*If first time to get this
 	doif pose eq ov31
 		pose ov34
 		targ ov17
 		subv ov69 1
 	else
-
+*	otherwise been here before
 		setv va00 pose
 		addv va00 1
 		pose va00
@@ -371,29 +371,29 @@ scrp 2 7 1 302
 	accg 1
 	mvto va02 va03
 	velo rand -10 10 rand -5 0
-
+*set up variables
 	setv ov00 1
-
+*set up tick rates
 	setv ov70 10
 	setv ov71 100
-
+*set up dormancy counter
 	setv ov72 50
-
+*energy in seed
 	setv ov02 100
-
+*set up light levels
 	setv ov80 1
 	setv ov81 0.1
-
+*set up min/max/dormancy heat levels
 	setv ov82 1
 	setv ov83 0.01
 	setv ov84 0.001
-
+*set up min/max water levels
 	setv ov85 1
 	setv ov86 0.1
 	tick ov70
 endm
 
-
+***flower get pollination event
 scrp 2 7 1 303
 
 	inst
