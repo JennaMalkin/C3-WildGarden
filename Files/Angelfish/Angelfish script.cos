@@ -237,8 +237,9 @@ scrp 2 18 14 9
 			emit 6 .15
 *ov01 is life (rises every timer script)
 			setv ov01 0
-
+*ov02 is energy (lowers each timer script)
 			setv ov02 550
+*ov05 is life stage
 			setv ov05 0
 			seta ov16 null
 
@@ -269,17 +270,17 @@ scrp 2 18 14 9
 				setv ov76 4
 			endi
 
-
+*Pose bases
 			setv ov30 0
 			setv ov31 10
 			setv ov32 20
 			setv ov33 30
 			setv ov34 41
-
+*initial poses
 			setv ov61 50
 			setv ov73 1
 
-
+*ov74 stops them breeding too quickly when they become adults.
 			setv ov74 0
 			setv va50 rand 0 1
 			doif va50 = 0
@@ -333,8 +334,7 @@ scrp 2 15 14 9
 		gsub deth
 	endi
 
-
-
+*If not full, eat any nearby food
 	doif ov02 < 2500
 		gsub eat_
 
@@ -342,7 +342,7 @@ scrp 2 15 14 9
 	endi
 
 
-
+*Mating / breeding
 	doif ov05 = 2 and ov72 = 0
 		addv ov74 1
 		doif ov74 >= 100
@@ -351,7 +351,7 @@ scrp 2 15 14 9
 	endi
 
 
-
+* Age and change pose bases, put in an inst to stop invalid map positions.
 	inst
 	doif ov73 = 1 and ov01 >= 200 and ov01 <= 400 and obst left > 40 and obst rght > 40 and obst _up_ > 40 and obst down > 40 and rtyp room ownr = 9
 
@@ -396,10 +396,10 @@ scrp 2 15 14 9
 	endi
 	slow
 
-
+* Hunger monitor - this determines behaviour.
 	doif ov02 >= 500 and ov02 <= 1499
 
-
+* Initial movement or flocking?
 		doif ov92 = 0
 			gsub inim
 			gsub obst
@@ -421,7 +421,7 @@ scrp 2 15 14 9
 			elif ov10 = -1
 				gsub lstn
 			endi
-
+* Swim facing forward when full.
 			setv va44 0
 			setv va45 rand 1 4
 			loop
@@ -444,7 +444,7 @@ scrp 2 15 14 9
 		endi
 	elif ov02 < 500 and ov02 > 0
 
-
+* Track down and eat food.
 		gsub hunt
 		gsub obst
 		gsub swim
@@ -453,11 +453,11 @@ scrp 2 15 14 9
 
 	elif ov02 <= 0
 
-
+* Die due to starvation.
 		gsub deth
 	endi
 
-
+* If not carried, die or be marked for death.
 	subr deth
 		doif carr = null
 			setv va00 posl
@@ -471,7 +471,8 @@ scrp 2 15 14 9
 			endi
 
 
-
+* Create Fading Fish Detritus (fish has died rather than been consumed)
+*Do this if baby:
 			doif ov05 = 0
 				doif ov10 < 0
 					inst
@@ -516,7 +517,7 @@ scrp 2 15 14 9
 					endi
 					slow
 				endi
-
+*Do this if child:
 			elif ov05 = 1
 				doif ov10 < 0
 					inst
@@ -562,7 +563,7 @@ scrp 2 15 14 9
 
 					slow
 				endi
-
+*Do this if adult:
 			elif ov05 = 2
 				doif ov10 < 0
 					inst
@@ -618,7 +619,7 @@ scrp 2 15 14 9
 		endi
 	retn
 
-
+* Room Monitor, stops the little darlings from flying!
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -641,7 +642,7 @@ scrp 2 15 14 9
 		accg ov87
 	retn
 
-
+* Obstacle checker, stops the little darlings from getting bruises!
 	subr obst
 		doif obst rght < 45 and ov10 <> -1
 			velo 0 0
@@ -686,13 +687,13 @@ scrp 2 15 14 9
 	retn
 
 	subr eggs
-
+* Check how many adults are around, don't want to overcrowd!
 		setv va34 0
 		rnge 500
 		esee 2 15 14
 			addv va34 1
 		next
-
+* Also check how many other eggs are around.
 		rnge 500
 		esee 2 18 14
 			addv va34 1
@@ -705,7 +706,7 @@ scrp 2 15 14 9
 		else
 			setv ov08 0
 		endi
-
+* If you are going to make some eggs, make them.
 		doif ov08 <> 0
 			setv va80 posl
 			setv va81 post
@@ -738,7 +739,7 @@ scrp 2 15 14 9
 		endi
 	retn
 
-
+* Initial movement, gives the ones born first something to do.
 	subr inim
 		doif ov10 = 1
 			setv ov12 rand 1 2
@@ -856,7 +857,7 @@ scrp 2 15 14 9
 		endi
 	retn
 
-
+* Eating nearby food.
 	subr eat_
 		setv va44 0
 		setv va55 0
@@ -889,7 +890,7 @@ scrp 2 15 14 9
 	retn
 
 
-
+* Flock swimming, or if nobody is nearby - swim randomly!
 	subr flok
 		setv va50 0
 		setv va51 0
@@ -937,12 +938,12 @@ scrp 2 15 14 9
 		endi
 	retn
 
-
+* Movement - simply that.
 	subr move
 		velo ov12 ov13
 	retn
 
-
+* Random swimming, if you can't find food or a nearby fish to follow.
 	subr rndm
 		setv va64 rand 1 10
 		doif va64 = 6 and ov10 = 1
@@ -968,35 +969,35 @@ scrp 2 15 14 9
 		endi
 	retn
 
-
+* Left start turn.
 	subr lstn
 		base ov32
 		anim [0 1 2 3 4 5 6 7 8 9 10]
 		over
 	retn
 
-
+* Right start turn.
 	subr rstr
 		base ov33
 		anim [0 1 2 3 4 5 6 7 8 9 10]
 		over
 	retn
 
-
+* Left start turn reversed.
 	subr lstr
 		base ov32
 		anim [10 9 8 7 6 5 4 3 2 1 0]
 		over
 	retn
 
-
+* Right start turn reversed.
 	subr rstn
 		base ov33
 		anim [10 9 8 7 6 5 4 3 2 1 0]
 		over
 	retn
 
-
+* Front swimming.
 	subr ftsw
 		velo 0 0
 		velo -1 1
@@ -1010,7 +1011,7 @@ scrp 2 15 14 9
 		anim [0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9]
 	retn
 
-
+* Left or Right facing swimming.
 	subr swim
 		doif ov10 = 1
 			base ov31
@@ -1023,7 +1024,7 @@ scrp 2 15 14 9
 	retn
 endm
 
-
+* Fish Detritus Timer
 scrp 2 10 40 9
 	doif ov77 = 5
 		wait 100
@@ -1044,6 +1045,7 @@ scrp 2 10 40 9
 	endi
 endm
 
+* Fish Eat Script
 scrp 2 15 14 12
 	stim writ from 80 1
 	targ ownr
@@ -1057,7 +1059,7 @@ scrp 2 15 14 12
 		setv va70 209
 	endi
 
-
+*Do this if baby
 	doif ov05 = 0
 		doif ov10 < 0
 			inst
@@ -1102,7 +1104,7 @@ scrp 2 15 14 12
 			endi
 			slow
 		endi
-
+*Do this if child
 	elif ov05 = 1
 		doif ov10 < 0
 			inst
@@ -1147,7 +1149,7 @@ scrp 2 15 14 12
 			endi
 			slow
 		endi
-
+*Do this if adult
 	elif ov05 = 2
 		doif ov10 < 0
 			inst
@@ -1197,6 +1199,7 @@ scrp 2 15 14 12
 
 endm
 
+*Remove script
 rscr
 enum 2 18 14
 	kill targ
