@@ -30,58 +30,69 @@ anim [0 1 2 3 4 5 6 7 8 9 8 7 6 5 4 3 2 1 255]
 mvsf game "ch_x" game "ch_y"
 tick 20
 
+*Aquamite timer script
 scrp 2 13 8 9
 	doif carr = null
-
+*call up the room monitor
 		gsub room
 
-
+*die if marked for death
 		doif ov99 = 99
 			gsub deth
 		endi
 
-
+*hunger/energy related behaviour
 		doif ov01 <= 0
-
+*die if starved
 			gsub deth
+*If old enough
 		elif ov01 >= 75
-
+*check around for other aquamites (breeding)
 			setv va33 0
 			rnge 500
 			esee 2 13 8
 				addv va33 1
 			next
 			targ ownr
+*Weight urgency of breeding based on population
 			doif va33 <> 0
 				mulv va33 2
 			endi
-
+*depending on how many others there are nearby, reproduce.
 			setv va00 rand 1 2
 			doif va33 < 5
 				setv ov90 1
 				gsub repr
+*If overpopulation and random chance, remove yourself.
 			elif va33 > 10 and va00 = 2
 				kill ownr
 				stop
 			endi
 		endi
 
+** drifting subroutine
 		subr drft
+*Choose direction randomly
 			setv va70 rand 1 4
+*Up
 			doif va70 = 1
 				setv ov11 -1
+*Down
 			elif va70 = 2
 				setv ov11 1
+*Left
 			elif va70 = 3
 				setv ov10 -1
+*Right
 			elif va70 = 4
 				setv ov10 1
 			endi
+*Avoid obstacles and apply movement
 			gsub obst
 			gsub move
 		retn
 
-
+** reproduction subroutine
 		subr repr
 			doif carr = null
 
@@ -118,7 +129,7 @@ scrp 2 13 8 9
 			endi
 		retn
 
-
+** Obstacle avoidance subroutine
 		subr obst
 			doif obst 0 < 50
 				setv ov10 1
@@ -140,8 +151,9 @@ scrp 2 13 8 9
 			endi
 		retn
 
-
+**Room monitor subroutine - from the gumin grass seeds.
 		subr room
+*If not in water room
 			doif rtyp room ownr <> 9
 				loop
 					addv ov86 1
@@ -150,36 +162,42 @@ scrp 2 13 8 9
 					elif ov86 > 6 and ov86 < 100
 						addv ov87 .08
 					endi
+*Increase gravity over time
 					accg ov87
 				untl rtyp room ownr = 9 or ov86 >= 100
 				doif ov86 >= 100
+*Die if out of water room too long
 					gsub deth
 				endi
 			endi
 			doif rtyp room ownr = 9
 				setv ov86 0
 				setv ov87 0
+*Resume normal drift
 				gsub drft
 			endi
 			accg ov87
 		retn
 
-
+** Die, or be marked to die.
 		subr deth
 			doif carr = null
 				kill ownr
+*If you're being carried, mark for death but defer until you've been dropped
 			elif carr <> null
 				setv ov99 99
 			endi
 		retn
 
 
-
+** Movement subroutine.
 		subr move
 			velo ov10 ov11
 		retn
 	endi
 endm
+
+**Remove script
 rscr
 enum 2 13 8
 	kill targ
