@@ -257,16 +257,20 @@ scrp 2 14 2 9
 
 *Roam subroutine
 	subr roam
+*random number between 0 and 10
 		setv va66 rand 0 10
+*Set ov75 (unused) to 1
 		setv ov75 1
+*If random number is less than 5, ov10 (left-right) is switched.
 		doif va66 lt 5
 			negv ov10
 		endi
+*If random number is greater than 5, ov11 is changed to -1 (downward movement).
 		doif va66 gt 5
 			setv ov11 rand -1 1
 			setv ov11 -1
 		endi
-
+*Make the ant choose a new direction to move in.
 		gsub vect
 		gsub anim
 		gsub move
@@ -454,6 +458,7 @@ scrp 2 14 2 9
 				endi
 			endi
 		next
+*The queen is dead.
 		targ ownr
 		kill targ
 	retn
@@ -566,6 +571,7 @@ scrp 2 14 2 9
 		endi
 	retn
 
+*Queen movement - set velocity to temporary movement vectors chosen in gsub vec2
 	subr mov2
 		velo va10 va11
 	retn
@@ -588,7 +594,7 @@ scrp 2 14 2 9
 		gsub obst
 		gsub vec2
 		gsub ani2
-		gsub mov2
+		gsub 
 		stop
 	retn
 
