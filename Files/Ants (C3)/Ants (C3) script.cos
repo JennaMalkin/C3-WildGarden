@@ -11,15 +11,21 @@
 *# GB_Category = 3
 *# Agent Author = "Creature Labs"
 
+*Nest site
 new: simp 2 17 6 "ant" 9 68 50
 perm 99
 attr 192
+*energy level
 setv ov02 1000
+*bioenergy
 setv ov61 15
-
+*state
 setv ov00 0
+*age
 setv ov01 2000
+*Minimum energy to allow spawning
 setv ov72 200
+*energy cost to make worker
 setv ov73 150
 setv ov74 800
 mvsf game "ch_x" game "ch_y"
@@ -34,137 +40,169 @@ tick 1
 
 setv vely 0
 
-
+*Ant push
 scrp 2 14 2 1
 	stim writ from 88 1
 endm
 
+*Ant timer
 scrp 2 14 2 9
 	tick rand 5 12
+*add one to age, subtract 1 from energy level
 	addv ov01 1
 	subv ov02 1
+*Drown
 	doif carr = null
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
 			subv ov02 100
 		endi
 	endi
 
+*Die if energy low
 	doif ov02 <= 0
 		setv ov00 99
 	endi
 
-
+*If caste is 1, go to the queen subroutine
 	doif ov07 = 1
 		gsub quen
 	endi
 
+*if age is greater than 2010, divide age by 10 and take the remainder
 	doif ov01 gt 2010
 		setv va66 ov01
 		modv va66 10
+*If the remainder of age/10 is 0 (if ov01 is evenly divisible by 10), add 1 to drive ov20.
 		doif va66 eq 0
 			addv ov20 1
 		endi
 	endi
 
+*If energy is less than ov72 and ov00 (state) is not 2
 	doif ov02 < ov72 and ov00 <> 2
+*Set ant to roam
 		setv ov00 1
 	endi
 
+*If energy is less than or equal to 0
 	doif ov02 <= 0
+*set state to die
 		setv ov00 99
 	endi
-
+**Obstacle checking - use ov10 and ov11 to change direction if there's an obstacle nearby
+*Left
 	doif obst 0 lt 30
 		setv ov10 1
 		setv ov11 -1
 	endi
+*Right
 	doif obst 1 lt 30
 		setv ov10 -1
 		setv ov11 -1
 	endi
-
+*Up
 	doif obst 2 lt 30
 		setv ov11 1
 	endi
+*Down
 	doif obst 3 lt 30
 		setv ov11 -1
 	endi
 
+*If state is 99, go to the die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
-
+*If state is 1, go to the get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
-
+*If state is 2, go to the return home routine
 	doif ov00 = 2
 		gsub home
 	endi
-
+*If state is 0, go to the roam subroutine
 	doif ov00 eq 0
 		gsub roam
 	endi
 
+*Die subroutine
 	subr die_
+*location temp variables
 		setv va50 posl
 		setv va51 post
+*direction of movement temp variable
 		setv va52 ov10
 
-
+*If caste is worker, create dead ant with these sprites
 		doif ov07 = 0
 			new: simp 2 10 24 "ant" 12 18 2000
 		else
+*If caste is not worker (therefore queen), create dead ant with queen sprites
 			new: simp 2 10 24 "ant" 12 56 2000
 		endi
+*dead ant attributes
 		accg 2
 		tick 4
 		elas 0
 		fric 60
 		attr 195
 		aero 0
+*Use movement temp variable to allow detritus to inherit ant's movement
 		setv ov10 va52
 		setv ov01 0
 		setv ov61 10
+*Safely move dead ant to temp location
 		doif tmvt va50 va51 <> 1
 			kill targ
 		else
 			mvto va50 va51
 			setv vely 0
 		endi
+*Remove live ant object
 		kill ownr
 	retn
 
+*Get food subroutine - any detritus (2 10 0)
 	subr gfod
 		setv va47 2
 		setv va48 10
 		setv va49 0
+*Instantly, if ov16 is null, try to find detritus
 		inst
 		doif ov16 = null
+*go to find subroutine
 			gsub find
 		endi
+*Target the detritus found in gsub find
 		targ ov16
+*if target is not null
 		doif targ <> null
+*Make the ant hunt the target detritus
 			targ ownr
 			gsub hunt
 
-
+* Check if the ant has touched the detritus
 			doif touc ov16 ownr <> 0
 
 
 
 
 
-
+*switch to 'go home' state
 				setv ov00 2
+*Send message 4 to the detritus (pickup script)
 				mesg writ ov16 4
+*Store reference to the detritus in ov18
 				seta ov18 ov16
 			endi
 		else
+*If detritus vanished or can't be targeted, switch to roam and clear ov16
 			targ ownr
 			setv ov00 0
 			seta ov16 null
 		endi
+*Make the ant choose a new direction to move in.
 		targ ownr
 		gsub vect
 		gsub anim
@@ -172,28 +210,44 @@ scrp 2 14 2 9
 		stop
 	retn
 
+*return home subroutine
 	subr home
+*Target my own nest
 		seta ov16 ov19
 		targ ov16
+*If target is valid
 		doif targ <> null
+*Make ant hunt their home
 			targ ownr
 			gsub hunt
+*Check if the ant is touching the home nest
 			doif touc ownr ov16 = 1
+*Change target to the ant itself
 				targ ownr
+*Instantly
 				inst
+*Check if the ant is carrying something (ov18 is not null)
 				doif ov18 <> null
+*Send a message to ov18 to get eaten
 					mesg writ ov18 12
+*Reset ov18 to be null
 					seta ov18 null
 				endi
+*Send message to nest that it's been fed
 				mesg writ ov16 500
+*reset ant to roaming state
 				setv ov00 0
+*Add to ant's energy levels
 				addv ov02 ov73
 			endi
+*If the nest doesn't exist
 		else
+*Make the ant roam and reset its target to 0
 			targ ownr
 			setv ov00 0
 			seta ov16 null
 		endi
+*Make the ant choose a new direction to move in.
 		targ ownr
 		gsub vect
 		gsub anim
@@ -201,6 +255,7 @@ scrp 2 14 2 9
 		stop
 	retn
 
+*Roam subroutine
 	subr roam
 		setv va66 rand 0 10
 		setv ov75 1
@@ -217,24 +272,32 @@ scrp 2 14 2 9
 		gsub move
 		stop
 	retn
+
+*Vect subroutine - Create a movement vector
 	subr vect
+*Horizontal speed
 		setv va10 rand 2 6
+*Vertical speed
 		setv va11 rand 1 3
 	retn
 
+*Anim subroutine - Choose the right animation based on direction
 	subr anim
+*If the horizontal direction is 0, choose a random direction until it's not 0 (ant is always moving left or right, never standing still)
 		doif ov10 eq 0
 			loop
 				setv ov10 rand -1 1
 			untl ov10 ne 0
 		endi
 
+*If moving left or staying, use animation sequence base from ov30
 		doif ov10 <= 0
 			anim []
 			base ov30
 			anim [0 1 2 3 4 5 6 7 255]
 		endi
 
+*If moving right, use animation sequence base from ov31
 		doif ov10 > 0
 			anim []
 			base ov31
@@ -242,22 +305,30 @@ scrp 2 14 2 9
 		endi
 	retn
 
+*Move the ant
 	subr move
+*If the obstacle below the ant is less than 5 (ie the obstacle isn't going to get in the ant's way)
 		doif obst down < 5
+*Temp remove friction and stops current velocity
 			fric 0
 			velo 0 0
+*Apply direction (ov10 and ov11) to the vectors set in subr vect
 			mulv va10 ov10
 			mulv va11 ov11
+*Make sure vertical movement is always positive (to avoid ants sinking through the floor?)
 			absv va11
-
+*Set velocity
 			velo va10 va11
-
-
+*wait briefly (as we've just done a heap of calculations)
 			wait 10
+*Restore friction and reset animation
 			fric 100
 			anim []
+*End obstacle check
 		endi
 	retn
+
+*Find subroutine (food)
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -298,12 +369,18 @@ scrp 2 14 2 9
 	retn
 
 	subr hunt
+*instantly
 		inst
+*set the target to ov16
 		targ ov16
+*If the target exists
 		doif targ <> null
+*Set temporary variables to the target's xy location
 			setv va50 posx
 			setv va51 posy
+*Return target to the ant itself
 			targ ownr
+*Compare the ant's xy position to the target's - set movement ovs to help the ant move towards the target
 			doif posx lt va50
 				setv ov10 1
 			endi
@@ -316,7 +393,9 @@ scrp 2 14 2 9
 			doif posy gt va51
 				setv ov11 -1
 			endi
+*If anything else is true (target does not exist)
 		else
+*Change targ to the ant itself and reset it to roam
 			targ ownr
 			setv ov00 0
 			stop
@@ -324,28 +403,32 @@ scrp 2 14 2 9
 	retn
 
 
-
+*Queen subroutine
 	subr quen
-
+*Find a nest site
 		setv va47 2
 		setv va48 17
 		setv va49 6
 		gsub fnd2
+*If target nest exists
 		doif ov16 <> null
+*hunt the nest
 			targ ownr
 			gsub hunt
 
-
+*If the queen is touching the nest
 			doif touc ownr ov16 <> 0
 
 
 
 
 
-
+*Go to bnest subroutine at the nest you found (build the nest)
 				gsub bnst
 			endi
+*If anything else is true (the nest does not exist)
 		else
+*Reset the queen to roam
 			targ ownr
 			setv ov00 0
 			gsub rom2
@@ -358,12 +441,13 @@ scrp 2 14 2 9
 		stop
 	retn
 
+*Queens build the nest at a nest site
 	subr bnst
 		seta va16 ov16
 		enum 2 17 6
 			doif targ = va16
 				tick 30
-
+*If pose is 0, add energy to the nest
 				doif pose = 0
 					addv ov02 450
 					anim [1]
@@ -374,6 +458,7 @@ scrp 2 14 2 9
 		kill targ
 	retn
 
+*Queen-specific obstacle check subroutine
 	subr obst
 		doif obst 0 lt 120
 			setv ov10 1
@@ -391,10 +476,11 @@ scrp 2 14 2 9
 
 	retn
 
-
+*Find2 - this is split to be specifically called for a nest (for queens to lay an egg at)
 	subr fnd2
 		setv va99 99999999
 		seta va58 null
+*set a temporary variable to ov19 (nest ID)
 		seta va19 ov19
 		esee va47 va48 va49
 			doif targ <> va19
@@ -432,9 +518,13 @@ scrp 2 14 2 9
 		slow
 	retn
 
+*Vector 2 - for queens
 	subr vec2
+*Horizontal speed
 		setv va10 rand 4 8
+*Vertical speed
 		setv va11 rand 2 8
+*multiply xy direction object variables by temp variables
 		mulv va10 ov10
 		mulv va11 ov11
 		doif ov12 < va10
@@ -452,19 +542,23 @@ scrp 2 14 2 9
 
 	retn
 
+*Animate 2 - for queens
 	subr ani2
+*Queens are always on the move
 		doif ov12 eq 0
 			loop
 				setv ov12 rand -1 1
 			untl ov12 ne 0
 		endi
 
+*If queen is moving left or standing still, clear previous animations, use ov32 as the base frame and play leftward movement animation
 		doif ov12 <= 0
 			anim []
 			base ov32
 			anim [0 2 255]
 		endi
 
+*If queen is moving right, clear previous animations, use ov33 as the base frame and play rightward movement animation
 		doif ov12 > 0
 			anim []
 			base ov33
@@ -476,6 +570,7 @@ scrp 2 14 2 9
 		velo va10 va11
 	retn
 
+*Roam 2 - for queens
 	subr rom2
 		setv va66 rand 0 12
 
@@ -501,12 +596,14 @@ scrp 2 14 2 9
 
 endm
 
+*Nest timer script
 scrp 2 17 6 9
+*Subtract 1 from nest energy
 	subv ov02 1
 
 
 
-
+*Choose pose based on how much energy the nest has
 	doif ov02 > 0 and ov02 <= 420
 		anim [1]
 	elif ov02 > 420 and ov02 <= 600
@@ -521,19 +618,23 @@ scrp 2 17 6 9
 		anim [6]
 	endi
 
-
+*Find location for spawning new ant
 	setv va50 posx
 	setv va51 posy
 	subv va51 0
 	setv va88 0
+*Count ants instantly
 	inst
 	enum 2 14 2
+*ov19 is used to check if an ant belongs to this specific nest
 		doif ov19 = ownr
 			addv va88 1
 		endi
 	next
 	slow
+*If energy is greater than ov72 (spawn theshold) and less than 2000 and ants are fewer than 10
 	doif ov02 > ov72 and ov02 < 2000 and va88 < 10
+*Make a new worker ant
 		inst
 		new: simp 2 14 2 "ant" 51 0 2500
 		perm 99
@@ -544,7 +645,7 @@ scrp 2 17 6 9
 		elas 1
 		fric 0
 		clac 0
-
+*Push and eat
 		bhvr 17
 		puhl -1 10 12
 		setv ov30 0
@@ -564,6 +665,7 @@ scrp 2 17 6 9
 		setv ov10 1
 		setv ov11 -1
 		seta ov16 null
+*Ant belongs to this specific nest
 		seta ov19 ownr
 		setv ov20 0
 		setv ov61 40
@@ -572,7 +674,7 @@ scrp 2 17 6 9
 		setv ov74 800
 		setv ov75 1
 
-
+*move worker ant safely into the world
 		doif tmvt va50 va51 <> 1
 			kill targ
 		else
@@ -581,11 +683,12 @@ scrp 2 17 6 9
 			targ ownr
 
 
-
+*subtract ov73 from energy (cost of making an ant)
 			subv ov02 ov73
 		endi
 		targ ownr
 		slow
+*Make a queen ant - energy must be greater than or equal to 2000 and total ants must be less than 10
 	elif ov02 >= 2000 and va88 < 10
 		inst
 		new: simp 2 14 2 "ant" 51 30 2500
@@ -628,7 +731,7 @@ scrp 2 17 6 9
 		setv ov74 800
 		setv ov75 1
 
-
+*move queen ant safely into the world
 		doif tmvt va50 va51 <> 1
 			kill targ
 		else
@@ -637,25 +740,31 @@ scrp 2 17 6 9
 			targ ownr
 
 
-
+*subtract 1800 from nest energy - queens are expensive
 			subv ov02 1800
 		endi
 		targ ownr
 		slow
 	endi
+
+*energy recovery - if energy is less than 0
 	doif ov02 < 0
+*and if the total of ants is also 0
 		doif totl 2 14 2 = 0
+*add 200 to energy
 			addv ov02 200
 		endi
 	endi
 
 endm
 
+*ant eat script
 scrp 2 14 2 12
 	stim writ from 80 1
 	kill ownr
 endm
 
+*dead ant (detritus) timer script
 scrp 2 10 24 9
 	addv ov01 1
 	doif ov01 > 50
@@ -683,10 +792,12 @@ scrp 2 10 24 9
 	endi
 endm
 
+*Restore nest energy after a worker delivers detritus - triggered in ants gsub home
 scrp 2 17 6 500
 	addv ov02 ov72
 endm
 
+*remove scripts
 rscr
 
 enum 2 14 2
