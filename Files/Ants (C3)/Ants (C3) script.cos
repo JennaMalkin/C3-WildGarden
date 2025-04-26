@@ -334,41 +334,62 @@ scrp 2 14 2 9
 
 *Find subroutine (food)
 	subr find
+*A placeholder 'minimum distance'
 		setv va99 99999999
+*Set to null to clear any previous target
 		seta va58 null
+*instantly count food in range
 		inst
 		esee va47 va48 va49
+*If targ exists
 			doif targ <> null
+*Relative x and y distances between the ant (ownr) and the target (targ) are calculated and stored in va50 and va51, respectively.
+*Pythagorean formula is used here as a resource-saving measure to calculate the distance between the ant and its food.
 				setv va88 0
 				setv va50 relx ownr targ
 				setv va51 rely ownr targ
+*If the x-coordinate distance (va50) is negative (target is left of the ant), negate it to get the absolute value.
 				doif va50 lt 0
 					negv va50
 				endi
+*If the y-coordinate distance (va51) is negative (target is below the ant), negate it to get the absolute value.
 				doif va51 lt 0
 					negv va51
 				endi
+*The squared distances for both x and y are computed and stored in va52 and va53, respectively.
 				setv va52 va50
 				mulv va52 va52
 				setv va53 va51
 				mulv va53 va53
 				setv va54 va52
+*The total squared distance (va54) is the sum of the squared x and y distances.
 				addv va54 va53
+*If the total squared distance (va54) is smaller than the previous minimum distance (va99), update va58 with the current target (targ) and set va99 to the new smaller distance.
+*Because this runs within the esee-next loop, this will functionally mean that ants will always seek out the closest food item to them.
 				doif va54 lt va99
 					seta va58 targ
 					setv va99 va54
 				endi
 			endi
+*Continue esee-next loop
 		next
+*Now that targ has been chosen, update va58 from 'null' to targ.
 		targ va58
+*If targ is not null
 		doif targ <> null
+*Change targ to the ant itself
 			targ ownr
+*Set ov16 to va58 (the food we found)
 			seta ov16 va58
+*If anything else is true (no food found)
 		else
+*Set targ to the ant itself and clear ov16
 			targ ownr
 			seta ov16 null
 		endi
+*Set targ to the ant itself (failsafe)
 		targ ownr
+*Slow down from inst
 		slow
 	retn
 
