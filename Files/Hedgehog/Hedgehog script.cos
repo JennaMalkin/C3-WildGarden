@@ -20,25 +20,25 @@ aero 0
 elas 5
 bhvr 16
 fric 20
-
+*left
 setv ov30 0
-
+*right
 setv ov31 8
-
+*sniff/eat left
 setv ov32 16
-
+*sniff/eat right
 setv ov33 20
-
+*die left
 setv ov34 24
-
+*die right
 setv ov35 27
-
+*eat left
 setv ov36 30
-
+*eat right
 setv ov37 34
-
+*roll up left
 setv ov38 38
-
+*roll up right
 setv ov39 44
 
 
@@ -69,77 +69,90 @@ else
 	setv va66 0
 endi
 
-
+*hedgehog timer
 scrp 2 15 5 9
 	fric 100
+*Add to age, subtract energy
 	addv ov01 1
 	subv ov02 1
+*If old enough add to sex drive
 	doif ov01 > 1000
 		addv ov20 1
 	endi
+*Drowning
 	doif carr = null
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
 			subv ov02 100
 		endi
 	endi
-
+*pregnancy counter
 	doif ov70 > 0
 		addv ov70 1
 	endi
+*If age is greater than 1000 and stage of life is youth, go to matr subroutine
 	doif ov01 gt 1000
 		doif ov05 eq 1
 			gsub matr
 		endi
 	endi
 
+*If age is less than 1000 and sex drive is greater than 200 and state is 3
 	doif ov01 > 1000 and ov20 > 200 and ov00 <> 3
+*Set state to 2
 		setv ov00 2
 	endi
-
+*If pregnancy counter is greater than 10
 	doif ov70 > 10
+*Set state to 7
 		setv ov00 7
 	endi
 
+*If energy less than threshold
 	doif ov02 < ov73
+*Set state to 1
 		setv ov00 1
 	endi
-
+*Obstacle checking
+*Left
 	doif obst 0 lt 30
 		setv ov10 1
 		setv ov11 -1
 	endi
+*right
 	doif obst 1 lt 30
 		setv ov10 -1
 		setv ov11 -1
 	endi
-
+*Up
 	doif obst 2 lt 30
 		setv ov11 1
 	endi
+*Down
 	doif obst 3 lt 30
 		setv ov11 -1
 	endi
-
+*If energy is less than or equal to 0 or age is greater than 2000, mark for death
 	doif ov02 <= 0 or ov01 > 2000
 		setv ov00 99
 	endi
-
+*If marked for death go to die subroutine
 	doif ov00 = 99
 		gsub die_
 	endi
-
+*If state is 1, go to get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
-
+*If marked for death go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
-
+*If pregnancy is at full term, go to lay egg subroutine
 	doif ov00 = 7
 		gsub layg
 	endi
 
+*If state is 2, find a mate
 	doif ov00 eq 2
 		seta ov16 null
 		setv va47 2
@@ -161,21 +174,23 @@ scrp 2 15 5 9
 		targ ownr
 	endi
 
+*If state is 6, continue to mate
 	doif ov00 = 6
 		gsub mate
 	endi
 
-
+*If state is 0, roam.
 	doif ov00 eq 0
 		gsub roam
 	endi
 
+**Die subroutine
 	subr die_
 		setv va50 posl
 		setv va51 post
 		setv va52 ov10
 
-
+*Different sprites for young vs adult
 		doif ov01 gt 1000
 			new: simp 2 10 15 "hedgehog" 50 0 2000
 		else
@@ -211,6 +226,7 @@ scrp 2 15 5 9
 		over
 	retn
 
+*Get food subroutine
 	subr gfod
 		inst
 		setv va47 2
@@ -272,6 +288,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
+*hide subroutine
 	subr hide
 		anim []
 		doif ov10 >= 0
@@ -289,6 +306,7 @@ scrp 2 15 5 9
 		endi
 	retn
 
+*Mate subroutine - causes pregnancy
 	subr mate
 		targ ov16
 		doif targ <> null
@@ -316,7 +334,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
-
+*Matr subroutine - this is the one that actually produces young
 	subr matr
 		setv va00 ov00
 		setv va06 ov06
@@ -383,6 +401,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
+*Lay egg subroutine
 	subr layg
 		setv va50 posl
 		setv va51 post
@@ -462,7 +481,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
-
+*Roam subroutine
 	subr roam
 		setv va67 rand 0 20
 		doif va67 = 0
@@ -480,11 +499,14 @@ scrp 2 15 5 9
 
 		stop
 	retn
+
+*Vector subroutine - choose a random vector
 	subr vect
 		setv va10 rand 8 8
 		setv va11 rand 6 6
 	retn
 
+*Anim subroutine - constant motion in the left or right directions
 	subr anim
 		doif ov10 eq 0
 			loop
@@ -503,6 +525,7 @@ scrp 2 15 5 9
 		endi
 	retn
 
+*Velocity
 	subr move
 		mulv va10 ov10
 		mulv va11 ov11
@@ -511,6 +534,7 @@ scrp 2 15 5 9
 		setv vely 0
 	retn
 
+*Find subroutine - used for food (and mates?)
 	subr find
 		inst
 		setv va99 99999999
@@ -550,6 +574,7 @@ scrp 2 15 5 9
 		slow
 	retn
 
+*Hunt subroutine - used to get closer to target object
 	subr hunt
 		inst
 		targ ov16
@@ -578,6 +603,7 @@ scrp 2 15 5 9
 
 endm
 
+*Dead hedgehog timer
 scrp 2 10 15 9
 	elas 1
 	fric 80
@@ -618,12 +644,14 @@ scrp 2 10 15 9
 	endi
 endm
 
+*hedgehog eat script
 scrp 2 15 5 12
 	stim writ from 80 4
 	kill ownr
 
 endm
 
+*remove script
 rscr
 
 enum 2 15 5
