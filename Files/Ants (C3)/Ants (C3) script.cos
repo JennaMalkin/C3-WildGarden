@@ -80,7 +80,7 @@ scrp 2 14 2 9
 
 *If energy is less than ov72 and ov00 (state) is not 2
 	doif ov02 < ov72 and ov00 <> 2
-*Set ant to roam
+*Set ant to get food
 		setv ov00 1
 	endi
 
