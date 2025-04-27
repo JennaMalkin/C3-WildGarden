@@ -133,23 +133,31 @@ scrp 2 15 8 9
 
 *If state is 2, target and then seek out a mate
 	doif ov00 eq 2
+*Clear previous target
 		seta ov16 null
+*Choose mate
 		setv va47 2
 		setv va48 15
 		setv va49 8
 		setv va45 ov06
+*Go to seek subroutine
 		gsub seek
+*Target mate
 		targ ov16
-
+*If target is found, mate with it
 		doif targ <> null
 			targ ownr
 			setv ov00 3
+*If anything else is true (no mate found)
 		else
+*Reset to roaming
 			targ ownr
 			setv ov00 0
 		endi
 		targ ownr
 	endi
+
+*If state is 3 - go to mate subroutine
 	doif ov00 eq 3
 		gsub mate
 	endi
@@ -336,6 +344,7 @@ scrp 2 15 8 9
 		endi
 		targ ownr
 		gsub ani_
+*Reset pregnancy, state and sex drive
 		setv ov70 0
 		setv ov00 0
 		setv ov20 0
@@ -376,7 +385,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
-*Seek subroutine - used for mates and food, uses Euclidean distance to find nearest object.
+*Seek subroutine uses Euclidean distance to find nearest object.
 	subr seek
 		setv va99 99999999
 		inst
@@ -522,12 +531,14 @@ scrp 2 15 8 9
 
 	retn
 
+*Movement subroutine sets velocity
 	subr mov_
 		mulv va10 ov10
 		mulv va11 ov11
 		velo va10 va11
 	retn
 
+*Find subroutine - for mates
 	subr find
 		setv va99 99999999
 
@@ -1045,6 +1056,7 @@ scrp 2 13 5 9
 
 	retn
 
+*Nymph hardening animation
 	subr morf
 		anim []
 		doif ov10 gt 0
@@ -1080,6 +1092,7 @@ scrp 2 13 5 9
 		endi
 	retn
 
+*Dragonfly metamorphosis - nymph to adult
 	subr dfly
 		setv va50 posx
 		setv va51 posy
@@ -1147,6 +1160,7 @@ scrp 2 13 5 9
 		stop
 	retn
 
+*Vect subroutine sets a random vector
 	subr vect
 		setv va10 rand 6 12
 		setv va11 rand 8 10
@@ -1185,6 +1199,7 @@ scrp 2 13 5 9
 
 	retn
 
+*Movement subroutine sets velocity
 	subr mov_
 		mulv va10 ov10
 		mulv va11 ov11
@@ -1231,6 +1246,7 @@ scrp 2 13 5 9
 		slow
 	retn
 
+*Hunt subroutine
 	subr hunt
 		inst
 		targ ov16
