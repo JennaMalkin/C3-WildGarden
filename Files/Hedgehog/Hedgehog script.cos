@@ -89,7 +89,7 @@ scrp 2 15 5 9
 	doif ov70 > 0
 		addv ov70 1
 	endi
-*If age is greater than 1000 and stage of life is youth, go to matr subroutine
+*If age is greater than 1000 and stage of life is youth, go to matr subroutine to mature
 	doif ov01 gt 1000
 		doif ov05 eq 1
 			gsub matr
@@ -334,7 +334,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
-*Matr subroutine - this is the one that actually produces young
+*Matr subroutine - this replaces a youth hedgehog with a mature hedgehog
 	subr matr
 		setv va00 ov00
 		setv va06 ov06
