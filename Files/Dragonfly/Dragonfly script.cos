@@ -43,23 +43,27 @@ else
 endi
 
 
-
+*Dragonfly timer script
 scrp 2 15 8 9
-
+*add to life timer, subtract from energy
 	addv ov01 1
 	subv ov02 1
+*If not pregnant
 	doif ov70 <> 1
+*Add 1 to sex drive
 		addv ov20 1
 	endi
 
+*If pregnant
 	doif ov70 = 1
 		setv ov00 4
 	endi
 
+*Mark for death
 	doif ov02 <= 0
 		setv ov00 99
 	endi
-
+*Obstacle avoidance - left right
 	doif obst 0 < 30
 		setv ov10 1
 		setv ov11 -1
@@ -68,40 +72,45 @@ scrp 2 15 8 9
 		setv ov10 -1
 		setv ov11 -1
 	endi
-
+*Obstacle avoidance - up down
 	doif obst 2 < 30
 		setv ov11 1
 	endi
 	doif obst 3 < 30
 		setv ov11 -1
 	endi
+*Drowning but try to escape
 	doif carr = null
 		doif rtyp room ownr = 8
 			setv ov11 -1
 			subv ov02 20
+*If pregnant, mark to lay egg
 			doif ov70 eq 1
 				setv ov00 5
 			endi
 			setv vely -40
 		endi
 	endi
-
+*Go to die if marked for death
 	doif ov00 = 99
 		gsub die_
 	endi
 
+*If state is 5, lay egg
 	doif ov00 eq 5
 		gsub layg
 	endi
 
-
+*If energy is less than threshold, set state to 1 to trigger get food
 	doif ov02 lt ov73
 		setv ov00 1
 	endi
+*If state is 1, go to get food subroutine
 	doif ov00 eq 1
 		gsub gfod
 	endi
 
+*If state is 98, randomly return to roaming behaviour and restart timer
 	doif ov00 = 98
 		setv va66 rand 0 5
 		doif va66 = 0
@@ -110,15 +119,19 @@ scrp 2 15 8 9
 		endi
 	endi
 
+*If state is 4, go to water.
 	doif ov00 eq 4
 		gsub gwtr
 	endi
 
+*If sex drive is high and not pregnant, go to mate-seeking behaviour
 	doif ov20 gt 50
 		doif ov70 eq 0
 			setv ov00 2
 		endi
 	endi
+
+*If state is 2, target and then seek out a mate
 	doif ov00 eq 2
 		seta ov16 null
 		setv va47 2
@@ -141,14 +154,14 @@ scrp 2 15 8 9
 		gsub mate
 	endi
 
-
+*If state is 0 go to roam subroutine
 	doif ov00 = 0
 		gsub roam
 	endi
 
 	stop
 
-
+*Die subroutine
 	subr die_
 		setv va50 posl
 		setv va51 post
@@ -175,13 +188,16 @@ scrp 2 15 8 9
 		kill targ
 	retn
 
+*Get food subroutine
 	subr gfod
-
+*Look for badbugs/pests first:
 		setv va47 2
 		setv va48 14
 		setv va49 0
+*If target is null, go to find subroutine
 		doif ov16 = null
 			gsub find
+*If target is still null, seek out a goodbug instead
 			doif ov16 = null
 				setv va47 2
 				setv va48 13
@@ -189,30 +205,38 @@ scrp 2 15 8 9
 				gsub find
 			endi
 		endi
+*If targ exists
 		doif ov16 <> null
+*Make the dragonfly hunt it
 			targ ownr
 			gsub hunt
+*Once they touch their target, add to their energy, make the target be eaten
 			doif touc ownr ov16 <> 0
 				addv ov02 ov72
 				mesg writ ov16 12
+*Clear the target and go back to roaming
 				seta ov16 null
 				doif ov02 gt ov74
 					setv ov00 0
 				endi
 			endi
-
+*Change the movement of the dragonfly
 			gsub vec2
+*If anything else is true (if targ does not exist)
 		else
+*Roam instead
 			targ ownr
 			gsub roam
 			stop
 		endi
+*Change the movement of the dragonfly
 		targ ownr
 		gsub ani_
 		gsub mov_
 		stop
 	retn
 
+*Rest on a plant subroutine
 	subr rst_
 		setv va47 2
 		setv va48 4
@@ -238,6 +262,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
+*Go to water subroutine
 	subr gwtr
 		setv va60 prop grid ownr left 5
 		setv va61 prop grid ownr rght 5
@@ -265,6 +290,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
+*Lay egg subroutine
 	subr layg
 		doif pose gt 3
 			pose 17
@@ -316,6 +342,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
+*Sleep subroutine
 	subr slep
 		tick 30
 		base 0
@@ -349,6 +376,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
+*Seek subroutine - used for mates and food, uses Euclidean distance to find nearest object.
 	subr seek
 		setv va99 99999999
 		inst
@@ -387,6 +415,7 @@ scrp 2 15 8 9
 		slow
 	retn
 
+*Mate subroutine
 	subr mate
 		targ ov16
 		doif targ <> null
@@ -414,6 +443,7 @@ scrp 2 15 8 9
 		stop
 	retn
 
+*Roam subroutine
 	subr roam
 		setv va66 rand 0 10
 		doif va66 < 5
@@ -543,13 +573,21 @@ scrp 2 15 8 9
 		targ ownr
 		slow
 	retn
+
+*Hunt subroutine
 	subr hunt
+*instantly
 		inst
+*set the target to ov16
 		targ ov16
+*If the target exists
 		doif targ <> null
+*Set temporary variables to the target's xy location
 			setv va50 posx
 			setv va51 posy
+*Return target to the dragonfly itself
 			targ ownr
+*Compare the dragonfly's xy position to the target's - set movement ovs to help the dragonfly move towards the target
 			doif posx lt va50
 				setv ov10 1
 			endi
@@ -562,7 +600,9 @@ scrp 2 15 8 9
 			doif posy gt va51
 				setv ov11 -1
 			endi
+*If anything else is true (target does not exist)
 		else
+*Change the target to the dragonfly itself and reset it to roam
 			targ ownr
 			setv ov00 0
 			seta ov16 null
@@ -572,6 +612,7 @@ scrp 2 15 8 9
 
 endm
 
+*Nymph collision script
 scrp 2 15 8 6
 	doif ov00 eq 99
 		anim []
@@ -606,12 +647,14 @@ scrp 2 15 8 6
 	slow
 endm
 
+*Nymph drop script
 scrp 2 15 8 5
 	addv ov00 0
 	tick 4
 	setv velx 30
 endm
 
+*Dead dragonfly timer script
 scrp 2 10 9 9
 	elas 1
 	fric 80
@@ -655,6 +698,7 @@ scrp 2 15 8 256
 	addv ov02 _p1_
 endm
 
+*Egg timer script
 scrp 2 18 5 9
 
 	addv ov01 1
@@ -773,12 +817,13 @@ scrp 2 18 5 9
 	retn
 endm
 
+*Nymph drop script
 scrp 2 13 5 5
 	perm 30
 	accg 2
 endm
 
-
+*Nymph timer script
 scrp 2 13 5 9
 
 	addv ov01 1
@@ -1081,6 +1126,7 @@ scrp 2 13 5 9
 		slow
 	retn
 
+*Roam subroutine
 	subr roam
 		setv va66 rand 0 10
 
@@ -1146,6 +1192,7 @@ scrp 2 13 5 9
 
 	retn
 
+*Find subroutine
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -1215,6 +1262,7 @@ scrp 2 13 5 9
 
 endm
 
+*Dead dragonfly nymph timer script
 scrp 2 10 10 9
 	elas 1
 	fric 80
@@ -1254,17 +1302,20 @@ scrp 2 10 10 9
 	endi
 endm
 
+*Egg eat script
 scrp 2 13 5 12
 	stim writ from 80 1
 	kill ownr
 endm
 
+*Dragonfly eat script
 scrp 2 15 8 12
 	stim writ from 80 2
 	kill ownr
 
 endm
 
+*Remove scripts
 rscr
 
 enum 2 13 5
