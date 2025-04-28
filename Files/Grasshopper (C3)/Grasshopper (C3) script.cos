@@ -256,6 +256,8 @@ scrp 2 13 6 9
 
 **Chirp subroutine
 	subr chrp
+*Reset jump flag - from Vampess's NWFP
+                setv ov75 0 
 		snde "ghop"
 		doif ov10 <= 0
 			base ov32
@@ -284,7 +286,18 @@ scrp 2 13 6 9
 				gsub chrp
 			endi
 		endi
-
+*avoid bodies of water smell - from Vampess's NWFP
+                doif room targ ne -1
+                        doif prop room targ 5 ge 0.00001
+                                setv va00 lorp room targ 5 0
+                                setv va01 torx va00	
+                                doif va01 lt 0 and ov10 gt 0
+                                        negv ov10
+                                elif va01 gt 0 and ov10 lt 0
+                                        negv ov10
+                                endi
+                        endi
+                endi 
 		gsub jump
 		stop
 	retn
