@@ -63,27 +63,30 @@ setv ov75 1
 mvsf game "ch_x" game "ch_y"
 setv vely 0
 
-
+*Hoppity timer
 scrp 2 15 12 9
+*Add 1 to age, subtract 3 from energy
 	addv ov01 1
 	subv ov02 3
+*If not carried, set to roam
 	doif carr <> null
 		setv ov00 0
 	endi
+*If adult, add 1 to sex drive
 	doif ov05 = 2
 		addv ov20 1
 	endi
-
+*If old enough, roaming and in youth life stage, go to mature subroutine
 	doif ov01 > 500 and ov00 = 0 and ov05 = 1
 		gsub matr
 	endi
 
+*Drowning
 	doif carr = null
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
 			subv ov02 40
 		endi
 	endi
-
 
 
 	doif ov05 = 0
@@ -101,10 +104,12 @@ scrp 2 15 12 9
 
 
 
-
+*If sex drive is high and state is roaming, set to mate
 	doif ov20 > 400 and ov00 = 0
 		setv ov00 6
 	endi
+
+*If old enough, randomly add to sex drive
 	doif ov01 gt 2010
 		setv va66 ov01
 		modv va66 10
@@ -113,10 +118,12 @@ scrp 2 15 12 9
 		endi
 	endi
 
+*Go to get food behaviour if hungry enough
 	doif ov02 < ov73
 		setv ov00 1
 	endi
 
+*Obstacle checking
 	doif obst 0 lt 30
 		setv ov10 1
 		setv ov11 -1
@@ -133,14 +140,17 @@ scrp 2 15 12 9
 		setv ov11 -1
 	endi
 
+*If you've starved, set yourself to die
 	doif ov02 <= 0
 		setv ov00 99
 	endi
 
+*If state is 99, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
 
+*If state is 99, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
@@ -184,19 +194,22 @@ scrp 2 15 12 9
 	endi
 	slow
 
+*If state is 1, go to get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
 
+*If state is 6, go to baby subroutine (mate)
 	doif ov00 = 6
 		gsub baby
 	endi
 
+*If state is 0, go to roam subroutine
 	doif ov00 eq 0
 		gsub roam
 	endi
 
-
+**Die subroutine
 	subr die_
 		setv va50 posx
 		setv va51 posy
@@ -234,6 +247,7 @@ scrp 2 15 12 9
 		kill targ
 	retn
 
+**Roam subroutine
 	subr roam
 		setv va66 rand 0 10
 		doif ov75 = 0
@@ -282,6 +296,7 @@ scrp 2 15 12 9
 		stop
 	retn
 
+**Get food subroutine
 	subr gfod
 		fric 10
 		seta ov16 null
@@ -323,6 +338,7 @@ scrp 2 15 12 9
 		endi
 	retn
 
+**Baby (mate) subroutine
 	subr baby
 		setv va50 posl
 		setv va51 post
@@ -395,6 +411,7 @@ scrp 2 15 12 9
 		slow
 	retn
 
+**Mature subroutine
 	subr matr
 		setv va50 posl
 		setv va51 post
@@ -462,12 +479,13 @@ scrp 2 15 12 9
 		slow
 	retn
 
-
+**Vector subroutine - make a random vector
 	subr vect
 		setv va10 rand 8 14
 		setv va11 rand 15 20
 	retn
 
+**Animate subroutine
 	subr anim
 
 		doif ov11 = -1
@@ -508,11 +526,14 @@ scrp 2 15 12 9
 		endi
 	retn
 
+**Move subroutine - apply random velocity to movement OVs
 	subr move
 		mulv va10 ov10
 		mulv va11 ov11
 		velo va10 va11
 	retn
+
+**Hunt subroutine - approach target
 	subr hunt
 		inst
 		targ ov16
@@ -539,6 +560,7 @@ scrp 2 15 12 9
 		endi
 	retn
 
+**Find subroutine - scan for the nearest food item
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -580,6 +602,7 @@ scrp 2 15 12 9
 
 endm
 
+*Hoppity collision script
 scrp 2 15 12 6
 	inst
 	setv ov75 0
@@ -602,6 +625,7 @@ scrp 2 15 12 6
 
 endm
 
+*Dead hoppity timer script
 scrp 2 10 22 9
 	doif carr = null
 		doif ov10 <= 0
@@ -621,7 +645,7 @@ scrp 2 10 22 9
 	endi
 endm
 
-
+*Remove scripts
 rscr
 
 enum 2 15 12
