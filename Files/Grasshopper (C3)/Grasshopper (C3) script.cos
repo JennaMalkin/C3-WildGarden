@@ -80,6 +80,7 @@ scrp 2 13 6 9
 		setv ov00 99
 	endi
 
+*Avoid bodies of water smell
 	setv va60 prop grid ownr left 5
 	setv va61 prop grid ownr rght 5
 	doif va60 > va61
