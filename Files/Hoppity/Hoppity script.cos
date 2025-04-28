@@ -20,41 +20,54 @@ aero 5
 elas 5
 fric 90
 
-
+*jleft
 setv ov30 0
-
+*jright
 setv ov31 10
-
+*eat left
 setv ov32 20
-
+*eat right
 setv ov33 30
-
+*walk left
 setv ov34 40
-
+*walk right
 setv ov35 48
-
+*dig left
 setv ov36 56
-
+*dig right
 setv ov37 69
-
+*emerge left
 setv ov38 83
-
+*emerge right
 setv ov39 96
 
-
+*OV00 - state (0=roam, 1=find food, 2=go home, 3 = dig, 6=mate, 99=die)
 setv ov00 0
+*Age
 setv ov01 2000
+*Energy
 setv ov02 401
+*Life stage
 setv ov05 2
+*Gender - unused
 setv ov06 rand 0 1
+*X velocity
 setv ov10 -1
+*Y velocity
 setv ov11 -1
+*Target object
 seta ov16 null
+*Sex drive
 setv ov20 0
+*Bioenergy
 setv ov61 90
+*Energy gain from eating
 setv ov72 600
+*Hunger threshold
 setv ov73 600
+*Max energy - unused
 setv ov74 1000
+*OV75 - unused
 setv ov75 1
 
 
@@ -88,7 +101,7 @@ scrp 2 15 12 9
 		endi
 	endi
 
-
+*transition from baby to youth
 	doif ov05 = 0
 		doif va52 < 0
 			base 140
@@ -155,14 +168,16 @@ scrp 2 15 12 9
 		gsub die_
 	endi
 
+*Burrowing behaviour
 	doif ov00 = 3
 		fric 100
+*Emerge left
 		doif ov10 <= 0
 			anim []
 			base ov38
 			attr 195
 			anim [0 1 2 3 4 5 6 7 8 9 10 11 12]
-
+*Emerge right
 		elif ov10 > 0
 			anim []
 			base ov39
@@ -172,9 +187,12 @@ scrp 2 15 12 9
 		endi
 		setv ov00 0
 	endi
+*Dig
 	inst
+*If state is 2 (return home) and not being carried and not in water
 	doif ov00 = 2 and carr = null and room targ <> 8 and room targ <> 9
 		fric 100
+*Dig left
 		doif ov10 <= 0
 			anim []
 			base ov36
@@ -182,6 +200,7 @@ scrp 2 15 12 9
 
 
 			attr 192
+*Dig right
 		elif ov10 > 0
 			anim []
 			base ov37
@@ -300,6 +319,7 @@ scrp 2 15 12 9
 	subr gfod
 		fric 10
 		seta ov16 null
+*Food genus
 		setv va47 2
 		setv va48 11
 		setv va49 0
@@ -307,6 +327,7 @@ scrp 2 15 12 9
 			gsub find
 		endi
 		doif ov16 = null
+*Fruit genus
 			setv va47 2
 			setv va48 8
 			setv va49 0
@@ -607,6 +628,7 @@ scrp 2 15 12 6
 	inst
 	setv ov75 0
 	doif rand 0 10 < 11
+*Randomly trigger burrowing behaviour
 		doif carr = null
 			setv ov00 2
 		endi
