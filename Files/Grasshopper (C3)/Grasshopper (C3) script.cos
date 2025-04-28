@@ -19,6 +19,7 @@ attr 195
 aero 5
 elas 1
 bhvr 16
+*Pose holder variables
 setv ov30 0
 setv ov31 11
 setv ov32 22
@@ -27,37 +28,54 @@ setv ov34 30
 setv ov35 39
 setv ov36 0
 
+*OV00= state
 setv ov00 0
+*Age
 setv ov01 0
+*Energy
 setv ov02 800
+*Life stage
 setv ov05 2
+*Gender
 setv ov06 rand 0 1
+*XY variables
 setv ov10 -1
 setv ov11 -1
+*Target agent
 seta ov16 null
+*Sex drive
 setv ov20 0
+*Bioenergy
 setv ov61 42
+*energy gained from eating food
 setv ov72 400
+*Energy threshold before hunting begins
 setv ov73 400
+*Energy threshold before hunting stopped
 setv ov74 800
+*jump flag
 setv ov75 0
 mvsf game "ch_x" game "ch_y"
 setv vely 0
 
+*Grasshopper timer
 scrp 2 13 6 9
+*Add to age and sex drive, subtract from energy
 	addv ov01 1
 	subv ov02 1
 	addv ov20 1
 
+*If sex drive high and state is 0, set state to 6
 	doif ov20 > 800 and ov00 = 0
 		setv ov00 6
 	endi
 
+*Flag to hunt for food if energy lower than threshold
 	doif ov02 < ov73
 		setv ov00 1
 	endi
 
-
+*Flag for death if starving or too old
 	doif ov02 <= 0 or ov01 > 1000
 		setv ov00 99
 	endi
@@ -70,10 +88,12 @@ scrp 2 13 6 9
 		setv ov10 -1
 	endi
 
+*Drown if in water
 	doif rtyp room ownr = 8
 		subv ov02 50
 	endi
 
+*Obstacle checking
 	doif obst 0 lt 30
 		setv ov10 1
 		setv ov11 -1
@@ -90,27 +110,32 @@ scrp 2 13 6 9
 		setv ov11 -1
 	endi
 
+*Flag for death if starving or too old
 	doif ov02 <= 0 or ov01 > 2500
 		setv ov00 99
 	endi
 
+*If flagged for death go to the die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
 
+*If flagged to hunt food go to the get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
 
+*If flagged to lay eggs go to the lay eggs subroutine
 	doif ov00 = 6
 		gsub layg
 	endi
 
+*If flagged to roam go to the roam subroutine
 	doif ov00 eq 0
 		gsub roam
 	endi
 
-
+**Die subroutine
 	subr die_
 		setv va50 posl
 		setv va51 post
@@ -148,6 +173,7 @@ scrp 2 13 6 9
 		endi
 	retn
 
+**Get food subroutine
 	subr gfod
 		setv va47 2
 		setv va48 6
@@ -179,7 +205,7 @@ scrp 2 13 6 9
 	retn
 
 
-
+**Lay egg subroutine
 	subr layg
 		setv va50 posl
 		setv va51 post
@@ -227,7 +253,7 @@ scrp 2 13 6 9
 		endi
 	retn
 
-
+**Chirp subroutine
 	subr chrp
 		snde "ghop"
 		doif ov10 <= 0
@@ -242,7 +268,7 @@ scrp 2 13 6 9
 		stop
 	retn
 
-
+**Roam subroutine
 	subr roam
 		setv va66 rand 0 10
 		doif va66 lt 5
@@ -262,6 +288,7 @@ scrp 2 13 6 9
 		stop
 	retn
 
+**Jump subroutine
 	subr jump
 		doif ov75 = 0
 			setv ov75 1
@@ -282,12 +309,13 @@ scrp 2 13 6 9
 		endi
 	retn
 
-
+**Vector subroutine - random velocity
 	subr vect
 		setv va10 rand 8 8
 		setv va11 rand 20 20
 	retn
 
+**Animate subroutine - keep the grasshopper moving
 	subr anim
 		doif vely <= 0
 			doif ov10 <= 0
@@ -314,12 +342,14 @@ scrp 2 13 6 9
 
 	retn
 
+**Move subroutine
 	subr move
 		mulv va10 ov10
 		mulv va11 ov11
 		velo va10 va11
 	retn
 
+**Find subroutine - uses Euclidean distance to find the nearest food item (leaf)
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -359,6 +389,7 @@ scrp 2 13 6 9
 		slow
 	retn
 
+**Hunt subroutine - move closer to the food item
 	subr hunt
 		inst
 		targ ov16
@@ -387,6 +418,7 @@ scrp 2 13 6 9
 
 endm
 
+**Grasshopper collision script
 scrp 2 13 6 6
 	inst
 	setv ov75 0
@@ -404,6 +436,7 @@ scrp 2 13 6 6
 	slow
 endm
 
+**Grasshopper egg timer
 scrp 2 18 10 9
 	inst
 	addv ov01 1
@@ -459,6 +492,7 @@ scrp 2 18 10 9
 	endi
 endm
 
+**Dead grasshopper timer
 scrp 2 10 19 9
 	addv ov01 1
 	doif ov01 > 50
@@ -484,16 +518,19 @@ scrp 2 10 19 9
 	endi
 endm
 
+**Grasshopper eat script
 scrp 2 13 6 12
 	stim writ from 80 1
 	kill ownr
 endm
 
+**Grasshopper egg eat script
 scrp 2 18 10 12
 	stim writ from 80 1
 	kill ownr
 endm
 
+**Remove scripts
 rscr
 
 enum 2 13 6
