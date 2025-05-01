@@ -63,36 +63,36 @@ setv ov63 1000
 *	Asexual/sexual flag
 setv ov65 0
 
-
+*	time until maturity
 setv ov66 30
-
+*	flower lifetime
 setv ov67 30
-
+*	# of Stages in flower growth
 setv ov68 0
-
+*	current flower growth stage
 setv ov69 0
 
-
+*growth, flower and leaf costs
 setv ov70 0.0001
 setv ov71 0.0002
 setv ov72 0.0002
-
+*maturity and flower life counters - refresh ov66 and ov67
 setv ov73 40
 setv ov74 10
-
+*tick rates
 setv ov80 300
 setv ov82 100
 
-
+*Get plant size data
 setv va04 wdth
 subv va04 va02
 divv va04 2
 setv va05 hght
-
+*do some maths
 subv va05 va03
 subv va00 va04
 subv va01 va05
-
+*move plant to correct position
 mvsf game "ch_x" game "ch_y"
 
 tick ov80
@@ -100,56 +100,58 @@ tick ov80
 
 *seed timer script
 scrp 2 3 4 9
+**OV00 is state
+*0=on plant
+*1=loose, on ground
 
-
-
+**population cap
 	doif totl 2 3 4 gt 20
 		gsub dead
 	endi
 
 
-
+*if loose, not carried or falling
 	doif ov00 eq 1 and carr eq null and fall eq 0
 
-
+*check room type - SPECIFIC for each plant
 		doif rtyp room targ lt 5 or rtyp room targ eq 8 or rtyp room targ eq 9
-
+*not in right room
 			gsub nope
 		elif prop room targ 1 gt ov80 or prop room targ 1 lt ov81
-
+*not right light
 			gsub nope
 		elif prop room targ 3 gt ov85 or prop room targ 3 lt ov86
-
+*not right water
 			gsub nope
 		elif prop room targ 2 gt ov84 and prop room targ 2 lt ov83
-
+*not right heat but, but can go dormant
 			gsub nope
 			gsub dorm
 		elif prop room targ 2 gt ov82 or prop room targ 2 lt ov83
-
+*not right heat
 			gsub nope
 		else
 			rnge 100
-
+*			look for other grasses around
 			setv va00 0
 			esee 2 6 1
 				addv va00 1
 			next
 			doif va00 ge 4
-
+*			if overcrowded then do dormancy thing
 				gsub dorm
 			else
-
+*ELSE you've got here, conditions must be perfect
 				gsub grow
 			endi
 		endi
 	endi
 
-
+****
 	subr grow
-
+**SPECIFIC - MAKE PLANT
 		inst
-
+*get seed size data
 		setv va00 posl
 		setv va01 post
 		setv va02 wdth
@@ -280,13 +282,14 @@ endm
 scrp 2 6 1 9
 
 
+*OV00 is state:
+*0=normal growing
+*1=adult
+*2=wilting
+*3=seeding
+*5=dying
 
-
-
-
-
-
-
+*If dying
 	doif ov00 eq 5
 		doif pose gt ov32
 			setv va00 pose
@@ -303,11 +306,11 @@ scrp 2 6 1 9
 
 
 
-
+*Do environmental uptake
 	gsub up_t
-
+*Do environmental loss
 	gsub loss
-
+*see if need to change state
 	gsub what
 
 
