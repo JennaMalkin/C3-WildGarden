@@ -44,22 +44,38 @@ setv ov39 44
 
 
 
-
+*OV00 - state (0=roam, 1=find food, 2=find mate, 6=mate, 7=give birth, 99=die)
 setv ov00 0
+*Age counter
 setv ov01 1000
+*Energy
 setv ov02 800
+*Life stage (1= youth, 2 = adult)
 setv ov05 2
+*Gender (0 = female, 1 = male)
 setv ov06 va66
+*X direction movement vector
 setv ov10 1
+*Y direction movement vector
 setv ov11 1
+*Target agent (food or mate)
 seta ov16 null
+*Sex drive level
 setv ov20 0
+*Bioenergy value
 setv ov61 60
+*Pregnancy
 setv ov70 0
+*Energy gained per food eaten
 setv ov72 400
+*Hunger threshold (if energy is lower than this, seek food)
 setv ov73 400
+*Maximum energy cap
 setv ov74 800
+* ov75 = jump flag (0= hit ground ready to jump. 2=Inflight/jump activated) - unused.
 setv ov75 1
+
+*Move into the world
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 0
 setv vely 0
@@ -165,8 +181,11 @@ scrp 2 15 5 9
 		targ ov16
 
 		doif targ <> null
+*Make more gender-discerning - from Vampess's NWFP.
+			doif ov06 <> va45
 			targ ownr
 			setv ov00 6
+			endi
 		else
 			targ ownr
 			setv ov00 0
@@ -197,7 +216,7 @@ scrp 2 15 5 9
 			new: simp 2 10 15 "hedgehog" 50 50 2000
 		endi
 		accg 2
-
+		bhvr 16
 		setv ov34 24
 
 		setv ov35 27
@@ -208,10 +227,10 @@ scrp 2 15 5 9
 		setv ov61 20
 		setv ov01 0
 		doif tmvt va50 va51 <> 1
-			kill targ
-			kill ownr
-		endi
+			mvsf va50 va51
+		else
 		mvto va50 va51
+		endi
 		setv vely 0
 		kill ownr
 		anim []
@@ -232,9 +251,7 @@ scrp 2 15 5 9
 		setv va47 2
 		setv va48 14
 		setv va49 0
-		doif ov16 = null
 			gsub find
-		endi
 		doif ov16 = null
 			setv va47 2
 			setv va48 13
@@ -407,12 +424,12 @@ scrp 2 15 5 9
 		setv va51 post
 
 
-		setv va66 0
 		enum 2 15 5
 			addv va66 1
 		next
 		doif va66 < 4
 			inst
+			setv va66 0
 			reps 2
 				new: simp 2 15 5 "hedgehog" 50 50 2500
 				accg 1
@@ -492,7 +509,18 @@ scrp 2 15 5 9
 		doif va66 lt 5
 			mulv ov10 -1
 		endi
-
+*Avoid water
+		doif room targ ne -1
+			doif prop room targ 5 ge 0.00001
+                        setv va00 lorp room targ 5 0
+                        setv va01 torx va00
+                        	doif va01 lt 0 and ov10 gt 0
+                                negv ov10
+                        	elif va01 gt 0 and ov10 lt 0
+                                negv ov10
+                        	endi
+                	endi
+       		endi
 		gsub vect
 		gsub anim
 		gsub move
@@ -541,7 +569,7 @@ scrp 2 15 5 9
 		seta va58 null
 		inst
 		esee va47 va48 va49
-			doif targ <> null
+			doif targ <> null and prop room targ 5 <= 0.00001
 				setv va88 0
 				setv va50 relx ownr targ
 				setv va51 rely ownr targ
@@ -651,6 +679,12 @@ scrp 2 15 5 12
 
 endm
 
+*dead hedgehog eat script
+scrp 2 10 15 12
+	stim writ from 81 4
+	kill ownr
+endm
+
 *remove script
 rscr
 
@@ -660,5 +694,10 @@ next
 scrx 2 15 5 9
 scrx 2 15 5 6
 
+enum 2 10 15
+	kill targ
+next
+scrx 2 10 15 9
+scrx 2 10 15 12
 
 endm
