@@ -41,14 +41,16 @@ scrp 2 15 3 9
 	addv ov01 1
 *ov02: energy level (hunger)
 	subv ov02 1
+*if old enough, increase sex drive
 	doif ov01 gt 3000
 		setv va66 ov01
 		modv va66 10
 		doif va66 eq 0
-*if age counter ov01 is gt 3000 and evenly divisible by 10, add 1 to ov20 (a drive)
+*if age counter ov01 is gt 3000 and evenly divisible by 10, add 1 to ov20 (sex drive)
 			addv ov20 1
 		endi
 	endi
+*Obstacle checking:
 *doif the left wall is close, let the X-heading be 1, Y-heading be -1,
 	doif obst 0 lt 100
 		setv ov10 1
@@ -57,7 +59,7 @@ scrp 2 15 3 9
 		setv va02 rand 12 18
 		addv ov15 2
 	endi
-*doif the right? wall is close
+*doif the right wall is close
 	doif obst 1 lt 100
 		setv ov10 -1
 		setv ov11 -1
@@ -65,14 +67,14 @@ scrp 2 15 3 9
 		setv va02 rand 12 18
 		addv ov15 2
 	endi
-*doif the ceiling? is close
+*doif the ceiling is close
 	doif obst 2 lt 50
 		setv ov11 1
 		setv va02 rand 18 25
 		subv ov15 2
 	endi
 *ov 10 (pos--right, neg left) and 11 (neg-up, pos-down) seem to be directional pointers
-*ov 15 might be a lft/gravity thing? Higher/go up and lesser/go down?
+*ov 15 might be a lift/gravity thing? Higher/go up and lesser/go down?
 
 *freak out if you're underwater probably
 	doif carr = null
@@ -118,7 +120,7 @@ scrp 2 15 3 9
 		endi
 	endi
 
-*ov01 has...something to do with range?
+*if adult, range is 800, if baby, range is 100.
 	doif ov01 gt 3000
 		rnge 800
 	endi
@@ -160,7 +162,7 @@ scrp 2 15 3 9
 		gsub crap
 	endi
 
-*If your life is low? If you're old enough
+*If your energy is less than the hunger threshold and you're old enough seek flowers
 	doif ov02 lt ov73
 		doif ov00 lt 90
 			setv ov00 2
@@ -169,13 +171,13 @@ scrp 2 15 3 9
 				setv va48 7
 				setv va49 0
 				setv va45 0
-*look for 2 7 0, that is...flowers/leaves
+*look for 2 7 0, that is...flowers
 				esee va47 va48 va49
 					doif targ <> null
 						addv va45 1
 					endi
 				next
-*so ov00 is some kind of state
+*so ov00 is state
 * 2 is near plants
 
 * 6 is not near plants.
@@ -187,10 +189,12 @@ scrp 2 15 3 9
 			endi
 		endi
 	endi
+*If state is 6, go to enst subroutine
 	doif ov00 eq 6
 *enst? Look around?
 		gsub enst
 	endi
+*If state is 2, get food.
 	doif ov00 eq 2
 *get food?
 		setv va47 2
@@ -199,16 +203,16 @@ scrp 2 15 3 9
 		gsub gfod
 	endi
 
-* CONFUSED.
-* ov19 is clearly an agent
+* If state is less than 90
 	doif ov00 lt 90
 		doif ov98 le 20 and ov19 <> null
 			targ ov19
 			doif targ <> null
-*getting the ov02 of ov19 (nest?)
+*getting the ov02 (energy level) of ov19 (nest)
 				setv va50 ov02
 				targ ownr
 				doif va50 lt 180
+*Set state of hummingbird to 4 if energy level of nest is less than 180
 					setv ov00 4
 				endi
 			endi
@@ -224,8 +228,8 @@ scrp 2 15 3 9
 			setv va50 ov02
 			targ ownr
 			doif va50 lt 180
-*gather materials?
-* if your nest is less than stage 180?
+*gather materials
+* if your nest has less than 180 energy
 				gsub gmat
 			else
 				setv ov00 0
@@ -237,21 +241,23 @@ scrp 2 15 3 9
 		endi
 	endi
 
+*If adult
 	doif ov01 gt 3000
-
+*go to check subroutine
 		gsub chek
-*wait, is ov17 MATE?!
+*ov17 is MATE
 		doif ov17 = null
 			gsub fmte
 		endi
-*and ov19 is NEST?!
+*and ov19 is NEST
 		doif ov19 = null
 			gsub fnst
 		endi
+*If nest exists, go to snst subroutine
 		doif ov19 <> null
 			gsub snst
 		endi
-*WHAT IS OV20
+*Do if sex drive is greater than 50
 		doif ov20 gt 50
 *set state to 3 if you have no mate, or nest, or anything to do
 			doif ov17 <> null
@@ -264,13 +270,13 @@ scrp 2 15 3 9
 		endi
 		inst
 		slow
-*so if you have no mate or nest or anything to do... look for a mate
+*so if you have no mate or nest or anything to do and high sex drive... look for a mate
 		doif ov00 eq 3
 			gsub mate
 		endi
 	endi
 
-*WHY IS THIS CODING SO BAD
+*If age is 3000, go to mature subroutine
 	doif ov01 le 3000
 		doif ov01 eq 3000
 			gsub matr
@@ -304,6 +310,7 @@ scrp 2 15 3 9
 		velo va01 va02
 	retn
 
+*Animation subroutine
 	subr anim
 		setv va03 0
 		anim []
@@ -318,7 +325,7 @@ scrp 2 15 3 9
 
 	retn
 
-*go... to bed?
+*go to bed
 	subr gbed
 *set ov16 to your nest
 		seta ov16 ov19
@@ -347,7 +354,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
-*Why are there two dies? PRobably based on age.
+*Adult death subroutine
 	subr die_
 		setv va50 posx
 		setv va51 posy
@@ -378,6 +385,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
+*Chick death subroutine
 	subr die2
 		setv va50 posx
 		setv va51 posy
@@ -452,7 +460,7 @@ scrp 2 15 3 9
 * get food
 	subr gfod
 		inst
-*is ov16 supposed to be just be "agent of affection" or something
+*If target is null
 		doif ov16 = null
 			gsub find
 		endi
@@ -463,12 +471,12 @@ scrp 2 15 3 9
 
 			gsub hunt
 			gsub near
-*find, hunt near, 12 is eat script?
+*find, hunt near, 12 is eat - this is an error in the originals (see the NWFP)
 			doif va40 eq 1
 				addv ov02 ov72
 				mesg writ ov16 12
 				doif ov02 gt ov74
-*roam if you're young enough?
+*roam if your energy is greater than the stop hunting threshold
 					setv ov00 0
 				endi
 				targ ownr
@@ -484,7 +492,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
-*gather nesting materials?
+*gather nesting materials
 	subr gmat
 		targ ov19
 		doif targ <> null
@@ -519,7 +527,7 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*Check for mate/nest?
+*Check for mate/nest target
 	subr chek
 		targ ov17
 		doif targ = null
@@ -668,7 +676,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
-*Mate...? Creates a new bird..
+*Mature: Creates a new mature adult bird and kills the youth bird to prevent bounding box errors.
 	subr matr
 		setv va50 ov00
 		setv va51 ov06
@@ -763,6 +771,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
+*roam subroutine
 	subr roam
 		setv va66 rand 0 20
 
@@ -783,15 +792,18 @@ scrp 2 15 3 9
 *go to nest
 	subr nest
 		inst
+*If you don't have a nest, roam instead.
 		doif ov19 = null
 			setv ov00 0
 			stop
 		endi
+*Set target to be your nest
 		seta ov16 ov19
 		targ ov16
 		doif targ <> null
 			targ ownr
 			seta ov16 ov19
+*hunt your nest
 			gsub hunt
 			gsub near
 			doif va40 eq 1
@@ -802,6 +814,7 @@ scrp 2 15 3 9
 				subv ov98 ov98
 *Doif you're female
 				doif ov06 eq 1
+*And if you're pregnant
 					doif ov70 eq 1
 						mesg wrt+ ov16 260 1 0 0
 						setv ov70 0
@@ -810,6 +823,7 @@ scrp 2 15 3 9
 				setv ov00 0
 			endi
 		else
+*Clear nest target and return to roaming
 			targ ownr
 			seta ov19 null
 			setv ov00 0
