@@ -731,7 +731,7 @@ scrp 2 15 3 9
 
 	retn
 
-*something nest?
+*eat nest - emergency eat nest
 	subr enst
 		seta ov16 ov19
 		targ ov16
@@ -747,7 +747,7 @@ scrp 2 15 3 9
 				targ ownr
 				doif va89 gt 0
 					negv ov75
-*message the nest with negative whatever ov75 was.
+*message the nest with negative 'energy gain from eating nest' (ov75).
 					mesg wrt+ ov16 256 ov75 0 0
 					negv ov75
 *Eat your nest
@@ -1009,7 +1009,7 @@ scrp 2 15 3 6
 endm
 
 
-
+*add energy - either to nest or to bird eating nest
 scrp 2 15 3 256
 	addv ov02 _p1_
 endm
