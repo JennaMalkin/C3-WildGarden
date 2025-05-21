@@ -194,13 +194,17 @@ scrp 2 14 1 9
 
 
 
-
+*attack behaviour - if attack target (ov17) exists and the attack cooldown (ov88) is greater than 0.
 	doif ov17 <> null and ov88 > 0
+*reduce attack cooldown
 		subv ov88 1
+*if attack cooldown is greater than 80, go to the attack subroutine
 		doif ov88 > 80
 			gsub atak
 		endi
+*If attack cooldown is 0
 		doif ov88 = 0
+*lose your attack target
 			seta ov17 null
 		endi
 	endi
@@ -227,7 +231,7 @@ scrp 2 14 1 9
 
 **Queen subroutine
 	subr quen
-
+*Search for a place to build a new nest
 		setv va47 2
 		setv va48 17
 		setv va49 5
@@ -246,6 +250,7 @@ scrp 2 14 1 9
 *go to build nest subroutine
 				gsub bnst
 			endi
+*If you can't build a nest, go back to roaming
 		else
 			targ ownr
 			setv ov00 0
@@ -258,7 +263,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
-**build nest subroutine
+**Queen's build nest subroutine
 	subr bnst
 		seta va16 ov16
 		enum 2 17 5
@@ -313,18 +318,21 @@ scrp 2 14 1 9
 
 **Get food subroutine
 	subr gfod
+*find nearby flowers
 		setv va47 2
 		setv va48 7
 		setv va49 0
 		doif ov16 = null
 			gsub find
 		endi
+*once you've found a flower, get closer to it
 		doif ov16 <> null
 			targ ownr
 			gsub hunt
 			doif touc ownr ov16 <> 0
 				targ ownr
 				addv ov02 ov72
+**when touching flower, pollinate it
 				mesg writ ov16 303
 				doif ov02 gt ov74
 					setv ov00 2
@@ -365,6 +373,7 @@ scrp 2 14 1 9
 			gsub roam
 		endi
 		targ ownr
+*bees may die if ov89 is 1
 		doif ov89 = 1
 			gsub die_
 		endi
