@@ -30,8 +30,9 @@ anim [1]
 tick 1
 mvsf game "ch_x" game "ch_y"
 
+***Nest push script
 scrp 2 17 5 1
-
+*Make a drone
 
 
 	seta va17 from
@@ -54,38 +55,39 @@ scrp 2 17 5 1
 			accg 0
 			tick 4
 			clac 0
-
+*activate 1 and eat behaviour
 			bhvr 17
 			attr 199
 			aero 5
 			elas 20
-
+*BASEs for movement
+*fly left
 			setv ov30 0
-
+*fly right
 			setv ov31 4
-
+*still left+right
 			setv ov32 8
-
+*drop left
 			setv ov33 10
-
+*drop right
 			setv ov34 19
-
+*die left
 			setv ov35 28
-
+*die right
 			setv ov36 32
-
+*qb left
 			setv ov37 36
-
+*qb right
 			setv ov38 40
-
+*qb still left+right
 			setv ov39 44
-
+*qb drop left
 			setv ov40 46
-
+*qb drop right
 			setv ov41 55
-
+*qb die left
 			setv ov42 64
-
+*qb die right
 			setv ov43 68
 
 
@@ -104,7 +106,7 @@ scrp 2 17 5 1
 			setv ov72 400
 			setv ov73 400
 			setv ov74 800
-
+*activate 1 and eat behaviour
 			bhvr 17
 			setv ov80 va82
 
@@ -126,7 +128,7 @@ scrp 2 17 5 1
 	endi
 endm
 
-
+***bee push script
 scrp 2 14 1 1
 	seta ov17 from
 	setv ov88 90
@@ -135,25 +137,32 @@ scrp 2 14 1 1
 	targ ownr
 endm
 
-
+***bee timer script
 scrp 2 14 1 9
+
+*add 1 to age
 	addv ov01 1
+*subtract 1 from energy
 	subv ov02 1
+
+*Drown
 	doif carr = null
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
 			subv ov02 100
 		endi
 	endi
 
-
-
+*randomly buzz
 	doif rand 0 250 = 0
 		snde "beez"
 	endi
 
+*If caste is queen go to queen subroutine
 	doif ov07 = 1
 		gsub quen
 	endi
+
+*If old enough, add to sex drive
 	doif ov01 gt 2010
 		setv va66 ov01
 		modv va66 10
@@ -161,14 +170,17 @@ scrp 2 14 1 9
 			addv ov20 1
 		endi
 	endi
+*If energy is less than maximum energy cap, set state to 2
 	doif ov02 < ov74
 		setv ov00 2
 	endi
 
+*If energy is less than hunger threshold, set state to 1
 	doif ov02 < ov73
 		setv ov00 1
 	endi
 
+*If state is 99, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
@@ -193,19 +205,27 @@ scrp 2 14 1 9
 		endi
 	endi
 
+*If state is 99, go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
+
+*If state is 0, go to roam subroutine
 	doif ov00 eq 0
 		gsub roam
 	endi
+
+*If state is 1, go to get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
+
+*If state is 2, go to nest subroutine
 	doif ov00 = 2
 		gsub nest
 	endi
 
+**Queen subroutine
 	subr quen
 
 		setv va47 2
@@ -223,7 +243,7 @@ scrp 2 14 1 9
 
 
 
-
+*go to build nest subroutine
 				gsub bnst
 			endi
 		else
@@ -238,6 +258,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
+**build nest subroutine
 	subr bnst
 		seta va16 ov16
 		enum 2 17 5
@@ -250,6 +271,7 @@ scrp 2 14 1 9
 		kill targ
 	retn
 
+**die subroutine
 	subr die_
 		setv va50 posx
 		setv va51 posy
@@ -289,6 +311,7 @@ scrp 2 14 1 9
 		kill targ
 	retn
 
+**Get food subroutine
 	subr gfod
 		setv va47 2
 		setv va48 7
@@ -320,6 +343,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
+**attack subroutine
 	subr atak
 		inst
 		snde "beez"
@@ -350,6 +374,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
+**Nest subroutine
 	subr nest
 		inst
 		doif ov19 = null
@@ -387,6 +412,7 @@ scrp 2 14 1 9
 		slow
 	retn
 
+**roam subroutine
 	subr roam
 		setv va66 rand 0 12
 
@@ -410,6 +436,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
+**obstacle checking subroutine
 	subr obst
 
 		doif obst 0 lt 120
@@ -428,6 +455,7 @@ scrp 2 14 1 9
 
 	retn
 
+*Vector subroutine - choose a random vector
 	subr vect
 		setv va10 rand 8 14
 		setv va11 rand 4 8
@@ -448,6 +476,7 @@ scrp 2 14 1 9
 
 	retn
 
+*Anim subroutine - constant motion
 	subr anim
 		doif ov12 eq 0
 			loop
@@ -464,10 +493,12 @@ scrp 2 14 1 9
 		endi
 	retn
 
+*Move - Velocity setting subroutine
 	subr move
 		velo va10 va11
 	retn
 
+*Find subroutine - used for food
 	subr find
 		setv va99 99999999
 		seta va58 null
@@ -505,6 +536,7 @@ scrp 2 14 1 9
 		targ ownr
 	retn
 
+*Second find subroutine
 	subr fnd2
 		setv va99 99999999
 		seta va58 null
@@ -545,7 +577,7 @@ scrp 2 14 1 9
 		slow
 	retn
 
-
+*Swarm 2 subroutine
 	subr swm2
 		setv va88 0
 		esee 2 14 1
@@ -577,6 +609,7 @@ scrp 2 14 1 9
 		stop
 	retn
 
+*Hunt subroutine - used to get closer to target object
 	subr hunt
 		inst
 		doif ov16 <> null
@@ -602,6 +635,7 @@ scrp 2 14 1 9
 		endi
 	retn
 
+*Near subroutine - used by flying or swimming critters to get close to their targets
 	subr near
 		setv va40 0
 		doif ov16 <> null
@@ -631,14 +665,16 @@ scrp 2 14 1 9
 
 endm
 
+***Bee collision script
 scrp 2 14 1 6
 	inst
 	setv ov12 0
 	setv ov13 0
 endm
 
-
+***Nest timer script
 scrp 2 17 5 9
+*If nest's energy is above 0, subtract 1 from energy
 	doif ov02 > 0
 		subv ov02 1
 	endi
@@ -650,9 +686,10 @@ scrp 2 17 5 9
 		addv va66 1
 	next
 
+*If nest's energy is in a certain range and there aren't many other bees nearby, make a new one.
 	doif ov02 > 100 and ov02 < 3500 and va66 < 10
 		inst
-
+*Make a drone
 		subv ov02 ov81
 		subv ov02 va80
 		setv va50 posx
@@ -664,7 +701,7 @@ scrp 2 17 5 9
 		accg 0
 		tick 4
 		clac 0
-
+*activate 1 and eat behaviour
 		bhvr 17
 		attr 199
 		aero 5
@@ -733,8 +770,9 @@ scrp 2 17 5 9
 			setv vely 0
 		endi
 		targ ownr
+*else, if energy is very high and there are fewer than 10 bees around, make a queen
 	elif ov02 >= 3500 and va66 < 10
-
+**make a queen
 		inst
 		subv ov02 3000
 		subv ov02 va80
@@ -797,7 +835,7 @@ scrp 2 17 5 9
 		setv ov73 400
 		setv ov74 800
 		setv ov75 1
-
+*nest flag
 		setv ov79 0
 		setv ov80 va82
 		setv ov88 75
@@ -823,6 +861,7 @@ scrp 2 17 5 500
 	addv ov02 _p1_
 endm
 
+**dead bee timer script
 scrp 2 10 21 9
 	subv ov02 1
 	doif ov02 <= 0
@@ -836,6 +875,7 @@ scrp 2 10 21 9
 	endi
 endm
 
+**dead bee collision script
 scrp 2 10 21 6
 	subv ov02 1
 	doif ov10 <= 0
@@ -845,12 +885,13 @@ scrp 2 10 21 6
 	endi
 endm
 
+**bee eat script
 scrp 2 14 1 12
 	stim writ from 80 1
 	kill ownr
 endm
 
-
+***REMOVE SCRIPTS
 rscr
 
 enum 2 14 1
