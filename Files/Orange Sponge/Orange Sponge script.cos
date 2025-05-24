@@ -77,6 +77,7 @@ scrp 2 4 7 9
 	elif ov01 >= 700
 		gsub deth
 	endi
+*animate if fully grown
 	doif ov05 >= 5 and ov05 <= 10
 		gsub anim
 	endi
@@ -108,28 +109,37 @@ scrp 2 4 7 9
 		setv va00 0
 		doif va00 = 0
 			setv va40 0
+*search radius
 			rnge 500
+*look for other orange sponges
 			esee 2 4 7
 				addv va40 1
 			next
 			doif va40 > 7
+*die if can see too many nearby
 				gsub deth
 			endi
 			addv va00 1
 		endi
 		doif va00 = 1
 			setv va40 0
+*Touch check
 			etch 2 4 7
 				addv va40 1
 			next
 			doif va40 >= 2
+*die if too many are touching
 				gsub deth
 			endi
 		endi
 	retn
+
+*animation subroutine
 	subr anim
 		anim [0 1 2 3 4 5 6 7 8 9 255]
 	retn
+
+*seed spawning subroutine
 	subr seed
 		setv va60 posl
 		setv va61 post
@@ -182,6 +192,8 @@ scrp 2 4 7 9
 			setv ov05 10
 		endi
 	retn
+
+*death subroutine
 	subr deth
 		doif carr = null
 			doif ov05 = 0
@@ -200,6 +212,7 @@ scrp 2 4 7 9
 			over
 			kill targ
 		elif carr <> null
+*mark for later death if carried
 			setv ov99 99
 		endi
 	retn
@@ -237,6 +250,7 @@ scrp 2 3 6 9
 		gsub obst
 		gsub move
 
+*Try to grow into a sponge if landed
 	elif ov00 = 1 and carr = null
 		gsub grow
 	endi
