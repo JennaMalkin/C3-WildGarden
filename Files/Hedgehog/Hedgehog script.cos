@@ -20,46 +20,62 @@ aero 0
 elas 5
 bhvr 16
 fric 20
-
+*left
 setv ov30 0
-
+*right
 setv ov31 8
-
+*sniff/eat left
 setv ov32 16
-
+*sniff/eat right
 setv ov33 20
-
+*die left
 setv ov34 24
-
+*die right
 setv ov35 27
-
+*eat left
 setv ov36 30
-
+*eat right
 setv ov37 34
-
+*roll up left
 setv ov38 38
-
+*roll up right
 setv ov39 44
 
 
 
 
-
+*OV00 - state (0=roam, 1=find food, 2=find mate, 6=mate, 7=give birth, 99=die)
 setv ov00 0
+*Age counter
 setv ov01 1000
+*Energy
 setv ov02 800
+*Life stage (1= youth, 2 = adult)
 setv ov05 2
+*Gender (0 = female, 1 = male)
 setv ov06 va66
+*X direction movement vector
 setv ov10 1
+*Y direction movement vector
 setv ov11 1
+*Target agent (food or mate)
 seta ov16 null
+*Sex drive level
 setv ov20 0
+*Bioenergy value
 setv ov61 60
+*Pregnancy
 setv ov70 0
+*Energy gained per food eaten
 setv ov72 400
+*Hunger threshold (if energy is lower than this, seek food)
 setv ov73 400
+*Maximum energy cap
 setv ov74 800
+* ov75 = jump flag (0= hit ground ready to jump. 2=Inflight/jump activated) - unused.
 setv ov75 1
+
+*Move into the world
 mvsf game "ch_x" game "ch_y"
 velo rand -10 10 0
 setv vely 0
@@ -69,77 +85,90 @@ else
 	setv va66 0
 endi
 
-
+*hedgehog timer
 scrp 2 15 5 9
 	fric 100
+*Add to age, subtract energy
 	addv ov01 1
 	subv ov02 1
+*If old enough add to sex drive
 	doif ov01 > 1000
 		addv ov20 1
 	endi
+*Drowning
 	doif carr = null
 		doif rtyp room ownr = 8 or rtyp room ownr = 9
 			subv ov02 100
 		endi
 	endi
-
+*pregnancy counter
 	doif ov70 > 0
 		addv ov70 1
 	endi
+*If age is greater than 1000 and stage of life is youth, go to matr subroutine to mature
 	doif ov01 gt 1000
 		doif ov05 eq 1
 			gsub matr
 		endi
 	endi
 
+*If age is less than 1000 and sex drive is greater than 200 and state is 3
 	doif ov01 > 1000 and ov20 > 200 and ov00 <> 3
+*Set state to 2
 		setv ov00 2
 	endi
-
+*If pregnancy counter is greater than 10
 	doif ov70 > 10
+*Set state to 7
 		setv ov00 7
 	endi
 
+*If energy less than threshold
 	doif ov02 < ov73
+*Set state to 1
 		setv ov00 1
 	endi
-
+*Obstacle checking
+*Left
 	doif obst 0 lt 30
 		setv ov10 1
 		setv ov11 -1
 	endi
+*right
 	doif obst 1 lt 30
 		setv ov10 -1
 		setv ov11 -1
 	endi
-
+*Up
 	doif obst 2 lt 30
 		setv ov11 1
 	endi
+*Down
 	doif obst 3 lt 30
 		setv ov11 -1
 	endi
-
+*If energy is less than or equal to 0 or age is greater than 2000, mark for death
 	doif ov02 <= 0 or ov01 > 2000
 		setv ov00 99
 	endi
-
+*If marked for death go to die subroutine
 	doif ov00 = 99
 		gsub die_
 	endi
-
+*If state is 1, go to get food subroutine
 	doif ov00 = 1
 		gsub gfod
 	endi
-
+*If marked for death go to die subroutine
 	doif ov00 eq 99
 		gsub die_
 	endi
-
+*If pregnancy is at full term, go to lay egg subroutine
 	doif ov00 = 7
 		gsub layg
 	endi
 
+*If state is 2, find a mate
 	doif ov00 eq 2
 		seta ov16 null
 		setv va47 2
@@ -152,8 +181,11 @@ scrp 2 15 5 9
 		targ ov16
 
 		doif targ <> null
+*Make more gender-discerning - from Vampess's NWFP.
+			doif ov06 <> va45
 			targ ownr
 			setv ov00 6
+			endi
 		else
 			targ ownr
 			setv ov00 0
@@ -161,28 +193,30 @@ scrp 2 15 5 9
 		targ ownr
 	endi
 
+*If state is 6, continue to mate
 	doif ov00 = 6
 		gsub mate
 	endi
 
-
+*If state is 0, roam.
 	doif ov00 eq 0
 		gsub roam
 	endi
 
+**Die subroutine
 	subr die_
 		setv va50 posl
 		setv va51 post
 		setv va52 ov10
 
-
+*Different sprites for young vs adult
 		doif ov01 gt 1000
 			new: simp 2 10 15 "hedgehog" 50 0 2000
 		else
 			new: simp 2 10 15 "hedgehog" 50 50 2000
 		endi
 		accg 2
-
+		bhvr 16
 		setv ov34 24
 
 		setv ov35 27
@@ -193,10 +227,10 @@ scrp 2 15 5 9
 		setv ov61 20
 		setv ov01 0
 		doif tmvt va50 va51 <> 1
-			kill targ
-			kill ownr
-		endi
+			mvsf va50 va51
+		else
 		mvto va50 va51
+		endi
 		setv vely 0
 		kill ownr
 		anim []
@@ -211,14 +245,13 @@ scrp 2 15 5 9
 		over
 	retn
 
+*Get food subroutine
 	subr gfod
 		inst
 		setv va47 2
 		setv va48 14
 		setv va49 0
-		doif ov16 = null
 			gsub find
-		endi
 		doif ov16 = null
 			setv va47 2
 			setv va48 13
@@ -272,6 +305,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
+*hide subroutine
 	subr hide
 		anim []
 		doif ov10 >= 0
@@ -289,6 +323,7 @@ scrp 2 15 5 9
 		endi
 	retn
 
+*Mate subroutine - causes pregnancy
 	subr mate
 		targ ov16
 		doif targ <> null
@@ -316,7 +351,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
-
+*Matr subroutine - this replaces a youth hedgehog with a mature hedgehog
 	subr matr
 		setv va00 ov00
 		setv va06 ov06
@@ -383,17 +418,18 @@ scrp 2 15 5 9
 		stop
 	retn
 
+*Lay egg subroutine
 	subr layg
 		setv va50 posl
 		setv va51 post
 
 
-		setv va66 0
 		enum 2 15 5
 			addv va66 1
 		next
 		doif va66 < 4
 			inst
+			setv va66 0
 			reps 2
 				new: simp 2 15 5 "hedgehog" 50 50 2500
 				accg 1
@@ -462,7 +498,7 @@ scrp 2 15 5 9
 		stop
 	retn
 
-
+*Roam subroutine
 	subr roam
 		setv va67 rand 0 20
 		doif va67 = 0
@@ -473,18 +509,32 @@ scrp 2 15 5 9
 		doif va66 lt 5
 			mulv ov10 -1
 		endi
-
+*Avoid water
+		doif room targ ne -1
+			doif prop room targ 5 ge 0.00001
+                        setv va00 lorp room targ 5 0
+                        setv va01 torx va00
+                        	doif va01 lt 0 and ov10 gt 0
+                                negv ov10
+                        	elif va01 gt 0 and ov10 lt 0
+                                negv ov10
+                        	endi
+                	endi
+       		endi
 		gsub vect
 		gsub anim
 		gsub move
 
 		stop
 	retn
+
+*Vector subroutine - choose a random vector
 	subr vect
 		setv va10 rand 8 8
 		setv va11 rand 6 6
 	retn
 
+*Anim subroutine - constant motion in the left or right directions
 	subr anim
 		doif ov10 eq 0
 			loop
@@ -503,6 +553,7 @@ scrp 2 15 5 9
 		endi
 	retn
 
+*Velocity
 	subr move
 		mulv va10 ov10
 		mulv va11 ov11
@@ -511,13 +562,14 @@ scrp 2 15 5 9
 		setv vely 0
 	retn
 
+*Find subroutine - used for food (and mates?)
 	subr find
 		inst
 		setv va99 99999999
 		seta va58 null
 		inst
 		esee va47 va48 va49
-			doif targ <> null
+			doif targ <> null and prop room targ 5 <= 0.00001
 				setv va88 0
 				setv va50 relx ownr targ
 				setv va51 rely ownr targ
@@ -550,6 +602,7 @@ scrp 2 15 5 9
 		slow
 	retn
 
+*Hunt subroutine - used to get closer to target object
 	subr hunt
 		inst
 		targ ov16
@@ -578,6 +631,7 @@ scrp 2 15 5 9
 
 endm
 
+*Dead hedgehog timer
 scrp 2 10 15 9
 	elas 1
 	fric 80
@@ -618,12 +672,20 @@ scrp 2 10 15 9
 	endi
 endm
 
+*hedgehog eat script
 scrp 2 15 5 12
 	stim writ from 80 4
 	kill ownr
 
 endm
 
+*dead hedgehog eat script
+scrp 2 10 15 12
+	stim writ from 81 4
+	kill ownr
+endm
+
+*remove script
 rscr
 
 enum 2 15 5
@@ -632,5 +694,10 @@ next
 scrx 2 15 5 9
 scrx 2 15 5 6
 
+enum 2 10 15
+	kill targ
+next
+scrx 2 10 15 9
+scrx 2 10 15 12
 
 endm
