@@ -28,21 +28,22 @@ setv ov05 8
 setv ov61 50
 tick 10
 
+*Orange Sponge timer script
 scrp 2 4 7 9
-
+*age slightly
 	addv ov01 1
 
-
+*die if you're not in the sea
 	doif rtyp room ownr <> 9
 		gsub deth
 	endi
 
-
+*die if too old
 	doif ov01 > 700
 		gsub deth
 	endi
 
-
+*Grow
 	doif ov01 >= 0 and ov01 <= 25
 		pose 4
 		setv ov05 0
@@ -80,13 +81,13 @@ scrp 2 4 7 9
 		gsub anim
 	endi
 
-
+*Check that it's not too crowded already
 	doif ov05 = 0 or ov05 = 1
 		gsub chek
 	endi
 
 
-
+*Just in case, when you've already sown seeds, after a while, sow them again
 	doif ov05 = 10
 		addv ov40 1
 		doif ov40 = 20
@@ -94,7 +95,7 @@ scrp 2 4 7 9
 		endi
 	endi
 
-
+*Seed if old enough
 	doif ov05 = 9
 		setv va00 rand 1 30
 		doif va00 = 10
@@ -102,6 +103,7 @@ scrp 2 4 7 9
 		endi
 	endi
 
+*Check subroutine - not touching any other orange sponge
 	subr chek
 		setv va00 0
 		doif va00 = 0
@@ -202,32 +204,34 @@ scrp 2 4 7 9
 		endi
 	retn
 endm
+
+*Seed timer script
 scrp 2 3 6 9
 	doif ov00 = 0
-
+*room check
 		gsub room
 
-
+*Age slightly
 		addv ov01 1
 
-
+*die if marked for death
 		doif ov99 = 99
 			gsub deth
 		endi
 
-
+*die if too old
 		doif ov01 > 1500
 			gsub deth
 		endi
 
-
+*start to drop if getting too old
 		doif ov01 > 1000 and ov01 < 1500
 			accg .05
 			wait 75
 			setv ov00 1
 		endi
 
-
+*animation, random movement and obstacle avoidance
 		gsub anim
 		gsub rndm
 		gsub obst
@@ -237,7 +241,7 @@ scrp 2 3 6 9
 		gsub grow
 	endi
 
-
+*die or be marked for death subroutine
 	subr deth
 		doif carr = null
 			kill targ
@@ -246,7 +250,7 @@ scrp 2 3 6 9
 		endi
 	retn
 
-
+*Growth subroutine
 	subr grow
 		setv va00 posl
 		setv va01 post
@@ -278,7 +282,7 @@ scrp 2 3 6 9
 		gsub deth
 	retn
 
-
+*Random movement, tendency to keep low in the oceans.
 	subr rndm
 		loop
 			setv ov10 rand -2 2
@@ -294,12 +298,12 @@ scrp 2 3 6 9
 		endi
 	retn
 
-
+*animation
 	subr anim
 		anim [0 1 2 3 255]
 	retn
 
-
+*obstacle avoidance
 	subr obst
 		doif obst down < 20 and obst _up_ > 200
 			accg 3
@@ -320,7 +324,7 @@ scrp 2 3 6 9
 		endi
 	retn
 
-
+*room monitor
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -344,12 +348,13 @@ scrp 2 3 6 9
 		accg ov87
 	retn
 
-
+*Movement
 	subr move
 		velo ov10 ov11
 	retn
 endm
 
+**remove scripts
 rscr
 enum 2 4 7
 	kill targ
