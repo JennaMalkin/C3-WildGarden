@@ -615,7 +615,7 @@ scrp 2 14 2 9
 		gsub obst
 		gsub vec2
 		gsub ani2
-		gsub 
+		gsub mov2
 		stop
 	retn
 
