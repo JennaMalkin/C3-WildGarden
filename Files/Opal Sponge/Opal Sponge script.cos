@@ -30,22 +30,23 @@ setv ov01 399
 setv ov05 8
 tick 10
 
+*Timer script
 scrp 2 4 8 9
-
+*age slightly
 	addv ov01 1
 
 
-
+*die if you aren't in the sea
 	doif rtyp room ownr <> 9
 		gsub deth
 	endi
 
-
+*die if too old
 	doif ov01 > 700
 		gsub deth
 	endi
 
-
+*grow
 	doif ov01 >= 0 and ov01 <= 25
 		pose 4
 		setv ov05 0
@@ -79,17 +80,19 @@ scrp 2 4 8 9
 	elif ov01 >= 700
 		gsub deth
 	endi
+
+*animate if fully grown
 	doif ov05 >= 5 and ov05 <= 10
 		gsub anim
 	endi
 
-
+*check that it's not too crowded already
 	doif ov05 = 0 or ov05 = 1
 		gsub chek
 	endi
 
 
-
+*Just in case, when you've already sown seeds, after a while, sow them again
 	doif ov05 = 10
 		addv ov40 1
 		doif ov40 = 20
@@ -97,7 +100,7 @@ scrp 2 4 8 9
 		endi
 	endi
 
-
+*Seed if old enough
 	doif ov05 = 9
 		setv va00 rand 1 20
 		doif va00 = 10
@@ -105,32 +108,41 @@ scrp 2 4 8 9
 		endi
 	endi
 
+*Check subroutine - not touching any other orange sponge
 	subr chek
 		setv va00 0
 		doif va00 = 0
 			setv va40 0
 			rnge 500
+*Look for other opal sponges
 			esee 2 4 8
 				addv va40 1
 			next
+*die if too many nearby
 			doif va40 > 7
 				gsub deth
 			endi
 			addv va00 1
 		endi
+*touch check
 		doif va00 = 1
 			setv va40 0
 			etch 2 4 8
 				addv va40 1
 			next
 			doif va40 >= 2
+*die if too many are touching
 				gsub deth
 			endi
 		endi
 	retn
+
+*animation subroutine
 	subr anim
 		anim [0 1 2 3 4 5 6 7 8 9 255]
 	retn
+
+*seed spawning subroutine
 	subr seed
 		setv va60 posl
 		setv va61 post
@@ -183,6 +195,8 @@ scrp 2 4 8 9
 			setv ov05 10
 		endi
 	retn
+
+*Death subroutine
 	subr deth
 		doif carr = null
 			doif ov05 = 0
@@ -200,48 +214,52 @@ scrp 2 4 8 9
 			endi
 			over
 			kill targ
+*Mark for later death if carried
 		elif carr <> null
 			setv ov99 99
 		endi
 	retn
 endm
+
+**seed timer script
 scrp 2 3 7 9
 	doif ov00 = 0
-
+*room check
 		gsub room
 
-
+*age slightly
 		addv ov01 2
 
-
+*die if marked for death
 		doif ov99 = 99
 			gsub deth
 		endi
 
-
+*die if too old
 		doif ov01 > 1500
 			gsub deth
 		endi
 
 
-
+*start to drop if too old
 		doif ov01 > 1000 and ov01 < 1500
 			accg .05
 			wait 75
 			setv ov00 1
 		endi
 
-
+*animation, random movement and obstacle avoidance
 		gsub anim
 		gsub rndm
 		gsub obst
 		gsub move
 
+*try to grow into a sponge if landed
 	elif ov00 = 1 and carr = null
 		gsub grow
 	endi
 
-
+*die or be marked for death subroutine
 	subr deth
 		doif carr = null
 			kill targ
@@ -250,7 +268,7 @@ scrp 2 3 7 9
 		endi
 	retn
 
-
+*Growth subroutine
 	subr grow
 		setv va00 posl
 		setv va01 post
@@ -282,7 +300,7 @@ scrp 2 3 7 9
 		gsub deth
 	retn
 
-
+*Random movement, tendency to keep low in the oceans.
 	subr rndm
 		loop
 			setv ov10 rand -2 2
@@ -298,12 +316,12 @@ scrp 2 3 7 9
 		endi
 	retn
 
-
+*animation
 	subr anim
 		anim [0 1 2 3 255]
 	retn
 
-
+*obstacle avoidance
 	subr obst
 		doif obst down < 20 and obst _up_ > 200
 			accg 3
@@ -324,7 +342,7 @@ scrp 2 3 7 9
 		endi
 	retn
 
-
+*room monitor
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -348,12 +366,13 @@ scrp 2 3 7 9
 		accg ov87
 	retn
 
-
+*Movement
 	subr move
 		velo ov10 ov11
 	retn
 endm
 
+**remove scripts
 rscr
 enum 2 4 8
 	kill targ
