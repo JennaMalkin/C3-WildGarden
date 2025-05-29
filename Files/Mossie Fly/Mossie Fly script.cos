@@ -58,7 +58,7 @@ scrp 2 14 4 9
 *increase age
 	addv ov01 1
 
-*Drown
+*If you're in a water-type room, fly upwards
 	doif rtyp room targ eq 8 or rtyp room targ eq 9
 		setv vely -5
 		stop
@@ -112,11 +112,11 @@ scrp 2 14 4 9
 *set max velocity
 		setv ov14 5
 		setv ov15 5
-
+*Decrease indecision counter
 		subv ov90 1
-
+*Avoid walls
 		gsub wall
-
+*If indecision counter is less than or equal to 0:
 		doif ov90 le 0
 **if not changing X direction because of walls..
 			doif va00 ne 1
@@ -124,6 +124,7 @@ scrp 2 14 4 9
 *change X direction
 					negv ov10
 				endi
+*Add to indecision counter
 				addv ov90 rand 1 3
 			endi
 **if not changing Y direction because of walls..
@@ -131,7 +132,7 @@ scrp 2 14 4 9
 
 *change Y direction
 				negv ov11
-
+*Add to indecision counter
 				addv ov90 rand 2 5
 			endi
 		endi
@@ -139,11 +140,12 @@ scrp 2 14 4 9
 		gsub velo
 		gsub anim
 
-
+*If anger counter is less than or equal to 0, hunt
 		doif ov91 le 0
 			gsub hunt
 
 		else
+*If anger counter is anything other than 0, subtract from anger counter
 			subv ov91 1
 		endi
 
@@ -152,9 +154,11 @@ scrp 2 14 4 9
 ***Attack movement
 	doif ov00 eq 1
 		gsub hunt
+*If the target is to the right and we are moving left, turn right
 		doif posx lt ov70 and ov10 lt 0
 			setv ov10 1
 		endi
+*If the target is to the left and we are moving right, turn left
 		doif posx gt ov70 and ov10 gt 0
 			setv ov10 -1
 		endi
@@ -179,9 +183,12 @@ scrp 2 14 4 9
 
 ********HUNTING ROUTINE
 	subr hunt
+*Look within a range of 200 pixels
 		rnge 200
 		setv va99 0
+*Hunt the hand
 		esee 2 1 1
+*If the hand is found, targets it, switches to attack mode, and stores its coordinates.
 			setv va99 1
 			setv va00 posx
 			setv va01 posy
