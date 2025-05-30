@@ -298,7 +298,9 @@ scrp 2 14 4 3
 	doif fmly eq 4
 		stim writ targ 87 1
 	endi
-	kill ownr
+	doif rand 0 2 eq 0
+		kill ownr
+	endi
 endm
 
 *Pickup script
