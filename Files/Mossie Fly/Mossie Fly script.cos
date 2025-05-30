@@ -19,8 +19,8 @@
 
 new: simp 2 14 4 "mossie" 24 0 300
 attr 66
-*eat, pickup and act1
-bhvr 49
+*eat, pickup, act1, act2, hit
+bhvr 59
 tick 5
 *bioenergy
 setv ov61 40
@@ -282,6 +282,25 @@ scrp 2 14 4 1
 	endi
 endm
 
+*Activate 2 script
+scrp 2 14 4 2
+	setv vely -20
+	targ from
+	doif fmly eq 4
+		stim writ targ 88 1
+	endi
+endm
+
+*Hit script
+scrp 2 14 4 3
+	sndc "spnk"
+	targ from
+	doif fmly eq 4
+		stim writ targ 87 1
+	endi
+	kill ownr
+endm
+
 *Pickup script
 scrp 2 14 4 4
 	targ from
@@ -295,7 +314,7 @@ endm
 scrp 2 14 4 12
 	targ from
 	doif fmly eq 4
-		stim writ targ 88 1
+		stim writ targ 80 1
 	endi
 	kill ownr
 endm
@@ -318,8 +337,8 @@ scrp 2 18 20 9
 			kill targ
 			stop
 		endi
-*eat, pickup and act1
-		bhvr 49
+*eat, pickup, act1, act2, hit
+		bhvr 59
 		tick 5
 
 		setv ov61 40
@@ -343,5 +362,7 @@ enum 2 14 4
 next
 scrx 2 14 4 9
 scrx 2 14 4 1
+scrx 2 14 4 2
+scrx 2 14 4 3
 scrx 2 14 4 4
 scrx 2 14 4 12
