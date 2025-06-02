@@ -832,11 +832,20 @@ enum 2 14 2
 next
 scrx 2 14 2 9
 scrx 2 14 2 6
+scrx 2 14 2 12
 
 enum 2 17 6
 	kill targ
 next
 scrx 2 17 6 9
 scrx 2 17 6 6
+scrx 2 17 6 500
+
+enum 2 10 24
+	kill targ
+next
+scrx 2 10 24 9
+
+
 
 endm
