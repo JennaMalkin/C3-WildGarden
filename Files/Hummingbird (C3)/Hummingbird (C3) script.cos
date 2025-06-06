@@ -33,6 +33,24 @@ setv ov02 0
 tick 1
 mvsf game "ch_x" game "ch_y"
 
+*=== Variable Definitions - Hummingbird (2 15 3) ===
+* ov00 - State machine variable (behaviour state - 0 = roam, 1 = move to nest, 2 = seek flowers, 3 = seek mate, 4 = gather nesting material, 5 = light too low, 6 = no food found, 98 = sleeping, 99 = dead.)
+* ov01 - Age counter
+* ov02 - Current energy level
+* ov10 - Direction X: -1 (left), 1 (right)
+* ov11 - Direction Y: -1 (up), 1 (down)
+* ov15 - Vertical momentum (lift / hover)
+* ov19 - Reference to own nest
+* ov20 - Sex drive (increases with age)
+* ov70 - Pregnancy flag (1 = pregnant)
+* ov71 - Nest taken flag (1 = occupied)
+* ov72 - Energy gained from flower
+* ov73 - Hunger threshold
+* ov74 - Max energy before stopping feeding
+* ov75 - Energy from emergency eating nest
+* ov80 - ????
+* ov98 - Material gather progress or count
+
 
 
 scrp 2 15 3 9
@@ -130,7 +148,7 @@ scrp 2 15 3 9
 	endi
 
 	doif carr = null
-*this is something to do with CA levels, dark and light.
+*this causes birds to go to sleep in low-light rooms.
 		doif prop room ownr 1 < 0.5
 			doif ov19 <> null
 *I'm actually going to comment this out... so these birds can be used in rooms 
@@ -140,11 +158,12 @@ scrp 2 15 3 9
 		endi
 	endi
 *ov00 is a STATE
-*if light is too low, go to bed?
+*if light is too low, go to bed
 	doif ov00 eq 5
 		gsub gbed
 	endi
 
+*If you're sleeping
 	doif ov00 eq 98
 		doif carr = null
 			doif prop room ownr 1 > 0.5
@@ -191,12 +210,12 @@ scrp 2 15 3 9
 	endi
 *If state is 6, go to enst subroutine
 	doif ov00 eq 6
-*enst? Look around?
+*Eat nest
 		gsub enst
 	endi
 *If state is 2, get food.
 	doif ov00 eq 2
-*get food?
+*'food' is flowers.
 		setv va47 2
 		setv va48 7
 		setv va49 0
@@ -205,14 +224,16 @@ scrp 2 15 3 9
 
 * If state is less than 90
 	doif ov00 lt 90
+*If nest-gathering progress is less than or equal to 20 and you have a nest of your own
 		doif ov98 le 20 and ov19 <> null
+*Target your own nest
 			targ ov19
 			doif targ <> null
 *getting the ov02 (energy level) of ov19 (nest)
 				setv va50 ov02
 				targ ownr
 				doif va50 lt 180
-*Set state of hummingbird to 4 if energy level of nest is less than 180
+*Set state of hummingbird to 4 if energy level of nest is less than 180 (gathering nest materials)
 					setv ov00 4
 				endi
 			endi
@@ -221,7 +242,7 @@ scrp 2 15 3 9
 	endi
 	inst
 	slow
-*(state is 4 and you have an OV19)
+*state is 4 and you have a nest
 	doif ov00 eq 4 and ov19 <> null
 		targ ov19
 		doif targ <> null
@@ -236,7 +257,7 @@ scrp 2 15 3 9
 			endi
 		else
 			targ ownr
-*state 0 otherwise
+*roam otherwise
 			setv ov00 0
 		endi
 	endi
@@ -245,11 +266,11 @@ scrp 2 15 3 9
 	doif ov01 gt 3000
 *go to check subroutine
 		gsub chek
-*ov17 is MATE
+*ov17 is MATE - try to find one
 		doif ov17 = null
 			gsub fmte
 		endi
-*and ov19 is NEST
+*and ov19 is NEST - try to find one
 		doif ov19 = null
 			gsub fnst
 		endi
@@ -492,7 +513,7 @@ scrp 2 15 3 9
 		stop
 	retn
 
-*gather nesting materials
+*gather nesting materials - search for grass (2 6 1) and deliver to nest if found
 	subr gmat
 		targ ov19
 		doif targ <> null
@@ -527,7 +548,7 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*Check for mate/nest target
+*Check for mate/nest target - sets ov17 to the first suitable mate found
 	subr chek
 		targ ov17
 		doif targ = null
@@ -605,7 +626,7 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*
+*Sync nests with mate - female takes male's nest
 	subr snst
 		seta va50 null
 *Doif you're male
@@ -643,7 +664,7 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*go to mate
+*go to mate and attempt mating
 	subr mate
 		seta ov16 ov17
 		inst
@@ -947,7 +968,7 @@ scrp 2 15 3 9
 		endi
 	retn
 
-*this sets va40 to 1 if you're within 100px of your target.
+*this sets va40 to 1 if you're within 100px of your target. Helps flying critter get close to their target.
 	subr near
 		setv va40 0
 		doif ov16 <> null
