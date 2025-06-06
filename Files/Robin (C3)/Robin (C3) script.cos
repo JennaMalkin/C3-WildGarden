@@ -44,8 +44,11 @@ anim [0]
 
 ***Robin Timer
 scrp 2 15 1 9
+*add to age counter
 	addv ov01 1
+*ov02: energy level (hunger)
 	subv ov02 1
+*if old enough, increase sex drive
 	doif ov01 gt 3000
 		setv va66 ov01
 		modv va66 10
@@ -53,6 +56,7 @@ scrp 2 15 1 9
 			addv ov20 1
 		endi
 	endi
+*Obstacle checking:
 	doif obst 0 lt 100
 		setv ov10 1
 		setv ov11 -1
@@ -67,6 +71,7 @@ scrp 2 15 1 9
 		setv va02 rand 12 18
 		addv ov15 2
 	endi
+*freak out if you're underwater
 	doif carr = null
 		doif rtyp room ownr = 8
 			doif ov00 ne 99
@@ -89,20 +94,24 @@ scrp 2 15 1 9
 		setv ov15 0
 	endi
 
+*Starve to death
 	doif ov02 <= 0
 		setv ov00 99
 	endi
 
-
+*If flagged for death, die - use different subroutines for adult vs child
 	doif ov00 eq 99
+*If you're adult, use one die subroutine
 		doif ov01 gt 3000
 			gsub die_
 		endi
+*If you're due to die young, use the other die subroutine
 		doif ov01 le 3000
 			gsub die2
 		endi
 	endi
 
+*If adult, range is 800
 	doif ov01 gt 3000
 *		setv va89 800
 *		addv va89 obst 3
@@ -116,6 +125,7 @@ scrp 2 15 1 9
 		rnge 800
 	endi
 
+*If young, range is 100
 	doif ov01 lt 3000
 *		setv va89 50
 *		addv va89 obst 3
@@ -129,6 +139,7 @@ scrp 2 15 1 9
 		rnge 100
 	endi
 
+*This flags birds to sleep in low-light rooms.
 	inst
 	doif carr = null
 		doif prop room ownr 1 < 0.25
@@ -137,11 +148,13 @@ scrp 2 15 1 9
 			endi
 		endi
 	endi
+*If flagged to sleep, go to bed.
 	doif ov00 eq 5
 		gsub gbed
 	endi
 	slow
 
+*If you're sleeping
 	doif ov00 eq 98
 		doif carr = null
 			doif prop room ownr 1 > 0.25
@@ -153,6 +166,7 @@ scrp 2 15 1 9
 		endi
 	endi
 
+*If your energy is less than the hunger threshold and you're old enough, seek badbugs
 	doif ov02 lt ov73
 		doif ov00 lt 90
 			setv ov00 2
@@ -166,17 +180,21 @@ scrp 2 15 1 9
 						addv va45 1
 					endi
 				next
+*If you're near badbugs, set state to 2 (seek badbugs)
 				doif va45 gt 1
 					setv ov00 2
 				else
+*If anything else is true (far from food), set state to 6 (eat nest)
 					setv ov00 6
 				endi
 			endi
 		endi
 	endi
+*If state is 6, go to eat nest emergency subroutine.
 	doif ov00 eq 6
 		gsub enst
 	endi
+*If state is 2, set temporary variables to badbugs and then go to the get food subroutine.
 	doif ov00 eq 2
 		setv va47 2
 		setv va48 14
@@ -184,13 +202,18 @@ scrp 2 15 1 9
 		gsub gfod
 	endi
 
+*If state is less than 90
 	doif ov00 lt 90
+*If nest-gathering progress is less than or equal to 20 and you have a nest of your own
 		doif ov98 le 20 and ov19 <> null
+*Target your own nest
 			targ ov19
 			doif targ <> null
+*getting the ov02 (energy level) of ov19 (nest)
 				setv va50 ov02
 				targ ownr
 				doif va50 lt 180
+*Set state of pigeon to 4 if energy level of nest is less than 180 (gathering nest materials)
 					setv ov00 4
 				endi
 			endi
@@ -200,36 +223,45 @@ scrp 2 15 1 9
 	inst
 
 	slow
+*state is 4 and you have a nest
 	doif ov00 eq 4 and ov19 <> null
 		targ ov19
 		doif targ <> null
 			setv va50 ov02
 			targ ownr
 			doif va50 lt 180
+*gather materials
+*if your nest has less than 180 energy
 				gsub gmat
 			else
 				setv ov00 0
 			endi
 		else
 			targ ownr
+*Roam otherwise
 			setv ov00 0
 		endi
 	endi
 
+*If adult
 	doif ov01 gt 3000
-
+*Go to check subroutine
 		gsub chek
-
+*ov17 is MATE - try to find one
 		doif ov17 = null
 			gsub fmte
 		endi
+*and ov19 is NEST - try to find one
 		doif ov19 = null
 			gsub fnst
 		endi
+*If nest exists, go to sync nest subroutine
 		doif ov19 <> null
 			gsub snst
 		endi
+*Do if sex drive is greater than 50
 		doif ov20 gt 50
+*set state to 3 if you have no mate, or nest, or anything to do
 			doif ov17 <> null
 				doif ov19 <> null
 					doif ov00 = 0
@@ -242,23 +274,25 @@ scrp 2 15 1 9
 		inst
 
 		slow
+*so if you have no mate or nest or anything to do and high sex drive... look for a mate
 		doif ov00 eq 3
 			gsub mate
 		endi
 	endi
 
+*If age is 3000, go to mature subroutine
 	doif ov01 le 3000
 		doif ov01 eq 3000
 			gsub matr
 		endi
 	endi
 
-
+*State 0. roam
 	doif ov00 eq 0
 		gsub roam
 	endi
 
-
+*State 1, nest hunt
 	doif ov00 eq 1
 
 		gsub nest
@@ -288,7 +322,7 @@ scrp 2 15 1 9
 
 	retn
 
-
+*ov10 is left/right, ov11/15 is updown
 	subr move
 		mulv va01 ov10
 		mulv va02 ov11
