@@ -26,11 +26,11 @@ setv ov90 3
 tick 1
 mvsf game "ch_x" game "ch_y"
 
-
+*Plant timer script
 scrp 2 4 10 9
-
+*Lose life energy
 	subv ov01 1
-
+*Check energy stages for growth and trigger animations/reproduction
 	doif ov01 <= 230 and ov01 >= 221
 
 		setv ov90 1
@@ -49,11 +49,13 @@ scrp 2 4 10 9
 		wait rand 30 60
 	elif ov01 <= 110 and ov01 >= 50 and ov90 = 4
 		setv ov30 76
+*If old enough, animate and if not already reproduced, run reproduction subroutine
 		gsub anim
 		doif ov91 <> 1
 			wait rand 10 60
 			gsub seed
 		endi
+*If out of energy, die.
 	elif ov01 <= -50
 		base 0
 		frat 10
@@ -62,6 +64,7 @@ scrp 2 4 10 9
 		kill ownr
 	endi
 	gsub anim
+*animation subroutine - sway in the water.
 	subr anim
 		wait rand 1 5
 		frat 3
@@ -71,9 +74,11 @@ scrp 2 4 10 9
 	retn
 
 
-
+*seed subroutine
 	subr seed
+*Mark as already having reproduced
 		setv ov91 1
+*temporary location
 		setv va40 posl
 		setv va41 posl
 		setv va42 post
@@ -82,6 +87,7 @@ scrp 2 4 10 9
 		addv va40 9
 		subv va42 20
 		subv va43 50
+*Count how many seeds and plants there are nearby
 		setv va50 0
 		rnge 500
 		esee 2 3 8
@@ -91,12 +97,15 @@ scrp 2 4 10 9
 		esee 2 4 10
 			addv va50 1
 		next
+*If seeds and plants nearby is less than or equal to 5, allow for two new seeds.
 		doif va50 <= 5
 			setv va51 2
+*If plants are between 6 to 11, randomly choose between 1 and 2 seeds.
 		elif va50 >= 6 and va50 <= 8
 			setv va51 rand 1 2
 		elif va50 >= 9 or va50 <= 11
 			setv va51 rand 1 2
+*Overpopulated - self destruct.
 		elif va50 > 11
 			setv va00 1
 			doif va00 = 2
@@ -108,6 +117,7 @@ scrp 2 4 10 9
 				stop
 			endi
 		endi
+*Loop to create seeds
 		reps va51
 			inst
 			new: simp 2 3 8 "gumin" 9 95 4201
@@ -151,6 +161,7 @@ scrp 2 4 10 9
 			endi
 		repe
 		targ ownr
+*Allow for parent plant to reproduce again.
 		addv ov92 1
 		wait rand 100 300
 		doif ov92 <= 2
@@ -159,21 +170,22 @@ scrp 2 4 10 9
 	retn
 endm
 
+*Seed timer script
 scrp 2 3 8 9
 
-
+*Lose lifespan each time script is run
 	subv ov01 1
 
 
-
+*If too old, die.
 	doif ov01 <= 0
 		gsub deth
 	endi
 
-
+*Ensure seed is in correct environment
 	gsub room
 
-
+*Step through growth phases
 	doif ov90 = 0
 		pose 1
 		wait rand 40 60
@@ -201,7 +213,9 @@ scrp 2 3 8 9
 		gsub rndm
 		gsub obst
 		gsub move
+*Growth opportunity check if old enough
 		doif ov01 <= 300
+*Environmental checks and chance to grow
 			doif obst down < 30 and obst _up_ > 225 and obst rght > 20 and obst left > 20
 				etch 2 4 8
 					addv va40 1
@@ -219,12 +233,12 @@ scrp 2 3 8 9
 		endi
 	endi
 
-
+*Check for death flag
 	doif ov99 = 99
 		gsub deth
 	endi
 
-
+*Creates a new adult where the seed was previously (to prevent bounding box errors)
 	subr grow
 		setv va40 posl
 		setv va41 post
@@ -250,7 +264,7 @@ scrp 2 3 8 9
 		endi
 	retn
 
-
+*Kills agent directly or sets death flag for next time if carried.
 	subr deth
 		doif carr = null
 			kill ownr
@@ -259,7 +273,7 @@ scrp 2 3 8 9
 		endi
 	retn
 
-
+*Random movement subroutine
 	subr rndm
 		loop
 			setv ov10 rand -2 2
@@ -275,13 +289,13 @@ scrp 2 3 8 9
 		endi
 	retn
 
-
+*Animation for seed.
 	subr anim
 		base 5
 		anim [0 1 2 3 255]
 	retn
 
-
+*Obstacle avoidance logic
 	subr obst
 		doif obst left < 50
 			setv ov10 rand 1 2
@@ -297,7 +311,7 @@ scrp 2 3 8 9
 
 	retn
 
-
+*Room monitor - adds gravity if not in the right room and eventually kills seed if not in right room.
 	subr room
 		doif rtyp room ownr <> 9
 			loop
@@ -322,19 +336,24 @@ scrp 2 3 8 9
 	retn
 
 
-
+*Applies velocity to ov10 and ov11.
 	subr move
 		velo ov10 ov11
 	retn
 endm
+
+*Seed pickup script
 scrp 2 3 8 4
 
 endm
+
+*seed drop script
 scrp 2 3 8 5
 
 	setv ov90 5
 endm
 
+***REMOVAL
 rscr
 enum 2 4 10
 	kill targ
