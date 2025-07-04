@@ -833,6 +833,7 @@ next
 scrx 2 14 2 9
 scrx 2 14 2 6
 scrx 2 14 2 12
+scrx 2 14 2 1
 
 enum 2 17 6
 	kill targ
